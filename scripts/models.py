@@ -280,8 +280,21 @@ class Models:
 
             # define the model
             self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], \
-                               outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model, fusion_weight_layer] )
+                               outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
             # construct the loss
+            losses = {
+                'main_loss': 'mse',
+                'aux_v_loss': 'mse',
+                'aux_p_loss': 'mse',
+                'aux_m_loss': 'mse'
+            }
+            _loss_weights = {
+                'main_loss': 1.0,
+                'aux_v_loss': 1.0,
+                'aux_p_loss': 1.0,
+                'aux_m_loss': 1.0
+            }
+            '''
             losses = {
                 'main_loss':'mse',
                 'aux_loss':self.loss_aux_wrapper(fusion_weight_visual,\
@@ -292,14 +305,15 @@ class Models:
                 'main_loss': 1.0,
                 'aux_loss':1.0
             }
+            '''
 
             # adam_opt = Adam(lr=0.001)
-            #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
-            self.model.compile(optimizer='adam', \
-                               loss=self.loss_aux_wrapper(fusion_weight_visual,\
-                                                          fusion_weight_proprio, \
-                                                          fusion_weight_motor), \
-                               experimental_run_tf_function=False)
+            self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
+            #self.model.compile(optimizer='adam', \
+            #                   loss=self.loss_aux_wrapper(fusion_weight_visual,\
+            #                                              fusion_weight_proprio, \
+            #                                              fusion_weight_motor), \
+            #                   experimental_run_tf_function=False)
             # end auxiliary shared layers
 
             self.model_fusion_weights = Model(inputs=self.model.input,
@@ -339,8 +353,7 @@ class Models:
                                           [self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
                                            self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
                                            self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           fusion_weights_train], \
+                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes]], \
                                           epochs=self.parameters.get('model_epochs'), \
                                           batch_size=self.parameters.get('model_batch_size'), \
                                           validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
@@ -349,8 +362,7 @@ class Models:
                                                            [self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
                                                             self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
                                                             self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            fusion_weights_test]), \
+                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes]]), \
                                           shuffle=True, \
                                           callbacks=[myCallback], \
                                           verbose=1)
@@ -407,7 +419,7 @@ class Models:
     def loss_aux_wrapper(self, weight_visual_tensor, weight_proprio_tensor, weight_motor_tensor):
 
         def auxiliary_loss_weighting(loss_aux_mod, w, fact):
-            _shape = (64, 64)
+            _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
             # we replicate the elements
             x = K.repeat_elements(w, rep=_shape[0], axis=1)
             # we add the extra dimension:
