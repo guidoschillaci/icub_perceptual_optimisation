@@ -71,7 +71,7 @@ class Models:
         visual_layer_15 = MaxPooling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')), \
                          padding='same')
         visual_layer_16 = Flatten()
-        visual_layer_17 = Dense(410, activation='relu')
+        visual_layer_17 = Dense(256, activation='relu')
         ## link layers of the visual branch of the main model
         out_visual_main = visual_layer_17 ( \
             visual_layer_16 ( \
