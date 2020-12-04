@@ -18,7 +18,7 @@ class Parameters:
             'model_filename':'model.h5',
             'model_plot_filename': 'model.png',
 
-            'image_size': 64,
+            'image_size': 32,
             'image_channels': 1,
 
             'test_dataset_factor': 0.1, # the size of the test dataset compared to the train

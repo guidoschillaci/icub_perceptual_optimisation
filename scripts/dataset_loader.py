@@ -52,19 +52,39 @@ class DatasetLoader():
 
     def load_datasets(self):
         print('loading datasets')
+
         # images at time t
         if self.parameters.get('image_channels')==1:
-            self.dataset_images_t = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
+            self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
+            if self.parameters.get('image_size') != 64:
+                self.dataset_images_t = []
+                for i in tqdm(range(len(self.dataset_images_t))):
+                    cv2_img = cv2.resize(self.dataset_images_t[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
+                    self.dataset_images_t.append( np.array(cv2_img))
+            else:
+                self.dataset_images_t = self.dataset_images_t_orig
         else:
-            self.dataset_images_t = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
+            self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
+            if self.parameters.get('image_size') != 64:
+                self.dataset_images_t = []
+                for i in tqdm(range(len(self.dataset_images_t))):
+                    cv2_img = cv2.resize(self.dataset_images_t[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
+                    self.dataset_images_t.append( np.array(cv2_img))
+            else:
+                self.dataset_images_t = self.dataset_images_t_orig
+
 
         # image at time t+1
-        if self.parameters.get('image_channels') == 1:
-            self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images_grayscale.npy')
-        else:
-            self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
+        #if self.parameters.get('image_channels') == 1:
+        #    self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images_grayscale.npy')
+        #else:
+        #    self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
+        self.dataset_images_tp1 = deepcopy(self.dataset_images_t)
+
         # starts from t+1
         self.dataset_images_tp1 = np.delete(self.dataset_images_tp1, 0, 0)
+        # pop last elements from the datasets to match the size of self.dataset_images_tp1
+        self.dataset_images_t = np.delete(self.dataset_images_t, len(self.dataset_images_t) - 1, 0)
 
         self.dataset_joints = np.load(self.parameters.get('directory_datasets')+'dataset_joint_encoders.npy')
         self.dataset_cmd = np.load(self.parameters.get('directory_datasets')+'dataset_motor_commands.npy')
@@ -73,7 +93,6 @@ class DatasetLoader():
         self.dataset_timestamps = np.load(self.parameters.get('directory_datasets')+'dataset_timestamps.npy')
 
         # pop last elements from the datasets to match the size of self.dataset_images_tp1
-        self.dataset_images_t = np.delete(self.dataset_images_t, len(self.dataset_images_t)-1, 0)
         self.dataset_joints = np.delete(self.dataset_joints, len(self.dataset_joints)-1, 0)
         self.dataset_cmd = np.delete(self.dataset_cmd, len(self.dataset_cmd)-1, 0)
         if self.parameters.get('use_skin_data'):
