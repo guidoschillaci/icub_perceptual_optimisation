@@ -74,6 +74,7 @@ class DatasetLoader():
                 self.dataset_images_t = self.dataset_images_t_orig
 
 
+
         # image at time t+1
         #if self.parameters.get('image_channels') == 1:
         #    self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images_grayscale.npy')
