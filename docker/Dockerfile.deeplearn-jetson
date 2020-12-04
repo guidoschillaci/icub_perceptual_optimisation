@@ -1,36 +1,10 @@
 # re-adapted from https://github.com/robotology/icub-hri/blob/master/docker/Dockerfile
-FROM nvcr.io/nvidia/l4t-base:r32.2
+FROM nvcr.io/nvidia/l4t-tensorflow:r32.4.4-tf2.3-py3
+
 WORKDIR /
 RUN apt update && apt install -y --fix-missing make g++
 RUN apt update && apt install -y --fix-missing python3-pip libhdf5-serial-dev hdf5-tools
 RUN apt update && apt install -y python3-h5py git
-RUN pip3 install cython
-RUN pip3 install --pre --no-cache-dir --extra-index-url https://developer.download.nvidia.com/compute/redist/jp/v42 tensorflow-gpu
-RUN pip3 install -U numpy
-
-#RUN apt-get install -y lsb-release
-#RUN echo `lsb_release -cs`
-
-#RUN apt-get update -y
-#RUN apt-get install -y apt-transport-https ca-certificates gnupg software-properties-common wget
-
-#RUN wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add -
-#RUN apt-add-repository "deb https://apt.kitware.com/ubuntu/ `lsb_release -cs` main"
-
-#RUN apt-get update -y
-
-#RUN apt-get install -y  git \
-#        build-essential \
-#        cmake \
-#        clang \
-#        ccache
-
-
-
-
-#RUN pip3 install matplotlib scikit-image scikit-learn ipython opencv-python opencv-contrib-python pydot
-
-#RUN apt-get install -y libglu1-mesa-dev freeglut3-dev mesa-common-dev  libwebp-dev libtiff5-dev
 
 RUN pip3 install tqdm
 
