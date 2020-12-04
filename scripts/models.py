@@ -283,10 +283,10 @@ class Models:
                                outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
             # construct the loss
             losses = {
-                'main_loss': 'mse',
-                'aux_v_loss': 'mse',
-                'aux_p_loss': 'mse',
-                'aux_m_loss': 'mse'
+                'main_output': 'mse',
+                'aux_visual_output': 'mse',
+                'aux_proprio_output': 'mse',
+                'aux_motor_output': 'mse'
             }
             _loss_weights = {
                 'main_loss': 1.0,
