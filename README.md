@@ -1,5 +1,4 @@
-# icub_sensory_enhancement
-
+# Perceptual optimisation in the icub
 Perceptual optimisation, multi-modal integration with precision/fusion weights using deep neural networks.
 Tested on the iCub simulator
 
