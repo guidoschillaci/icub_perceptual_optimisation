@@ -1,3 +1,11 @@
+.DS_Store
+yarp/.DS_Store
+yarp/apps/.DS_Store
+yarp/modules/.DS_Store
+.idea/
+results*
+datasets*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
