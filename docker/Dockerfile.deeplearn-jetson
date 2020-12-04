@@ -16,6 +16,12 @@ ENV PATH=/usr/lib/ccache:$PATH
 
 RUN apt install -y --allow-unauthenticated  nano 
 RUN pip3 install matplotlib
+
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+ENV LANG en_US.UTF-8
+
 RUN pip3 install scikit-image scikit-learn 
 RUN pip3 install  opencv-python opencv-contrib-python pydot
 
