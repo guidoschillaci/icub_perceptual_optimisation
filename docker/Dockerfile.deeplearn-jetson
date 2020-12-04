@@ -14,8 +14,10 @@ RUN rm -rf /var/lib/apt/lists/*e
 # Enable ccache, for faster recompilation
 ENV PATH=/usr/lib/ccache:$PATH
 
-RUN apt-install -y nano
+RUN apt install -y --allow-unauthenticated  nano 
 RUN pip3 install matplotlib
+RUN pip3 install scikit-image scikit-learn 
+RUN pip3 install  opencv-python opencv-contrib-python pydot
 
 CMD [ "bash" ]
 
