@@ -157,9 +157,10 @@ class Models:
         x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                    padding='same')(x)
         x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-        x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
-                   padding='same')(x)
-        x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
+        if self.parameters.get('image_size')==64:
+            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+                       padding='same')(x)
+            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
         if self.parameters.get('opt_flow_only_magnitude'):
             out_main_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                                activation='relu', \
@@ -198,10 +199,11 @@ class Models:
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                       activation='relu', \
-                       padding='same')(x)
-            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
+            if self.parameters.get('image_size') == 64:
+                x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                           activation='relu', \
+                           padding='same')(x)
+                x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('opt_flow_only_magnitude'):
                 out_visual_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                                    activation='relu', \
@@ -227,10 +229,11 @@ class Models:
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                       activation='relu', \
-                       padding='same')(x)
-            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
+            if self.parameters.get('image_size') == 64:
+                x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                           activation='relu', \
+                           padding='same')(x)
+                x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('opt_flow_only_magnitude'):
                 out_proprio_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                                    activation='relu', \
@@ -257,10 +260,11 @@ class Models:
                        activation='relu', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                       activation='relu', \
-                       padding='same')(x)
-            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
+            if self.parameters.get('image_size') == 64:
+                x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                           activation='relu', \
+                           padding='same')(x)
+                x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('opt_flow_only_magnitude'):
                 out_motor_aux_model = Conv2D(1, (
                 self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
