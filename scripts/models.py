@@ -152,8 +152,11 @@ class Models:
 
         #addition = Lambda(self.addition_layer)([weighted_visual, weighted_proprio, weighted_cmd])
         addition = Add()([weighted_visual, weighted_proprio, weighted_motor])
-        x = Dense(512, activation='relu')(addition)
-        x = Reshape(target_shape=(32, 32, 1))(x)
+        x = Dense(256, activation='relu')(addition)
+        x = Reshape(target_shape=(16, 16, 1))(x)
+        x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+                   padding='same')(x)
+        x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
         x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                    padding='same')(x)
         x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
@@ -190,9 +193,13 @@ class Models:
                 visual_layer_2( \
                 visual_layer_1( \
                 input_visual) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )
-            x = Dense(512, activation='relu')(aux_visual_layer_1)
-            x = Reshape(target_shape=(32, 32, 1))(x)
+            x = Dense(256, activation='relu')(aux_visual_layer_1)
+            x = Reshape(target_shape=(16, 16, 1))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+                       padding='same')(x)
+            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
+            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                       activation='relu', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('opt_flow_only_magnitude'):
@@ -215,9 +222,13 @@ class Models:
                 proprioceptive_layer_2 ( \
                 proprioceptive_layer_1 ( \
                 input_proprioceptive) ) ) ) ) ) )
-            x = Dense(512, activation='relu')(aux_proprioceptive_layer_1)
-            x = Reshape(target_shape=(32, 32, 1))(x)
+            x = Dense(256, activation='relu')(aux_proprioceptive_layer_1)
+            x = Reshape(target_shape=(16, 16, 1))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+                       padding='same')(x)
+            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
+            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                       activation='relu', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('opt_flow_only_magnitude'):
@@ -240,8 +251,12 @@ class Models:
                 motor_layer_2 ( \
                 motor_layer_1 ( \
                 input_motor) ) ) ) ) ) )
-            x = Dense(512, activation='relu')(aux_motor_layer_1)
-            x = Reshape(target_shape=(32, 32, 1))(x)
+            x = Dense(256, activation='relu')(aux_motor_layer_1)
+            x = Reshape(target_shape=(16, 16, 1))(x)
+            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                       activation='relu', \
+                       padding='same')(x)
+            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
                        activation='relu', \
                        padding='same')(x)
