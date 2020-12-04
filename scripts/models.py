@@ -47,25 +47,25 @@ class Models:
 
         # visual branch
         input_visual = Input(shape=(self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')))
-        visual_layer_1 = Conv2D(16, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        visual_layer_1 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                    activation='relu', padding='same')
         visual_layer_2 = Dropout(0.4)
-        visual_layer_3 = Conv2D(16, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        visual_layer_3 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                    activation='relu', padding='same')
         visual_layer_4 = Dropout(0.4)
         visual_layer_5 = MaxPooling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')), \
                          padding='same')
         visual_layer_6 = Dropout(0.4)
-        visual_layer_7 = Conv2D(32, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        visual_layer_7 = Conv2D(16, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                    activation='relu', padding='same')
         visual_layer_8 = Dropout(0.4)
-        visual_layer_9 = Conv2D(32, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        visual_layer_9 = Conv2D(16, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                    activation='relu', padding='same')
         visual_layer_10 = Dropout(0.4)
         visual_layer_11 = MaxPooling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')), \
                          padding='same')
         visual_layer_12 = Dropout(0.4)
-        visual_layer_13 = Conv2D(64, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        visual_layer_13 = Conv2D(32, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
                    activation='relu', padding='same')
         visual_layer_14 = Dropout(0.4)
         visual_layer_15 = MaxPooling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')), \
@@ -94,13 +94,13 @@ class Models:
 
         # proprioceptive (joint encoders) branch
         input_proprioceptive = Input( shape=(len(self.datasets.dataset_joints[0]),) )
-        proprioceptive_layer_1 = Dense(4 * len(self.datasets.dataset_joints[0]), activation='relu')
+        proprioceptive_layer_1 = Dense(2 * len(self.datasets.dataset_joints[0]), activation='relu')
         proprioceptive_layer_2 = Dropout(0.4)
-        proprioceptive_layer_3 = Dense(8 * len(self.datasets.dataset_joints[0]), activation='relu')
+        proprioceptive_layer_3 = Dense(4 * len(self.datasets.dataset_joints[0]), activation='relu')
         proprioceptive_layer_4 = Dropout(0.4)
-        proprioceptive_layer_5 = Dense(16 * len(self.datasets.dataset_joints[0]), activation='relu')
+        proprioceptive_layer_5 = Dense(8 * len(self.datasets.dataset_joints[0]), activation='relu')
         proprioceptive_layer_6 = Dropout(0.4)
-        proprioceptive_layer_7 = Dense(410, activation='relu')
+        proprioceptive_layer_7 = Dense(256, activation='relu')
         ## link layers of the proprioceptive branch of the main model
         out_proprioceptive_main = proprioceptive_layer_7 ( \
             proprioceptive_layer_6( \
@@ -113,13 +113,13 @@ class Models:
 
         # motor commands branch
         input_motor = Input( shape=(len(self.datasets.dataset_cmd[0]),) )
-        motor_layer_1 = Dense(4 * len(self.datasets.dataset_cmd[0]), activation='relu')
+        motor_layer_1 = Dense(2 * len(self.datasets.dataset_cmd[0]), activation='relu')
         motor_layer_2 = Dropout(0.4)
-        motor_layer_3 = Dense(8 * len(self.datasets.dataset_cmd[0]), activation='relu')
+        motor_layer_3 = Dense(4 * len(self.datasets.dataset_cmd[0]), activation='relu')
         motor_layer_4 = Dropout(0.4)
-        motor_layer_5 = Dense(16 * len(self.datasets.dataset_cmd[0]), activation='relu')
+        motor_layer_5 = Dense(8 * len(self.datasets.dataset_cmd[0]), activation='relu')
         motor_layer_6 = Dropout(0.4)
-        motor_layer_7 = Dense(410, activation='relu')
+        motor_layer_7 = Dense(256, activation='relu')
         ## link layers of the motor branch of the main model
         out_motor_main = motor_layer_7 ( \
             motor_layer_6 ( \
@@ -131,7 +131,7 @@ class Models:
             input_motor) ) ) ) ) ) )
 
         concatenated = Concatenate()([out_visual_main, out_proprioceptive_main, out_motor_main])
-        x = Dense(32)(concatenated)
+        x = Dense(16)(concatenated)
         x = Dense(3, activation='sigmoid')(x)
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
@@ -152,7 +152,7 @@ class Models:
 
         #addition = Lambda(self.addition_layer)([weighted_visual, weighted_proprio, weighted_cmd])
         addition = Add()([weighted_visual, weighted_proprio, weighted_motor])
-        x = Dense(1024, activation='relu')(addition)
+        x = Dense(512, activation='relu')(addition)
         x = Reshape(target_shape=(32, 32, 1))(x)
         x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                    padding='same')(x)
@@ -190,7 +190,7 @@ class Models:
                 visual_layer_2( \
                 visual_layer_1( \
                 input_visual) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )
-            x = Dense(1024, activation='relu')(aux_visual_layer_1)
+            x = Dense(512, activation='relu')(aux_visual_layer_1)
             x = Reshape(target_shape=(32, 32, 1))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                        padding='same')(x)
@@ -215,7 +215,7 @@ class Models:
                 proprioceptive_layer_2 ( \
                 proprioceptive_layer_1 ( \
                 input_proprioceptive) ) ) ) ) ) )
-            x = Dense(1024, activation='relu')(aux_proprioceptive_layer_1)
+            x = Dense(512, activation='relu')(aux_proprioceptive_layer_1)
             x = Reshape(target_shape=(32, 32, 1))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
                        padding='same')(x)
@@ -240,7 +240,7 @@ class Models:
                 motor_layer_2 ( \
                 motor_layer_1 ( \
                 input_motor) ) ) ) ) ) )
-            x = Dense(1024, activation='relu')(aux_motor_layer_1)
+            x = Dense(512, activation='relu')(aux_motor_layer_1)
             x = Reshape(target_shape=(32, 32, 1))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
                        activation='relu', \
