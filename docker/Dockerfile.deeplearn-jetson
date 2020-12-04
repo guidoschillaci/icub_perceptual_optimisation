@@ -24,7 +24,7 @@ ENV LANG en_US.UTF-8
 
 RUN pip3 install scikit-image scikit-learn
 RUN pip3 install --upgrade pip
-RUN apt install -y python3-opencv
+RUN apt install -y --allow-unauthenticated python3-opencv
 #RUN pip3 install opencv-python
 #RUN pip3 install opencv-contrib-python
 RUN pip3 install pydot
