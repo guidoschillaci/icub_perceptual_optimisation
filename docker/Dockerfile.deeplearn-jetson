@@ -34,7 +34,7 @@ ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
 # to avoid getting stuck on configuring tzdata, called by python3-tk
 ENV TZ=Europe/Rome
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt install -y python3-tk graphviz
+RUN apt install -y --allow-unauthenticated python3-tk graphviz
 
 CMD [ "bash" ]
 
