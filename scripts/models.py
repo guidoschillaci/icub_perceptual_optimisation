@@ -294,6 +294,7 @@ class Models:
                 'aux_proprio_output': 1.0,
                 'aux_motor_output': 1.0
             }
+
             '''
             losses = {
                 'main_loss':'mse',
