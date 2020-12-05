@@ -289,10 +289,10 @@ class Models:
                 'aux_motor_output': 'mse'
             }
             _loss_weights = {
-                'main_loss': 1.0,
-                'aux_v_loss': 1.0,
-                'aux_p_loss': 1.0,
-                'aux_m_loss': 1.0
+                'main_output': 1.0,
+                'aux_visual_output': 1.0,
+                'aux_proprio_output': 1.0,
+                'aux_motor_output': 1.0
             }
             '''
             losses = {
