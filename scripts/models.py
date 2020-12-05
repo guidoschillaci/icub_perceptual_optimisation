@@ -405,14 +405,14 @@ class Models:
 
         # summarize history for loss
         fig = plt.figure(figsize=(10, 10))
-        plt.plot(self.history.history['loss'])
+        plt.plot(self.history.history['main_output_loss'])
         plt.plot(self.history.history['val_loss'])
         plt.title('model loss')
         plt.ylabel('loss')
         plt.xlabel('epoch')
         plt.legend(['train', 'test'], loc='upper left')
         plt.savefig(self.parameters.get('directory_plots') + 'loss.png')
-        np.savetxt(self.parameters.get('directory_plots') + "loss.txt", self.history.history['loss'],fmt="%s")
+        np.savetxt(self.parameters.get('directory_plots') + "loss.txt", self.history.history['main_output_loss'],fmt="%s")
         np.savetxt(self.parameters.get('directory_plots') + "loss_validation.txt", self.history.history['val_loss'],fmt="%s")
         #plt.show()
 
