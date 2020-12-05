@@ -36,6 +36,8 @@ class MyCallback(Callback):
 
     def on_train_begin(self, logs=None):
         print('callback train begin')
+        print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
+        print('teest size ', str(len(self.datasets.dataset_images_t[[self.datasets.test_indexes]])))
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
@@ -53,10 +55,10 @@ class MyCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         print('callback epoch end')
-        if self.parameters.get('make_plots'):
-            # plot also sequences of predictions
-            self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'))
-            self.plot_predictions_test_dataset(epoch, logs, predict_size=self.parameters.get('plots_predict_size'))
+        #if self.parameters.get('make_plots'):
+        #    # plot also sequences of predictions
+        #    self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'))
+        #    self.plot_predictions_test_dataset(epoch, logs, predict_size=self.parameters.get('plots_predict_size'))
 
 
     def plot_train_sequences(self, predict_size=20, save_gif=False):
