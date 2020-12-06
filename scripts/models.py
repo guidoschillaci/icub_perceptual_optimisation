@@ -399,6 +399,8 @@ class Models:
             print('Loaded pre-trained network named: ', model_filename)
 
     def save_plots(self):
+        # history dictioary
+        print('keras history keys ', self.history.history.keys())
         # model plot
         model_plt_file =self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
         tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
