@@ -400,22 +400,24 @@ class Models:
 
     def save_plots(self):
         # history dictioary
-        print('keras history keys ', self.history.history.keys())
+        history_keys = self.history.history.keys()
+        print('keras history keys ', history_keys)
         # model plot
         model_plt_file =self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
         tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
 
         # summarize history for loss
         fig = plt.figure(figsize=(10, 10))
-        plt.plot(self.history.history['main_output_loss'])
-        plt.plot(self.history.history['val_loss'])
-        plt.title('model loss')
-        plt.ylabel('loss')
+        plt.title('model history')
+        plt.ylabel('value')
         plt.xlabel('epoch')
-        plt.legend(['train', 'test'], loc='upper left')
-        plt.savefig(self.parameters.get('directory_plots') + 'loss.png')
-        np.savetxt(self.parameters.get('directory_plots') + "loss.txt", self.history.history['main_output_loss'],fmt="%s")
-        np.savetxt(self.parameters.get('directory_plots') + "loss_validation.txt", self.history.history['val_loss'],fmt="%s")
+        for i in range(len(history_keys)):
+
+            plt.plot(self.history.history[history_keys[i]], label=history_keys[i])
+            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history.history[history_keys[i]],fmt="%s")
+
+        plt.legend(history_keys, loc='upper left')
+        plt.savefig(self.parameters.get('directory_plots') + 'history.png')
         #plt.show()
 
     # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
