@@ -36,8 +36,8 @@ class MyCallback(Callback):
 
     def on_train_begin(self, logs=None):
         print('callback train begin')
-        print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
-        print('teest size ', str(len(self.datasets.dataset_images_t[[self.datasets.test_indexes]])))
+        #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
+        #print('teest size ', str(len(self.datasets.dataset_images_t[[self.datasets.test_indexes]])))
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
@@ -129,7 +129,7 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_trueOF_'+str(i)+ '.png', bbox_inches=extent_3)
 
             ax4 = plt.subplot(5, predict_size, i + 3 * (predict_size) + 1)
-            pred_unnorm = deepcopy(predictions[i])
+            pred_unnorm = deepcopy(predictions_all_outputs[i])
 
             print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
