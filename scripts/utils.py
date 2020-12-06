@@ -130,6 +130,7 @@ class MyCallback(Callback):
 
             ax4 = plt.subplot(5, predict_size, i + 3 * (predict_size) + 1)
             pred_unnorm = deepcopy(predictions[i])
+
             print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
                 pred_unnorm = pred_unnorm * self.parameters.get('opt_flow_max_value')
