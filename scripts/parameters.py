@@ -24,14 +24,14 @@ class Parameters:
             'test_dataset_factor': 0.1, # the size of the test dataset compared to the train
             'use_skin_data': False,
 
-            'model_auxiliary': True, # use auxiliary weight model
-            'model_batch_size': 16,
+            'model_auxiliary': False, # use auxiliary weight model
+            'model_batch_size': 32,
             'model_epochs': 1,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
 
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
-            'opt_flow_treshold': 0.01,  # magnitudes below this value are set to 0. (original range btw 0 and 1)
+            'opt_flow_treshold': 0.02,  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
 
