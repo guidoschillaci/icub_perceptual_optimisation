@@ -125,7 +125,7 @@ class DatasetLoader():
                 max_optflow = np.max(np.asarray(self.dataset_optical_flow).flatten())
                 self.dataset_optical_flow = self.dataset_optical_flow/max_optflow
                 if self.parameters.get('opt_flow_apply_threshold'):
-                    magnitude[ magnitude < self.parameters.get('opt_flow_treshold')] = 0
+                    self.dataset_optical_flow[ self.dataset_optical_flow < self.parameters.get('opt_flow_treshold')] = 0
                 self.parameters.set('opt_flow_max_value', max_optflow)
             else:
                 print('DS loader. TODO. normalisation for Optical flow with angle data has not been implemented yet.')
