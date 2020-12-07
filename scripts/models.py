@@ -17,6 +17,7 @@ import dataset_loader
 import os
 import tkinter
 import matplotlib.pyplot as plt
+import pandas as pd
 
 
 '''
@@ -399,6 +400,7 @@ class Models:
             print('Loaded pre-trained network named: ', model_filename)
 
     def save_plots(self):
+        pd.DataFrame.from_dict(self.history.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
         # history dictioary
         history_keys = self.history.history.keys()
         print('keras history keys ', history_keys)
