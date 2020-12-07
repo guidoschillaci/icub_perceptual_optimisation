@@ -65,6 +65,7 @@ class MyCallback(Callback):
         self.val_loss["epoch"].append(logs.get("val_loss"))
         self.val_acc["epoch"].append(logs.get("val_acc"))
 
+
         print('callback train end')
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
