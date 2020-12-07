@@ -384,7 +384,7 @@ class Models:
                            shuffle=True,\
                            callbacks = [myCallback],\
                            verbose=1)
-            print('keras history keys ', self.history.history.keys())
+            print('history keys', self.history.history.keys())
         print('training done')
 
 
