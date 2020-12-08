@@ -6,7 +6,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
 from copy import deepcopy
-
+import pandas as pd
 
 # the activation function of the output layer of the model
 def activation_opt_flow(x):
@@ -70,6 +70,25 @@ class MyCallback(Callback):
         #    self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'))
         #    self.plot_predictions_test_dataset(epoch, logs, predict_size=self.parameters.get('plots_predict_size'))
 
+    def save_plots(self):
+        pd.DataFrame.from_dict(self.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
+        # history dictioary
+        history_keys = self.history.keys()
+        print('keras history keys ', history_keys)
+
+        # summarize history for loss
+        fig = plt.figure(figsize=(10, 10))
+        plt.title('model history')
+        plt.ylabel('value')
+        plt.xlabel('epoch')
+        for i in range(len(history_keys)):
+
+            plt.plot(self.history[history_keys[i]], label=history_keys[i])
+            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history[history_keys[i]],fmt="%s")
+
+        plt.legend(history_keys, loc='upper left')
+        plt.savefig(self.parameters.get('directory_plots') + 'history.png')
+        #plt.show()
 
     def plot_train_sequences(self, predict_size=20, save_gif=False):
         start = [510, 700, 1300, 2500, 3600, 3780, 4570, 13900]

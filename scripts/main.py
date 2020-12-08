@@ -18,6 +18,6 @@ if __name__ == "__main__":
     mod.train_model()
 
     # save plots
-    mod.save_plots()
+    # mod.save_plots()
     # save nn
     mod.save_model()

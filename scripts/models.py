@@ -390,6 +390,9 @@ class Models:
 
     def save_model(self):
         self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
+        # model plot
+        model_plt_file =self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
+        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
         print('model saved')
 
     def load_model(self):
@@ -400,29 +403,6 @@ class Models:
             # load mode
             self.model = load_model(model_filename) # keras.load_model function
             print('Loaded pre-trained network named: ', model_filename)
-
-    def save_plots(self):
-        pd.DataFrame.from_dict(self.history.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
-        # history dictioary
-        history_keys = self.history.history.keys()
-        print('keras history keys ', history_keys)
-        # model plot
-        model_plt_file =self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
-        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
-
-        # summarize history for loss
-        fig = plt.figure(figsize=(10, 10))
-        plt.title('model history')
-        plt.ylabel('value')
-        plt.xlabel('epoch')
-        for i in range(len(history_keys)):
-
-            plt.plot(self.history.history[history_keys[i]], label=history_keys[i])
-            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history.history[history_keys[i]],fmt="%s")
-
-        plt.legend(history_keys, loc='upper left')
-        plt.savefig(self.parameters.get('directory_plots') + 'history.png')
-        #plt.show()
 
     # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
     def loss_aux_wrapper(self, weight_visual_tensor, weight_proprio_tensor, weight_motor_tensor):
