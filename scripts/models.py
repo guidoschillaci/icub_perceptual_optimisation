@@ -368,7 +368,7 @@ class Models:
                                           shuffle=True, \
                                           callbacks=[myCallback], \
                                           verbose=1)
-            print('keras history keys ', self.history.history.keys())
+            #print('keras history keys ', self.history.history.keys())
         else:
 
             self.history=self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
@@ -384,7 +384,7 @@ class Models:
                            shuffle=True,\
                            callbacks = [myCallback],\
                            verbose=1)
-            print('history keys', self.history.history.keys())
+            #print('history keys', self.history.history.keys())
         print('training done')
 
 

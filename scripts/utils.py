@@ -58,6 +58,8 @@ class MyCallback(Callback):
             self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'),\
                                       save_gif=True)
 
+        self.save_plots()
+
     def on_epoch_end(self, epoch, logs=None):
         print('callback epoch end')
 
