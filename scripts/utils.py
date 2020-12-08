@@ -35,11 +35,7 @@ class MyCallback(Callback):
         self.datasets = datasets
 
     def on_train_begin(self, logs={}):
-        self.losses = {"batch": [], "epoch": []}
-        self.accuracy = {"batch": [], "epoch": []}
-        self.val_loss = {"batch": [], "epoch": []}
-        self.val_acc = {"batch": [], "epoch": []}
-
+        self.history = {'loss': [], 'acc': [], 'val_loss': [], 'val_acc': []}
 
         print('callback train begin')
         #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
@@ -53,19 +49,9 @@ class MyCallback(Callback):
             self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'))
 
     def on_batch_end (self, batch, logs={}):
-        self.losses ["batch"]. append (logs.get ("loss"))
-        self.accuracy ["batch"]. append (logs.get ("acc"))
-        self.val_loss ["batch"]. append (logs.get ("val_loss"))
-        self.val_acc ["batch"]. append (logs.get ("val_acc"))
+        pass
 
     def on_train_end(self, logs=None):
-
-        self.losses["epoch"].append(logs.get("loss"))
-        self.accuracy["epoch"].append(logs.get("acc"))
-        self.val_loss["epoch"].append(logs.get("val_loss"))
-        self.val_acc["epoch"].append(logs.get("val_acc"))
-
-
         print('callback train end')
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
@@ -74,6 +60,11 @@ class MyCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         print('callback epoch end')
+
+        self.history['loss'].append(logs.get('loss'))
+        self.history['acc'].append(logs.get('acc'))
+        self.history['val_loss'].append(logs.get('val_loss'))
+        self.history['val_acc'].append(logs.get('val_acc'))
         #if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
         #    self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'))
