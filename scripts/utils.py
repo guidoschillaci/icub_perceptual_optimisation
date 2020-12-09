@@ -97,8 +97,8 @@ class MyCallback(Callback):
         start = [510, 700, 1300, 2500, 3600, 3780, 4570, 13900]
         end = list(np.asarray(start) + predict_size)
         print('saving sequence plots...')
-        for i in tqdm(range(len(start))):
-            print('plotting train from ' + str(start[i]) + ' to ' + str(end[i]))
+        for i in (range(len(start))):
+            #print('plotting train from ' + str(start[i]) + ' to ' + str(end[i]))
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
                                                    self.datasets.dataset_images_t[self.datasets.train_indexes][start[i]:end[i]], \
                                                    self.datasets.dataset_images_tp1[self.datasets.train_indexes][start[i]:end[i]], \
