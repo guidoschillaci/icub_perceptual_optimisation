@@ -75,7 +75,7 @@ class MyCallback(Callback):
     def save_plots(self):
         pd.DataFrame.from_dict(self.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
         # history dictioary
-        history_keys = self.history.keys()
+        history_keys = list(self.history.keys())
         print('keras history keys ', history_keys)
 
         # summarize history for loss
