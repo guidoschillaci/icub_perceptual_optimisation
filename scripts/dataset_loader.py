@@ -113,17 +113,18 @@ class DatasetLoader():
                     opt_flow_polar_normalised = np.zeros((self.parameters.get('image_size'), self.parameters.get('image_size'), 3))
                 flow = cv2.calcOpticalFlowFarneback(self.dataset_images_t[i], self.dataset_images_tp1[i], None, 0.5, 3, 15, 3, 5, 1.2, 0)
                 magnitude, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
-                print('max OF ', np.max(np.asarray(magnitude).flatten()), ' min ',np.min(np.asarray(magnitude).flatten()) )
-                opt_flow_polar_normalised[..., 0] = cv2.normalize(magnitude,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_32F)
-                if not self.parameters.get('opt_flow_only_magnitude'):
-                    opt_flow_polar_normalised[..., 1] = np.cos(ang) # ensures this is within -1,1 and doesnt' jump from 0to 180
-                    opt_flow_polar_normalised[..., 2] = np.sin(ang) # ensures this is within -1,1 and doesnt' jump from 0to 180
-                self.dataset_optical_flow.append(opt_flow_polar_normalised)
+                #print('max OF ', np.max(np.asarray(magnitude).flatten()), ' min ',np.min(np.asarray(magnitude).flatten()) )
+                #opt_flow_polar_normalised[..., 0] = cv2.normalize(magnitude,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_32F)
+                #if not self.parameters.get('opt_flow_only_magnitude'):
+                #    opt_flow_polar_normalised[..., 1] = np.cos(ang) # ensures this is within -1,1 and doesnt' jump from 0to 180
+                #    opt_flow_polar_normalised[..., 2] = np.sin(ang) # ensures this is within -1,1 and doesnt' jump from 0to 180
+                #self.dataset_optical_flow.append(opt_flow_polar_normalised)
+                self.dataset_optical_flow.append(magnitude)
             self.dataset_optical_flow = np.array(self.dataset_optical_flow)
 
             if self.parameters.get('opt_flow_only_magnitude'):
-                #max_optflow = np.max(np.asarray(self.dataset_optical_flow).flatten())
-                #self.dataset_optical_flow = self.dataset_optical_flow/max_optflow
+                max_optflow = np.max(np.asarray(self.dataset_optical_flow).flatten())
+                self.dataset_optical_flow = self.dataset_optical_flow/max_optflow
                 if self.parameters.get('opt_flow_apply_threshold'):
                     self.dataset_optical_flow[ self.dataset_optical_flow < self.parameters.get('opt_flow_treshold')] = 0
                 #self.parameters.set('opt_flow_max_value', max_optflow)
