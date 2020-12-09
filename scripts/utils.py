@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from copy import deepcopy
 import pandas as pd
+from tqdm import tqdm
 
 # the activation function of the output layer of the model
 def activation_opt_flow(x):
@@ -37,7 +38,7 @@ class MyCallback(Callback):
     def on_train_begin(self, logs={}):
         self.history = {'loss': [], 'acc': [], 'val_loss': [], 'val_acc': []}
 
-        print('callback train begin')
+        #print('callback train begin')
         #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
         #print('teest size ', str(len(self.datasets.dataset_images_t[[self.datasets.test_indexes]])))
         # sub model with fusion weights output
@@ -52,7 +53,7 @@ class MyCallback(Callback):
         pass
 
     def on_train_end(self, logs=None):
-        print('callback train end')
+        #print('callback train end')
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
             self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'),\
@@ -61,7 +62,7 @@ class MyCallback(Callback):
         self.save_plots()
 
     def on_epoch_end(self, epoch, logs=None):
-        print('callback epoch end')
+        #print('callback epoch end')
 
         self.history['loss'].append(logs.get('loss'))
         self.history['acc'].append(logs.get('acc'))
@@ -76,7 +77,7 @@ class MyCallback(Callback):
         pd.DataFrame.from_dict(self.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
         # history dictioary
         history_keys = list(self.history.keys())
-        print('keras history keys ', history_keys)
+        #print('keras history keys ', history_keys)
 
         # summarize history for loss
         fig = plt.figure(figsize=(10, 10))
@@ -95,7 +96,8 @@ class MyCallback(Callback):
     def plot_train_sequences(self, predict_size=20, save_gif=False):
         start = [510, 700, 1300, 2500, 3600, 3780, 4570, 13900]
         end = list(np.asarray(start) + predict_size)
-        for i in range(len(start)):
+        print('saving sequence plots...')
+        for i in tqdm(range(len(start))):
             print('plotting train from ' + str(start[i]) + ' to ' + str(end[i]))
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
                                                    self.datasets.dataset_images_t[self.datasets.train_indexes][start[i]:end[i]], \
