@@ -58,7 +58,7 @@ class DatasetLoader():
             self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
             if self.parameters.get('image_size') != 64:
                 self.dataset_images_t = []
-                for i in tqdm(range(len(self.dataset_images_t_orig))-1):
+                for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
                     cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
                     self.dataset_images_t.append( np.array(cv2_img))
             else:
@@ -81,7 +81,7 @@ class DatasetLoader():
         #else:
         #    self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
         self.dataset_images_tp1 = [] # deepcopy(self.dataset_images_t)
-        for i in tqdm(range(len(self.dataset_images_t_orig))-1):
+        for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
             cv2_img = cv2.resize(self.dataset_images_t_orig[i+1],
                                  (self.parameters.get('image_size'), self.parameters.get('image_size')),
                                  interpolation=cv2.INTER_LINEAR)
