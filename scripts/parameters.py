@@ -26,7 +26,7 @@ class Parameters:
 
             'model_auxiliary': False, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 30,
+            'model_epochs': 50,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
 
