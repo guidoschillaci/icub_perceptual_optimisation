@@ -24,9 +24,9 @@ class Parameters:
             'test_dataset_factor': 0.1, # the size of the test dataset compared to the train
             'use_skin_data': False,
 
-            'model_auxiliary': False, # use auxiliary weight model
+            'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 50,
+            'model_epochs': 30,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
 
