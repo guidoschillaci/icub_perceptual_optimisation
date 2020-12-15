@@ -148,8 +148,8 @@ class DatasetLoader():
             self.scaler_dataset_skin = preprocessing.MinMaxScaler()
 
         #normalise images
-        self.dataset_images_t = self.dataset_images_t / 255.
-        self.dataset_images_tp1 = self.dataset_images_tp1 / 255.
+        self.dataset_images_t = np.asarray(self.dataset_images_t) / 255.
+        self.dataset_images_tp1 = np.asarray(self.dataset_images_tp1) / 255.
         # normalise optical flow
         #max_optflow = np.max(np.asarray(self.dataset_optical_flow).flatten())
         #self.dataset_optical_flow = self.dataset_optical_flow/max_optflow
