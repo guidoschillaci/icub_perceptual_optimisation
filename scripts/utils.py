@@ -160,7 +160,7 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_trueOF_'+str(i)+ '.png', bbox_inches=extent_3)
 
             ax4 = plt.subplot(5, self.parameters.get('plots_predict_size'), i + 3 * (self.parameters.get('plots_predict_size')) + 1)
-            pred_unnorm = deepcopy(predictions_all_outputs[i])
+            pred_unnorm = deepcopy(predictions[i])
 
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
