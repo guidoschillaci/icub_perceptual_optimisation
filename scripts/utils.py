@@ -39,15 +39,15 @@ class MyCallback(Callback):
         print('log key', str(logs.keys()))
         if not self.parameters.get('model_auxiliary'):
             self.history = {'loss': [], \
-                            'main_output': [], \
-                            'aux_visual_output': [], \
-                            'aux_proprio_output': [], \
-                            'aux_motor_output': [], \
+                            'main_output_loss': [], \
+                            'aux_visual_output_loss': [], \
+                            'aux_proprio_output_loss': [], \
+                            'aux_motor_output_loss': [], \
                             'val_loss': [], \
-                            'val_main_output': [], \
-                            'val_aux_visual_output': [], \
-                            'val_aux_proprio_output': [], \
-                            'val_aux_motor_output': []}
+                            'val_main_output_loss': [], \
+                            'val_aux_visual_output_loss': [], \
+                            'val_aux_proprio_output_loss': [], \
+                            'val_aux_motor_output_loss': []}
         else:
             self.history = {'loss': [], 'val_loss': []}
 
@@ -81,16 +81,16 @@ class MyCallback(Callback):
             self.history['val_loss'].append(logs.get('val_loss'))
         else:
             self.history['loss'].append(logs.get('loss'))
-            self.history['main_output'].append(logs.get('main_output_loss'))
-            self.history['aux_visual_output'].append(logs.get('aux_visual_output_loss'))
-            self.history['aux_proprio_output'].append(logs.get('aux_proprio_output_loss'))
-            self.history['aux_motor_output'].append(logs.get('aux_motor_output_loss'))
+            self.history['main_output_loss'].append(logs.get('main_output_loss'))
+            self.history['aux_visual_output_loss'].append(logs.get('aux_visual_output_loss'))
+            self.history['aux_proprio_output_loss'].append(logs.get('aux_proprio_output_loss'))
+            self.history['aux_motor_output_loss'].append(logs.get('aux_motor_output_loss'))
 
             self.history['val_loss'].append(logs.get('val_loss'))
-            self.history['val_main_output'].append(logs.get('val_main_output_loss'))
-            self.history['val_aux_visual_output'].append(logs.get('val_aux_visual_output_loss'))
-            self.history['val_aux_proprio_output'].append(logs.get('val_aux_proprio_output_loss'))
-            self.history['val_aux_motor_output'].append(logs.get('val_aux_motor_output_loss'))
+            self.history['val_main_output_loss'].append(logs.get('val_main_output_loss'))
+            self.history['val_aux_visual_output_loss'].append(logs.get('val_aux_visual_output_loss'))
+            self.history['val_aux_proprio_output_loss'].append(logs.get('val_aux_proprio_output_loss'))
+            self.history['val_aux_motor_output_loss'].append(logs.get('val_aux_motor_output_loss'))
 
         #if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
