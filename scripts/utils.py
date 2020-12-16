@@ -36,7 +36,19 @@ class MyCallback(Callback):
         self.datasets = datasets
 
     def on_train_begin(self, logs={}):
-        self.history = {'loss': [], 'acc': [], 'val_loss': [], 'val_acc': []}
+        if not self.parameters.get('model_auxiliary'):
+            self.history = {'loss': [], \
+                            'main_output': [], \
+                            'aux_visual_output': [], \
+                            'aux_proprio_output': [], \
+                            'aux_motor_output': [], \
+                            'val_loss': [], \
+                            'val_main_output': [], \
+                            'val_aux_visual_output': [], \
+                            'val_aux_proprio_output': [], \
+                            'val_aux_motor_output': []}
+        else:
+            self.history = {'loss': [], 'val_loss': []}
 
         #print('callback train begin')
         #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
@@ -63,10 +75,22 @@ class MyCallback(Callback):
     def on_epoch_end(self, epoch, logs=None):
         #print('callback epoch end')
 
-        self.history['loss'].append(logs.get('loss'))
-        self.history['acc'].append(logs.get('acc'))
-        self.history['val_loss'].append(logs.get('val_loss'))
-        self.history['val_acc'].append(logs.get('val_acc'))
+        if not self.parameters.get('model_auxiliary'):
+            self.history['loss'].append(logs.get('loss'))
+            self.history['val_loss'].append(logs.get('val_loss'))
+        else:
+            self.history['loss'].append(logs.get('loss'))
+            self.history['main_output'].append(logs.get('main_output'))
+            self.history['aux_visual_output'].append(logs.get('aux_visual_output'))
+            self.history['aux_proprio_output'].append(logs.get('aux_proprio_output'))
+            self.history['aux_motor_output'].append(logs.get('aux_motor_output'))
+
+            self.history['val_loss'].append(logs.get('val_loss'))
+            self.history['val_main_output'].append(logs.get('val_main_output'))
+            self.history['val_aux_visual_output'].append(logs.get('val_aux_visual_output'))
+            self.history['val_aux_proprio_output'].append(logs.get('val_aux_proprio_output'))
+            self.history['val_aux_motor_output'].append(logs.get('val_aux_motor_output'))
+
         #if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
         #    self.plot_train_sequences(predict_size=self.parameters.get('plots_predict_size'))
