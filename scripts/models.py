@@ -310,12 +310,12 @@ class Models:
             '''
 
             # adam_opt = Adam(lr=0.001)
-            self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
-            #self.model.compile(optimizer='adam', \
-            #                   loss=self.loss_aux_wrapper(fusion_weight_visual,\
-            #                                              fusion_weight_proprio, \
-            #                                              fusion_weight_motor), \
-            #                   experimental_run_tf_function=False)
+            #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
+            self.model.compile(optimizer='adam', \
+                               loss=self.loss_aux_wrapper(fusion_weight_visual,\
+                                                          fusion_weight_proprio, \
+                                                          fusion_weight_motor), \
+                               experimental_run_tf_function=False)
             # end auxiliary shared layers
 
             self.model_fusion_weights = Model(inputs=self.model.input,
