@@ -3,6 +3,7 @@ yarp/.DS_Store
 yarp/apps/.DS_Store
 yarp/modules/.DS_Store
 .idea/
+_results*
 results*
 datasets*
 
