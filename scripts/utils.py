@@ -36,6 +36,7 @@ class MyCallback(Callback):
         self.datasets = datasets
 
     def on_train_begin(self, logs={}):
+        print('log key', str(logs.keys()))
         if not self.parameters.get('model_auxiliary'):
             self.history = {'loss': [], \
                             'main_output': [], \
@@ -74,7 +75,7 @@ class MyCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         #print('callback epoch end')
-
+        print('log key', str(logs.keys()))
         if not self.parameters.get('model_auxiliary'):
             self.history['loss'].append(logs.get('loss'))
             self.history['val_loss'].append(logs.get('val_loss'))
