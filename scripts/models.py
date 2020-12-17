@@ -283,6 +283,7 @@ class Models:
             self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], \
                                outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
             # construct the loss
+            '''
             losses = {
                 'main_output': 'mse',
                 'aux_visual_output': 'mse',
@@ -295,8 +296,8 @@ class Models:
                 'aux_proprio_output': 1.0,
                 'aux_motor_output': 1.0
             }
-
             '''
+
             losses = {
                 'main_loss':'mse',
                 'aux_loss':self.loss_aux_wrapper(fusion_weight_visual,\
@@ -307,15 +308,15 @@ class Models:
                 'main_loss': 1.0,
                 'aux_loss':1.0
             }
-            '''
+
 
             # adam_opt = Adam(lr=0.001)
-            self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
-            #self.model.compile(optimizer='adam', \
-            #                   loss=self.loss_aux_wrapper(fusion_weight_visual,\
-            #                                              fusion_weight_proprio, \
-            #                                              fusion_weight_motor), \
-            #                   experimental_run_tf_function=False)
+            #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
+            self.model.compile(optimizer='adam', \
+                               loss=self.loss_aux_wrapper(fusion_weight_visual,\
+                                                          fusion_weight_proprio, \
+                                                          fusion_weight_motor), \
+                               experimental_run_tf_function=False)
             # end auxiliary shared layers
 
             self.model_fusion_weights = Model(inputs=self.model.input,
