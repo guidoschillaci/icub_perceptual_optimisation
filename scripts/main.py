@@ -14,6 +14,8 @@ if __name__ == "__main__":
     mod.read_data()
     # build deep nn (or load it)
     mod.make_model()
+    # save a plot of the model
+    mod.plot_model()
     # train the network
     mod.train_model()
 

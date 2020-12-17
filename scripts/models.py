@@ -388,12 +388,15 @@ class Models:
             #print('history keys', self.history.history.keys())
         print('training done')
 
+    def plot_model(self):
+        print('saving plot of the model...')
+        # model plot
+        model_plt_file = self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
+        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
 
     def save_model(self):
         self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
-        # model plot
-        model_plt_file =self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
-        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
+        self.plot_model()
         print('model saved')
 
     def load_model(self):
