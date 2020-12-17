@@ -37,7 +37,9 @@ class MyCallback(Callback):
 
     def on_train_begin(self, logs={}):
         print('log key', str(logs.keys()))
-        if self.parameters.get('model_auxiliary'):
+        if not self.parameters.get('model_auxiliary'):
+            self.history = {'loss': [], 'val_loss': []}
+        else:
             self.history = {'loss': [], \
                             'main_output_loss': [], \
                             'aux_visual_output_loss': [], \
@@ -48,8 +50,6 @@ class MyCallback(Callback):
                             'val_aux_visual_output_loss': [], \
                             'val_aux_proprio_output_loss': [], \
                             'val_aux_motor_output_loss': []}
-        else:
-            self.history = {'loss': [], 'val_loss': []}
 
         #print('callback train begin')
         #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
