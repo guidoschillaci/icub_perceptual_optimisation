@@ -110,12 +110,26 @@ class MyCallback(Callback):
         plt.ylabel('value')
         plt.xlabel('epoch')
         for i in range(len(history_keys)):
-
-            plt.plot(self.history[history_keys[i]], label=history_keys[i])
-            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history[history_keys[i]],fmt="%s")
-
+            if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
+                plt.plot(self.history[history_keys[i]], label=history_keys[i])
+                np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history[history_keys[i]],fmt="%s")
         plt.legend(history_keys, loc='upper left')
         plt.savefig(self.parameters.get('directory_plots') + 'history.png')
+
+        if self.parameters.get('model_auxiliary'):
+            fig2 = plt.figure(figsize=(10, 10))
+            plt.title('model history')
+            plt.ylabel('value')
+            plt.xlabel('epoch')
+            for i in range(len(history_keys)):
+                if (history_keys[i] == 'loss') or (history_keys[i] == 'val_loss'):
+                    pass
+                else:
+                    plt.plot(self.history[history_keys[i]], label=history_keys[i])
+                    np.savetxt(self.parameters.get('directory_plots') + history_keys[i] + '.txt',
+                               self.history[history_keys[i]], fmt="%s")
+            plt.legend(history_keys, loc='upper left')
+            plt.savefig(self.parameters.get('directory_plots') + 'history_sub_losses.png')
         #plt.show()
 
     def plot_train_sequences(self, save_gif=False):
