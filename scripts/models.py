@@ -429,6 +429,7 @@ class Models:
             return fact_matrix * K.pow((w - sig_soft_loss_aux), 2)
 
         def loss_aux(y_true, y_pred):
+
             # split  observatiosn and predictions
             true_out, true_aux_visual, true_aux_proprio, true_aux_motor, true_fus_w = tf.unstack(y_true, axis=0)
             pred_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor, pred_fus_w = tf.unstack(y_pred, axis=0)
