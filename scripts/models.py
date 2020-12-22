@@ -463,6 +463,6 @@ class Models:
             #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
             #return mse(true_out, pred_out) + aux_loss_weighting_total + fus_weight_regulariser_total
-            return 0
+            return 0.0
 
         return loss_aux
