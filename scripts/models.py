@@ -431,8 +431,8 @@ class Models:
         def loss_aux(y_true, y_pred):
             print('tensor shape ', tf.shape(y_true))
             # split  observatiosn and predictions
-            true_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, axis=0)
-            pred_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred, axis=0)
+            true_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true,num_or_size_splits=4, axis=0)
+            pred_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred,num_or_size_splits=4, axis=0)
 
             alpha = 0.2
             beta = 0.1
