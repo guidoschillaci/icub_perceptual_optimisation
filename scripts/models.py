@@ -464,7 +464,7 @@ class Models:
                                            fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
             print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
-            return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
+            return loss_main_out + aux_loss_weighting_total + fus_weight_regulariser_total
 
 
         return loss_aux
