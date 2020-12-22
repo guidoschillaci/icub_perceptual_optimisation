@@ -450,9 +450,9 @@ class Models:
             alpha = 0.2
             beta = 0.1
 
-            #loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
-            #loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
-            #loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+            loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
+            loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
+            loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
             #aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
             #                           auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
