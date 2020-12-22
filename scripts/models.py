@@ -1,5 +1,5 @@
 import tensorflow as tf
-#tf.compat.v1.disable_eager_execution()
+tf.compat.v1.disable_eager_execution()
 
 from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
 from tensorflow.keras import Model
