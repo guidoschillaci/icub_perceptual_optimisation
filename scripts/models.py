@@ -142,9 +142,9 @@ class Models:
         #fusion_weight_image, fusion_weight_joint, fusion_weight_cmd = tf.split(fusion_weight_layer, num_or_size_splits=3, axis=1)
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
-        print('w_img', str(fusion_weight_visual.shape))
-        print('w_j', str(fusion_weight_proprio.shape))
-        print('w_c', str(fusion_weight_motor.shape))
+        #print('w_img', str(fusion_weight_visual.shape))
+        #print('w_j', str(fusion_weight_proprio.shape))
+        #print('w_c', str(fusion_weight_motor.shape))
         #weighted_visual = Lambda(self.multiply_layer)([out_image, fusion_weight_visual])
         #weighted_proprio = Lambda(self.multiply_layer)([out_joints, fusion_weight_proprio])
         #weighted_motor = Lambda(self.multiply_layer)([out_cmd, fusion_weight_motor])
@@ -450,19 +450,19 @@ class Models:
             alpha = 0.2
             beta = 0.1
 
-            loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
-            loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
-            loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+            #loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
+            #loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
+            #loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
-            aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
-                                       auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
-                                       auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
+            #aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
+            #                           auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
+            #                           auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
 
-            fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
-                                           fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
-                                           fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
+            #fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
+            #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
+            #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
-            return mse(true_out, pred_out) + aux_loss_weighting_total + fus_weight_regulariser_total
-            # return first_part
+            #return mse(true_out, pred_out) + aux_loss_weighting_total + fus_weight_regulariser_total
+            return 0
 
         return loss_aux
