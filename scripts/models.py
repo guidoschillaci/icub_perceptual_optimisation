@@ -437,12 +437,12 @@ class Models:
             # split  observatiosn and predictions
             #true_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, 4, axis=0)
             #pred_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred, 4, axis=0)
-            true_out = y_true[0]
+            true_main_out = y_true[0]
             true_aux_visual = y_true[1]
             true_aux_proprio = y_true[2]
             true_aux_motor = y_true[3]
 
-            pred_out = y_pred[0]
+            pred_main_out = y_pred[0]
             pred_aux_visual = y_pred[1]
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
@@ -450,6 +450,7 @@ class Models:
             alpha = 0.2
             beta = 0.1
 
+            loss_main_out = mse(true_main_out, pred_main_out)
             loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
             loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
             loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
@@ -462,7 +463,7 @@ class Models:
             #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
             #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
-            return mse(true_out, pred_out) #+ aux_loss_weighting_total + fus_weight_regulariser_total
+            return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
 
 
         return loss_aux
