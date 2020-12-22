@@ -454,9 +454,9 @@ class Models:
             loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
             loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
-            #aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
-            #                           auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
-            #                           auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
+            aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
+                                       auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
+                                       auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
 
             #fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
             #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
