@@ -459,9 +459,9 @@ class Models:
                                        auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
                                        auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
 
-            #fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
-            #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
-            #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
+            fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
+                                           fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
+                                           fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
             return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
 
