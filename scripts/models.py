@@ -437,15 +437,15 @@ class Models:
             # split  observatiosn and predictions
             #true_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, 4, axis=0)
             #pred_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred, 4, axis=0)
-            true_out = y_true[:, :, 0]
-            true_aux_visual = y_true[:, :, 1]
-            true_aux_proprio = y_true[:, :, 2]
-            true_aux_motor = y_true[:, :, 3]
+            true_out = y_true
+            true_aux_visual = y_true
+            true_aux_proprio = y_true
+            true_aux_motor = y_true
 
-            pred_out = y_pred[:, :, 0]
-            pred_aux_visual = y_pred[:, :, 1]
-            pred_aux_proprio = y_pred[:, :, 2]
-            pred_aux_motor = y_pred[:, :, 3]
+            pred_out = y_pred
+            pred_aux_visual = y_pred
+            pred_aux_proprio = y_pred
+            pred_aux_motor = y_pred
 
             alpha = 0.2
             beta = 0.1
