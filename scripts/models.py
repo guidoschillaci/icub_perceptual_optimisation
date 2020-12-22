@@ -1,5 +1,5 @@
 import tensorflow as tf
-#tf.config.experimental_run_functions_eagerly(True)
+#tf.compat.v1.disable_eager_execution()
 
 from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
 from tensorflow.keras import Model
@@ -318,8 +318,8 @@ class Models:
             self.model.compile(optimizer='adam', \
                                loss=self.loss_aux_wrapper(fusion_weight_visual,\
                                                           fusion_weight_proprio, \
-                                                          fusion_weight_motor), \
-                               experimental_run_tf_function=False)
+                                                          fusion_weight_motor))#, \
+                               #experimental_run_tf_function=False)
             # end auxiliary shared layers
 
             self.model_fusion_weights = Model(inputs=self.model.input,
