@@ -35,7 +35,7 @@ class Parameters:
             'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
 
-            'make_plots': True,
+            'make_plots': False,
             'plots_predict_size': 10,
             'verbosity_level': 3
         }

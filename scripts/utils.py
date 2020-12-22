@@ -75,8 +75,8 @@ class MyCallback(Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         #print('callback epoch end')
-        print('log key', str(logs.keys()))
-        print('hostiry key', str(self.history.keys()))
+        #print('log key', str(logs.keys()))
+        #print('hostiry key', str(self.history.keys()))
         if not self.parameters.get('model_auxiliary'):
             self.history['loss'].append(logs.get('loss'))
             self.history['val_loss'].append(logs.get('val_loss'))
