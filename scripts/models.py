@@ -435,17 +435,17 @@ class Models:
             print('tensor shape pred ', tf.shape(y_pred))
             partitions = range(4)
             # split  observatiosn and predictions
-            true_main_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, 4, axis=0)
-            pred_main_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred, 4, axis=0)
-            #true_main_out = y_true[0]
-            #true_aux_visual = y_true[1]
-            #true_aux_proprio = y_true[2]
-            #true_aux_motor = y_true[3]
+            #true_main_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, 4, axis=0)
+            #pred_main_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred, 4, axis=0)
+            true_main_out = y_true[0]
+            true_aux_visual = y_true[1]
+            true_aux_proprio = y_true[2]
+            true_aux_motor = y_true[3]
 
-            #pred_main_out = y_pred[0]
-            #pred_aux_visual = y_pred[1]
-            #pred_aux_proprio = y_pred[2]
-            #pred_aux_motor = y_pred[3]
+            pred_main_out = y_pred[0]
+            pred_aux_visual = y_pred[1]
+            pred_aux_proprio = y_pred[2]
+            pred_aux_motor = y_pred[3]
 
             alpha = 0.2
             beta = 0.1
@@ -459,9 +459,9 @@ class Models:
                                        auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
                                        auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
 
-            fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
-                                           fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
-                                           fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
+            #fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
+            #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
+            #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
             print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
             return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
