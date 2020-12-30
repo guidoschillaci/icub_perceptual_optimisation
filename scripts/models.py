@@ -431,8 +431,8 @@ class Models:
             return fact_matrix * K.pow((w - sig_soft_loss_aux), 2)
 
         def loss_aux(y_true, y_pred):
-            print('tensor shape true ', np.asarray(y_true).shape)
-            print('tensor shape pred ', np.asarray(y_pred).shape)
+            #print('tensor shape true ', np.asarray(y_true).shape)
+            #print('tensor shape pred ', np.asarray(y_pred).shape)
             #partitions = range(4)
             # split  observatiosn and predictions
             #true_main_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, 4, axis=0)
@@ -465,6 +465,5 @@ class Models:
 
             #print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
             return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
-
 
         return loss_aux
