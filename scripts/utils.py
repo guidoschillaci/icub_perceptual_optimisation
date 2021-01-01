@@ -36,7 +36,7 @@ class MyCallback(Callback):
         self.datasets = datasets
 
     def on_train_begin(self, logs={}):
-        print('log key', str(logs.keys()))
+        #print('log key', str(logs.keys()))
         if not self.parameters.get('model_auxiliary'):
             self.history = {'loss': [], 'val_loss': []}
         else:
