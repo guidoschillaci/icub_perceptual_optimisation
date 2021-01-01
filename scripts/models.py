@@ -1,5 +1,5 @@
 import tensorflow as tf
-tf.compat.v1.disable_eager_execution()
+#tf.compat.v1.disable_eager_execution()
 #tf.compat.v1.experimental.output_all_intermediates(True)
 #tf.config.run_functions_eagerly(False)
 
@@ -355,7 +355,7 @@ class Models:
                  self.datasets.dataset_joints[self.datasets.test_indexes], \
                  self.datasets.dataset_cmd[self.datasets.test_indexes]])
 
-            self.history = self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
+            self.history = self.model.fit_generator([self.datasets.dataset_images_t[self.datasets.train_indexes], \
                                            self.datasets.dataset_joints[self.datasets.train_indexes], \
                                            self.datasets.dataset_cmd[self.datasets.train_indexes]], \
                                           [self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
@@ -377,7 +377,7 @@ class Models:
             #print('keras history keys ', self.history.history.keys())
         else:
 
-            self.history=self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
+            self.history=self.model.fit_generator([self.datasets.dataset_images_t[self.datasets.train_indexes], \
                                          self.datasets.dataset_joints[self.datasets.train_indexes],\
                                          self.datasets.dataset_cmd[self.datasets.train_indexes]],\
                            self.datasets.dataset_optical_flow[self.datasets.train_indexes],\
