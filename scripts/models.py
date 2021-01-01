@@ -416,6 +416,9 @@ class Models:
     def loss_aux_wrapper(self, weight_visual_tensor, weight_proprio_tensor, weight_motor_tensor):
 
         def auxiliary_loss_weighting(loss_aux_mod, w, fact):
+            is_w_empty = tf.equal(tf.size(w), 0)
+            if is_w_empty:
+                return 0
             _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
             # we replicate the elements
             x = K.repeat_elements(w, rep=_shape[0], axis=1)
@@ -455,15 +458,16 @@ class Models:
             loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
             loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
-            #aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
-            #                           auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
-            #                           auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
+            aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
+                                       auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
+                                       auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
 
             #fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
             #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
             #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
 
             #print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
-            return loss_main_out #+ aux_loss_weighting_total #+ fus_weight_regulariser_total
+
+            return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
 
         return loss_aux
