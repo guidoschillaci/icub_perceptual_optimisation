@@ -418,7 +418,7 @@ class Models:
         def auxiliary_loss_weighting(loss_aux_mod, w, fact):
             is_w_empty = tf.equal(tf.size(w), 0)
             if is_w_empty:
-                return 0
+                return 0.0
             _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
             # we replicate the elements
             x = K.repeat_elements(w, rep=_shape[0], axis=1)
