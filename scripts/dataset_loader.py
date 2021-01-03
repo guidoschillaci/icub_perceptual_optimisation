@@ -218,39 +218,35 @@ class DatasetLoader():
     def make_tf_dataset(self):
         if self.parameters.get('model_auxiliary'):
             self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
-                [self.dataset_images_t[self.train_indexes], \
+                self.dataset_images_t[self.train_indexes], \
                  self.dataset_joints[self.train_indexes], \
-                 self.dataset_cmd[self.train_indexes]], \
-                    \
-                [self.dataset_optical_flow[self.train_indexes], \
+                 self.dataset_cmd[self.train_indexes], \
+                self.dataset_optical_flow[self.train_indexes], \
                  self.dataset_optical_flow[self.train_indexes], \
                  self.dataset_optical_flow[self.train_indexes], \
-                 self.dataset_optical_flow[self.train_indexes]] \
+                 self.dataset_optical_flow[self.train_indexes] \
                 ))
             self.tf_test_dataset = tf.data.Dataset.from_tensor_slices(( \
-                [self.dataset_images_t[self.test_indexes], \
+                self.dataset_images_t[self.test_indexes], \
                  self.dataset_joints[self.test_indexes], \
-                 self.dataset_cmd[self.test_indexes]], \
-                    \
-                [self.dataset_optical_flow[self.test_indexes], \
+                 self.dataset_cmd[self.test_indexes], \
                  self.dataset_optical_flow[self.test_indexes], \
                  self.dataset_optical_flow[self.test_indexes], \
-                 self.dataset_optical_flow[self.test_indexes]] \
+                 self.dataset_optical_flow[self.test_indexes], \
+                 self.dataset_optical_flow[self.test_indexes] \
                 ))
         else:
             self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
-                [self.dataset_images_t[self.train_indexes], \
+                self.dataset_images_t[self.train_indexes], \
                  self.dataset_joints[self.train_indexes], \
-                 self.dataset_cmd[self.train_indexes]], \
-                    \
-                [self.dataset_optical_flow[self.train_indexes]] \
+                 self.dataset_cmd[self.train_indexes], \
+                self.dataset_optical_flow[self.train_indexes] \
                 ))
             self.tf_test_dataset = tf.data.Dataset.from_tensor_slices(( \
-                [self.dataset_images_t[self.test_indexes], \
+                self.dataset_images_t[self.test_indexes], \
                  self.dataset_joints[self.test_indexes], \
-                 self.dataset_cmd[self.test_indexes]], \
-                    \
-                [self.dataset_optical_flow[self.test_indexes]] \
+                 self.dataset_cmd[self.test_indexes], \
+                self.dataset_optical_flow[self.test_indexes] \
                 ))
 
         self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('batch_size'))

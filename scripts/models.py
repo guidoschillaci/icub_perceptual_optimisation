@@ -364,16 +364,25 @@ class Models:
             start_time = time.time()
             epoch_loss_avg = Mean()
             epoch_val_loss_avg = Mean() # validation loss
-            for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
+            self.dataset_images_t[self.train_indexes], \
+            self.dataset_joints[self.train_indexes], \
+            self.dataset_cmd[self.train_indexes], \
+            self.dataset_optical_flow[self.train_indexes], \
+            self.dataset_optical_flow[self.train_indexes], \
+            self.dataset_optical_flow[self.train_indexes], \
+            self.dataset_optical_flow[self.train_indexes] \
+
+            #for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
+            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_train_dataset)):
                 # Open a GradientTape to record the operations run
                 # during the forward pass, which enables auto-differentiation.
                 with tf.GradientTape() as tape:
                     # forward pass
-                    predictions = self.model(x_batch_train, training=True)  # predictions for this minibatch
-                    weights_predictions = self.model_fusion_weights(x_batch_train, training=True)
+                    predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                    weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
 
                     # Compute the loss value for this minibatch.
-                    loss_value = self.loss_custom_loop(y_batch_train, predictions, \
+                    loss_value = self.loss_custom_loop((out_of,out_of,out_of,out_of), predictions, \
                                                        weights_predictions[0], \
                                                        weights_predictions[1], \
                                                        weights_predictions[2])
@@ -387,12 +396,13 @@ class Models:
                 # the value of the variables to minimize the loss.
                 self.optimizer.apply_gradients(zip(grads, self.model.trainable_weights))
 
-            for step, (x_batch_test, y_batch_test) in tqdm(enumerate(self.datasets.tf_test_dataset)):
-                predictions = self.model(x_batch_test, training=True)  # predictions for this minibatch
-                weights_predictions = self.model_fusion_weights(x_batch_test, training=True)
+
+            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_test_dataset)):
+                predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
 
                 # Compute the loss value for this minibatch.
-                val_loss_value = self.loss_custom_loop(y_batch_test, predictions, \
+                val_loss_value = self.loss_custom_loop( (out_of, out_of, out_of, out_of), predictions, \
                                                    weights_predictions[0], \
                                                    weights_predictions[1], \
                                                    weights_predictions[2])
