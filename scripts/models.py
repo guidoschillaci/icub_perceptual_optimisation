@@ -19,7 +19,7 @@ import time
 import numpy as np
 import h5py
 import dataset_loader
-import tqdm
+from tqdm import tqdm
 import os
 import tkinter
 import matplotlib.pyplot as plt
@@ -365,7 +365,7 @@ class Models:
             epoch_val_loss_avg = Mean() # validation loss
 
             #for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
-            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in (enumerate(self.datasets.tf_train_dataset)):
+            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_train_dataset)):
                 print('step ', str(step))
                 # Open a GradientTape to record the operations run
                 # during the forward pass, which enables auto-differentiation.
@@ -373,7 +373,7 @@ class Models:
                     # forward pass
                     predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                     weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
-
+                    print('weights_predictions ', str(weights_predictions))
                     # Compute the loss value for this minibatch.
                     loss_value = self.loss_custom_loop((out_of,out_of,out_of,out_of), predictions, \
                                                        weights_predictions[0], \
