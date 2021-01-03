@@ -350,9 +350,9 @@ class Models:
 
     def train_model(self):
         if self.parameters.get('model_custom_training_loop'):
-            self.custom_training_loop
+            self.custom_training_loop()
         else:
-            self.keras_training_loop
+            self.keras_training_loop()
 
     @tf.function
     def custom_training_loop(self):
