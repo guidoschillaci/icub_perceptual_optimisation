@@ -387,7 +387,7 @@ class Models:
 
                 # Run one step of gradient descent by updating
                 # the value of the variables to minimize the loss.
-                self.optimizer.apply_gradients(zip(grads, self.model.trainable_weights))
+                self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
 
 
             for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_test_dataset)):
