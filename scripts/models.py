@@ -9,7 +9,7 @@ from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 from tensorflow.keras.losses import mse
 from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.metrics import Mean()
+from tensorflow.keras.metrics import Mean
 from utils import Split, MyCallback, activation_opt_flow
 #from keract import get_activations, display_activations
 from copy import deepcopy
