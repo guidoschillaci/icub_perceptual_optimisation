@@ -501,8 +501,10 @@ class Models:
                          weight_motor_tensor):
         true_main_out = y_true[0]
         true_aux_visual = y_true[1]
-        print ('true 2 ', str(y_true[2].numpy()))
-        print ('true 3 ', str(y_true[3].numpy()))
+        print ('true 0 ', str(y_true[0].numpy().shape))
+        print ('true 1 ', str(y_true[1].numpy().shape))
+        print ('true 2 ', str(y_true[2].numpy().shape))
+        print ('true 3 ', str(y_true[3].numpy().shape))
 
         true_aux_proprio = y_true[2]
         true_aux_motor = y_true[3]
