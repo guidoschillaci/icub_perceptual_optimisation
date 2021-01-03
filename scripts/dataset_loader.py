@@ -252,5 +252,5 @@ class DatasetLoader():
                 self.dataset_optical_flow[self.test_indexes] \
                 ))
 
-        self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('batch_size'))
-        self.tf_test_dataset = self.tf_test_dataset.batch(self.parameters.get('batch_size'))
+        self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('model_batch_size'))
+        self.tf_test_dataset = self.tf_test_dataset.batch(self.parameters.get('model_batch_size'))
