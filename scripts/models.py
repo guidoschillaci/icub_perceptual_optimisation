@@ -349,6 +349,7 @@ class Models:
             self.model.summary()
 
     def train_model(self):
+        print('Custom training loop? ', str(self.parameters.get('model_custom_training_loop')))
         if self.parameters.get('model_custom_training_loop'):
             self.custom_training_loop()
         else:

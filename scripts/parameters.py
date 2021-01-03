@@ -46,6 +46,7 @@ class Parameters:
             return self.dictionary[key_name]
         else:
             print('Trying to access parameters key: '+ key_name+ ' which does not exist')
+            sys.exit(0)
 
     def set(self, key_name, key_value):
         if key_name in self.dictionary.keys():
