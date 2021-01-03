@@ -364,9 +364,10 @@ class Models:
             epoch_loss_avg = Mean()
             epoch_val_loss_avg = Mean() # validation loss
 
+            pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
             #for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
-            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_train_dataset)):
-                print('step ', str(step))
+            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in pbar:
+                #print('step ', str(step))
                 # Open a GradientTape to record the operations run
                 # during the forward pass, which enables auto-differentiation.
                 with tf.GradientTape() as tape:
@@ -380,6 +381,7 @@ class Models:
                                                        predictions, \
                                                        weights_predictions)
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+                    pbar.set_description("Loss = %d" % loss_value)
 
                 # Use the gradient tape to automatically retrieve
                 # the gradients of the trainable variables with respect to the loss.
@@ -520,7 +522,7 @@ class Models:
         loss_aux_proprio = tf.reduce_mean(mse(true_aux_proprio, pred_aux_proprio))
         loss_aux_motor = tf.reduce_mean(mse(true_aux_motor, pred_aux_motor))
 
-        print('loss main shape', str(loss_main_out.numpy().shape))
+        #print('loss main shape', str(loss_main_out.numpy().shape))
 
         #aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
         #                           self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
