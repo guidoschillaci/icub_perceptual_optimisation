@@ -496,7 +496,7 @@ class Models:
     def loss_custom_loop(self, y_true, y_pred, weights):
 
         print ('weights ', str(weights.numpy().shape))
-        print ('true ', str(y_true.numpy().shape))
+        #print ('true ', str(y_true.numpy().shape))
         print ('true 0 ', str(y_true[0].numpy().shape))
         print ('true 1 ', str(y_true[1].numpy().shape))
         print ('true 2 ', str(y_true[2].numpy().shape))
@@ -519,6 +519,8 @@ class Models:
         loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
         loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
         loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+
+        print('loss main', str(loss_main_out))
 
         aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
                                    self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
