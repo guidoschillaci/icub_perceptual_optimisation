@@ -3,12 +3,13 @@ import tensorflow as tf
 #tf.compat.v1.experimental.output_all_intermediates(True)
 #tf.config.run_functions_eagerly(False)
 
-from tf.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
-from tf.keras import Model
-from tf.keras import backend as K
-from tf.keras.models import load_model
-from tf.keras.losses import mse
-from tf.keras.optimizers import Adam
+from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
+from tensorflow.keras import Model
+from tensorflow.keras import backend as K
+from tensorflow.keras.models import load_model
+from tensorflow.keras.losses import mse
+from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.metrics import Mean()
 from utils import Split, MyCallback, activation_opt_flow
 #from keract import get_activations, display_activations
 from copy import deepcopy
@@ -359,8 +360,9 @@ class Models:
         for epoch in range(self.parameters.get('model_epochs')):
             print("\nStart of epoch %d" % (epoch,))
             start_time = time.time()
-            epoch_loss_avg = tf.keras.metrics.Mean()
-            for step, (x_batch_train, y_batch_train) in tqdm(enumerate(train_dataset)):
+            epoch_loss_avg = Mean()
+            epoch_val_loss_avg = Mean() # validation loss
+            for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
                 # Open a GradientTape to record the operations run
                 # during the forward pass, which enables auto-differentiation.
                 with tf.GradientTape() as tape:
@@ -382,7 +384,21 @@ class Models:
                 # Run one step of gradient descent by updating
                 # the value of the variables to minimize the loss.
                 self.optimizer.apply_gradients(zip(grads, self.model.trainable_weights))
-            print("Epoch {:03d}: Loss: {:.3f}".format(epoch,epoch_loss_avg.result()))
+
+            for step, (x_batch_test, y_batch_test) in tqdm(enumerate(self.datasets.tf_test_dataset)):
+                predictions = self.model(x_batch_test, training=True)  # predictions for this minibatch
+                weights_predictions = self.model_fusion_weights(x_batch_test, training=True)
+
+                # Compute the loss value for this minibatch.
+                val_loss_value = self.loss_custom_loop(y_batch_test, predictions, \
+                                                   weights_predictions[0], \
+                                                   weights_predictions[1], \
+                                                   weights_predictions[2])
+                epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
+
+            print("Epoch {:03d}: Loss: {:.3f},  ValLoss: {:.3f}".format(epoch,\
+                                                                        epoch_loss_avg.result(), \
+                                                                        epoch_val_loss_avg.result()))
         print('training done')
 
     def keras_training_loop(self):
