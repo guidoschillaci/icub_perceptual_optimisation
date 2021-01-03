@@ -363,13 +363,6 @@ class Models:
             start_time = time.time()
             epoch_loss_avg = Mean()
             epoch_val_loss_avg = Mean() # validation loss
-            self.dataset_images_t[self.train_indexes], \
-            self.dataset_joints[self.train_indexes], \
-            self.dataset_cmd[self.train_indexes], \
-            self.dataset_optical_flow[self.train_indexes], \
-            self.dataset_optical_flow[self.train_indexes], \
-            self.dataset_optical_flow[self.train_indexes], \
-            self.dataset_optical_flow[self.train_indexes] \
 
             #for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
             for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_train_dataset)):
