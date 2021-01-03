@@ -396,10 +396,9 @@ class Models:
                 weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
 
                 # Compute the loss value for this minibatch.
-                val_loss_value = self.loss_custom_loop( (out_of, out_of, out_of, out_of), predictions, \
-                                                   weights_predictions[0], \
-                                                   weights_predictions[1], \
-                                                   weights_predictions[2])
+                val_loss_value = self.loss_custom_loop( (out_of, out_of, out_of, out_of), \
+                                                        predictions, \
+                                                        weights_predictions)
                 epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
             print("Epoch {:03d}: Loss: {:.3f},  ValLoss: {:.3f}".format(epoch,\
@@ -495,17 +494,17 @@ class Models:
         return loss_aux_mod * alpha_weight
 
     #@tf.function
-    def loss_custom_loop(self, y_true, y_pred, \
-                         weight_visual_tensor, \
-                         weight_proprio_tensor, \
-                         weight_motor_tensor):
-        true_main_out = y_true[0]
-        true_aux_visual = y_true[1]
+    def loss_custom_loop(self, y_true, y_pred, weights):
+
+        print ('weights ', str(weights.numpy().shape))
+        print ('true ', str(y_true.numpy().shape))
         print ('true 0 ', str(y_true[0].numpy().shape))
         print ('true 1 ', str(y_true[1].numpy().shape))
         print ('true 2 ', str(y_true[2].numpy().shape))
         print ('true 3 ', str(y_true[3].numpy().shape))
 
+        true_main_out = y_true[0]
+        true_aux_visual = y_true[1]
         true_aux_proprio = y_true[2]
         true_aux_motor = y_true[3]
 
