@@ -381,7 +381,7 @@ class Models:
                                                        predictions, \
                                                        weights_predictions)
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
-                    pbar.set_description("Loss = %d" % loss_value)
+                    pbar.set_description("Loss = %f" % loss_value)
 
                 # Use the gradient tape to automatically retrieve
                 # the gradients of the trainable variables with respect to the loss.
