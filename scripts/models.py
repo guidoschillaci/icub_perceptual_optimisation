@@ -373,8 +373,8 @@ class Models:
                     # forward pass
                     predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                     weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
-                    print('weights_predictions ', str(weights_predictions.numpy()))
-                    print('weights_predictions ', str(weights_predictions[0].numpy()))
+                    #print('weights_predictions ', str(weights_predictions.numpy()))
+                    #print('weights_predictions ', str(weights_predictions[0].numpy()))
                     # Compute the loss value for this minibatch.
                     loss_value = self.loss_custom_loop((out_of,out_of,out_of,out_of), \
                                                        predictions, \
