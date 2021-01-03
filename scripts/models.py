@@ -47,8 +47,6 @@ class Models:
     def read_data(self):
         self.datasets = dataset_loader.DatasetLoader(self.parameters)
         self.datasets.load_datasets()
-        if self.parameters.get('model_custom_training_loop'):
-            self.datasets.make_tf_dataset()
 
     def make_model(self):
         # inspired by NetGate model, Patel et al., (2017) "Sensor Modality Fusion with CNNs

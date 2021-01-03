@@ -213,9 +213,12 @@ class DatasetLoader():
 
 
         self.split_train_test()
+        if self.parameters.get('model_custom_training_loop'):
+            self.make_tf_dataset()
         print ('Datasets loaded!')
 
     def make_tf_dataset(self):
+        print('making tf dataset')
         if self.parameters.get('model_auxiliary'):
             self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
                 self.dataset_images_t[self.train_indexes], \
