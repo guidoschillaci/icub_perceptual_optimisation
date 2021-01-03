@@ -376,10 +376,9 @@ class Models:
                     print('weights_predictions ', str(weights_predictions.numpy()))
                     print('weights_predictions ', str(weights_predictions[0].numpy()))
                     # Compute the loss value for this minibatch.
-                    loss_value = self.loss_custom_loop((out_of,out_of,out_of,out_of), predictions, \
-                                                       weights_predictions[0], \
-                                                       weights_predictions[1], \
-                                                       weights_predictions[2])
+                    loss_value = self.loss_custom_loop((out_of,out_of,out_of,out_of), \
+                                                       predictions, \
+                                                       weights_predictions)
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
 
                 # Use the gradient tape to automatically retrieve
