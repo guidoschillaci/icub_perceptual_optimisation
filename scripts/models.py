@@ -3,20 +3,22 @@ import tensorflow as tf
 #tf.compat.v1.experimental.output_all_intermediates(True)
 #tf.config.run_functions_eagerly(False)
 
-from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
-from tensorflow.keras import Model
-from tensorflow.keras import backend as K
-from tensorflow.keras.models import load_model
-from tensorflow.keras.losses import mse
-from tensorflow.keras.optimizers import Adam
+from tf.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
+from tf.keras import Model
+from tf.keras import backend as K
+from tf.keras.models import load_model
+from tf.keras.losses import mse
+from tf.keras.optimizers import Adam
 from utils import Split, MyCallback, activation_opt_flow
 #from keract import get_activations, display_activations
 from copy import deepcopy
 import sys
+import time
 
 import numpy as np
 import h5py
 import dataset_loader
+import tqdm
 import os
 import tkinter
 import matplotlib.pyplot as plt
@@ -285,6 +287,8 @@ class Models:
             # define the model
             self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], \
                                outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
+
+
             # construct the loss
             '''
             losses = {
@@ -314,15 +318,17 @@ class Models:
             }
             '''
 
-
-            # adam_opt = Adam(lr=0.001)
-            #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
-            self.model.compile(optimizer='adam', \
+            if not self.parameters.get('model_custom_training_loop'):
+                # adam_opt = Adam(lr=0.001)
+                #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
+                self.model.compile(optimizer='adam', \
                                loss=self.loss_aux_wrapper(fusion_weight_visual,\
                                                           fusion_weight_proprio, \
                                                           fusion_weight_motor))#, \
                                #experimental_run_tf_function=False)
-            # end auxiliary shared layers
+                # end auxiliary shared layers
+            else:
+                self.optimiser =  Adam(lr=0.001)
 
             self.model_fusion_weights = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
@@ -332,17 +338,55 @@ class Models:
             # without auxiliary model
             # define the model
             self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], outputs=out_main_model)
-            #adam_opt = Adam(lr=0.001)
-            self.model.compile(optimizer='adam',\
-                               loss='mean_squared_error'
-                               )
+
+            if not self.parameters.get('model_custom_training_loop'):
+                self.model.compile(optimizer='adam',loss='mean_squared_error')
+            else:
+                self.optimiser = Adam(lr=0.001)
 
         if self.parameters.get('verbosity_level') >0:
             self.model.summary()
 
-    #@tensorflow.function
     def train_model(self):
-        print('starting training the model')
+        if self.parameters.get('model_custom_training_loop'):
+            self.custom_training_loop
+        else:
+            self.keras_training_loop
+
+    @tf.function
+    def custom_training_loop(self):
+        print('starting training the model with custom training loop')
+        for epoch in range(self.parameters.get('model_epochs')):
+            print("\nStart of epoch %d" % (epoch,))
+            start_time = time.time()
+            epoch_loss_avg = tf.keras.metrics.Mean()
+            for step, (x_batch_train, y_batch_train) in tqdm(enumerate(train_dataset)):
+                # Open a GradientTape to record the operations run
+                # during the forward pass, which enables auto-differentiation.
+                with tf.GradientTape() as tape:
+                    # forward pass
+                    predictions = self.model(x_batch_train, training=True)  # predictions for this minibatch
+                    weights_predictions = self.model_fusion_weights(x_batch_train, training=True)
+
+                    # Compute the loss value for this minibatch.
+                    loss_value = self.loss_custom_loop(y_batch_train, predictions, \
+                                                       weights_predictions[0], \
+                                                       weights_predictions[1], \
+                                                       weights_predictions[2])
+                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+
+                # Use the gradient tape to automatically retrieve
+                # the gradients of the trainable variables with respect to the loss.
+                grads = tape.gradient(loss_value, self.model.trainable_weights)
+
+                # Run one step of gradient descent by updating
+                # the value of the variables to minimize the loss.
+                self.optimizer.apply_gradients(zip(grads, self.model.trainable_weights))
+            print("Epoch {:03d}: Loss: {:.3f}".format(epoch,epoch_loss_avg.result()))
+        print('training done')
+
+    def keras_training_loop(self):
+        print('starting training the model with keras fit function')
         myCallback = MyCallback(self.parameters, self.datasets)
         if self.parameters.get('model_auxiliary'):
             fusion_weights_train = self.model_fusion_weights.predict( \
@@ -413,7 +457,58 @@ class Models:
             self.model = load_model(model_filename) # keras.load_model function
             print('Loaded pre-trained network named: ', model_filename)
 
-    # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
+    @tf.function
+    def loss_weighting_custom_loop(self, loss_aux_mod, w, fact):
+        is_w_empty = tf.equal(tf.size(w), 0)
+        if is_w_empty:
+            print('loss weighting returns empty!!!!')
+            return 0.0
+        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        # we replicate the elements
+        x = K.repeat_elements(w, rep=_shape[0], axis=1)
+        # we add the extra dimension:
+        x = K.expand_dims(x, axis=1)
+        weight = K.repeat_elements(x, rep=_shape[1], axis=1)
+        alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
+        return loss_aux_mod * alpha_weight
+
+    @tf.function
+    def loss_custom_loop(self, y_true, y_pred, \
+                         weight_visual_tensor, \
+                         weight_proprio_tensor, \
+                         weight_motor_tensor):
+        true_main_out = y_true[0]
+        true_aux_visual = y_true[1]
+        true_aux_proprio = y_true[2]
+        true_aux_motor = y_true[3]
+
+        pred_main_out = y_pred[0]
+        pred_aux_visual = y_pred[1]
+        pred_aux_proprio = y_pred[2]
+        pred_aux_motor = y_pred[3]
+
+        alpha = 0.2
+        beta = 0.1
+
+        loss_main_out = mse(true_main_out, pred_main_out)
+        loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
+        loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
+        loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+
+        aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
+                                   self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
+                                   self.loss_weighting_custom_loop(loss_aux_motor, weight_motor_tensor, alpha)
+
+        # fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
+        #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
+        #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
+
+        # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
+
+        return loss_main_out + aux_loss_weighting_total
+
+
+        # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
     def loss_aux_wrapper(self, weight_visual_tensor, weight_proprio_tensor, weight_motor_tensor):
 
         def auxiliary_loss_weighting(loss_aux_mod, w, fact):
