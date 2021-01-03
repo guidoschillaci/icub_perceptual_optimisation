@@ -520,7 +520,7 @@ class Models:
         loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
         loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
-        print('loss main', str(loss_main_out))
+        print('loss main shape', str(loss_main_out.numpy().shape))
 
         aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
                                    self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
