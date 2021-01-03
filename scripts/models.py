@@ -355,7 +355,7 @@ class Models:
         else:
             self.keras_training_loop()
 
-    @tf.function
+    #@tf.function
     def custom_training_loop(self):
         print('starting training the model with custom training loop')
         for epoch in range(self.parameters.get('model_epochs')):
@@ -479,7 +479,7 @@ class Models:
             self.model = load_model(model_filename) # keras.load_model function
             print('Loaded pre-trained network named: ', model_filename)
 
-    @tf.function
+    #@tf.function
     def loss_weighting_custom_loop(self, loss_aux_mod, w, fact):
         is_w_empty = tf.equal(tf.size(w), 0)
         if is_w_empty:
@@ -494,7 +494,7 @@ class Models:
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
-    @tf.function
+    #@tf.function
     def loss_custom_loop(self, y_true, y_pred, \
                          weight_visual_tensor, \
                          weight_proprio_tensor, \
