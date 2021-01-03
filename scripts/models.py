@@ -522,9 +522,9 @@ class Models:
 
         print('loss main shape', str(loss_main_out.numpy().shape))
 
-        aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
-                                   self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
-                                   self.loss_weighting_custom_loop(loss_aux_motor, weight_motor_tensor, alpha)
+        #aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
+        #                           self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
+        #                           self.loss_weighting_custom_loop(loss_aux_motor, weight_motor_tensor, alpha)
 
         # fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
         #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
@@ -532,7 +532,7 @@ class Models:
 
         # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
 
-        return loss_main_out + aux_loss_weighting_total
+        return loss_main_out# + aux_loss_weighting_total
 
 
         # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
