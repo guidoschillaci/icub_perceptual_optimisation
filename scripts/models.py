@@ -481,6 +481,7 @@ class Models:
 
     #@tf.function
     def weight_loss(self, loss_aux_mod, w, fact):
+        print('size ', str(w.numpy().shape)
         is_w_empty = tf.equal(tf.size(w), 0)
         if is_w_empty:
             print('loss weighting returns empty!!!!')
@@ -528,7 +529,7 @@ class Models:
         loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
         #print('loss main shape', str(loss_main_out.numpy().shape))
-
+        print('sss ', str(weights.numpy().shape))
         aux_loss_weighting_total = self.weight_loss(loss_aux_visual,  weights[:,0], alpha) + \
                                    self.weight_loss(loss_aux_proprio, weights[:,1], alpha) + \
                                    self.weight_loss(loss_aux_motor,   weights[:,2], alpha)
