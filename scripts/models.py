@@ -487,7 +487,7 @@ class Models:
             print('loss weighting returns empty!!!!')
             return 0.0
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        print('size _shape ', str(_shape.shape))
+        print('size _shape ', str(np.asarray(_shape).shape))
         # we replicate the elements
         x = tf.repeat(w, repeats=_shape[0], axis=1)
         # we add the extra dimension:
