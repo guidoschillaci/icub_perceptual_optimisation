@@ -381,7 +381,7 @@ class Models:
                                                        predictions, \
                                                        weights_predictions)
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
-                    pbar.set_description("Loss = %f" % loss_value)
+                    pbar.set_description("Batch loss = %f" % loss_value)
 
                 # Use the gradient tape to automatically retrieve
                 # the gradients of the trainable variables with respect to the loss.
@@ -518,9 +518,9 @@ class Models:
         beta = 0.1
 
         loss_main_out = tf.reduce_mean(mse(true_main_out, pred_main_out))
-        loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual))
-        loss_aux_proprio = tf.reduce_mean(mse(true_aux_proprio, pred_aux_proprio))
-        loss_aux_motor = tf.reduce_mean(mse(true_aux_motor, pred_aux_motor))
+        loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual) * weights[:,0])
+        loss_aux_proprio = tf.reduce_mean(mse(true_aux_proprio, pred_aux_proprio)* weights[:,0])
+        loss_aux_motor = tf.reduce_mean(mse(true_aux_motor, pred_aux_motor)* weights[:,0])
 
         #print('loss main shape', str(loss_main_out.numpy().shape))
 
