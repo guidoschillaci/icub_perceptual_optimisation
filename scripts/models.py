@@ -489,10 +489,10 @@ class Models:
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         print('size _shape ', str(_shape.shape))
         # we replicate the elements
-        x = K.repeat_elements(w, rep=_shape[0], axis=1)
+        x = tf.repeat(w, repeats=_shape[0], axis=1)
         # we add the extra dimension:
-        x = K.expand_dims(x, axis=1)
-        weight = K.repeat_elements(x, rep=_shape[1], axis=1)
+        x = tf.expand_dims(x, axis=1)
+        weight = tf.repeat(x, repeats=_shape[1], axis=1)
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
