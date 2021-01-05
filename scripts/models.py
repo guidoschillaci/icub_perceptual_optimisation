@@ -481,7 +481,7 @@ class Models:
 
     #@tf.function
     def weight_loss(self, loss_aux_mod, w, fact):
-        print('size ', str(w.numpy().shape)
+        print('size ', str(w.numpy().shape))
         is_w_empty = tf.equal(tf.size(w), 0)
         if is_w_empty:
             print('loss weighting returns empty!!!!')
