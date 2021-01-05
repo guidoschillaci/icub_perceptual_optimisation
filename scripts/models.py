@@ -480,7 +480,7 @@ class Models:
             print('Loaded pre-trained network named: ', model_filename)
 
     #@tf.function
-    def loss_weighting_custom_loop(self, loss_aux_mod, w, fact):
+    def weight_loss(self, loss_aux_mod, w, fact):
         is_w_empty = tf.equal(tf.size(w), 0)
         if is_w_empty:
             print('loss weighting returns empty!!!!')
@@ -517,16 +517,21 @@ class Models:
         alpha = 0.2
         beta = 0.1
 
-        loss_main_out = tf.reduce_mean(mse(true_main_out, pred_main_out))
-        loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual) * weights[:,0])
-        loss_aux_proprio = tf.reduce_mean(mse(true_aux_proprio, pred_aux_proprio)* weights[:,0])
-        loss_aux_motor = tf.reduce_mean(mse(true_aux_motor, pred_aux_motor)* weights[:,0])
+        #loss_main_out = tf.reduce_mean(mse(true_main_out, pred_main_out))
+        #loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual))
+        #loss_aux_proprio = tf.reduce_mean(mse(true_aux_proprio, pred_aux_proprio))
+        #loss_aux_motor = tf.reduce_mean(mse(true_aux_motor, pred_aux_motor))
+
+        loss_main_out = mse(true_main_out, pred_main_out)
+        loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
+        loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
+        loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
         #print('loss main shape', str(loss_main_out.numpy().shape))
 
-        #aux_loss_weighting_total = self.loss_weighting_custom_loop(loss_aux_visual, weight_visual_tensor, alpha) + \
-        #                           self.loss_weighting_custom_loop(loss_aux_proprio, weight_proprio_tensor, alpha) + \
-        #                           self.loss_weighting_custom_loop(loss_aux_motor, weight_motor_tensor, alpha)
+        aux_loss_weighting_total = self.weight_loss(loss_aux_visual,  weights[:,0], alpha) + \
+                                   self.weight_loss(loss_aux_proprio, weights[:,1], alpha) + \
+                                   self.weight_loss(loss_aux_motor,   weights[:,2], alpha)
 
         # fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
         #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
@@ -535,7 +540,10 @@ class Models:
         # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
 
         #return loss_main_out# + aux_loss_weighting_total
-        return loss_main_out + loss_aux_visual + loss_aux_proprio + loss_aux_motor
+        return tf.reduce_mean(loss_main_out) + \
+               tf.reduce_mean(loss_aux_visual) + \
+               tf.reduce_mean(loss_aux_proprio) + \
+               tf.reduce_mean(loss_aux_motor)
 
 
         # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
