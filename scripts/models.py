@@ -402,7 +402,7 @@ class Models:
                                                         weights_predictions)
                 epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
-            print("Epoch {:03d}: Loss: {:.3f},  ValLoss: {:.3f}".format(epoch,\
+            print("Epoch {:03d}: Loss: {:.6f},  ValLoss: {:.6f}".format(epoch,\
                                                                         epoch_loss_avg.result(), \
                                                                         epoch_val_loss_avg.result()))
         print('training done')
