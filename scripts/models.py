@@ -479,7 +479,7 @@ class Models:
             self.model = load_model(model_filename) # keras.load_model function
             print('Loaded pre-trained network named: ', model_filename)
 
-    #@tf.function
+    @tf.function
     def weight_loss(self, loss_aux_mod, w, fact):
         #print('size ', str(w.numpy().shape))
         is_w_empty = tf.equal(tf.size(w), 0)
@@ -498,7 +498,7 @@ class Models:
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
-    #@tf.function
+    @tf.function
     def loss_custom_loop(self, y_true, y_pred, weights):
 
         #print ('weights ', str(weights.numpy().shape))
@@ -532,7 +532,7 @@ class Models:
         loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
         #print('loss main shape', str(loss_main_out.numpy().shape))
-        print('sss ', str(weights.numpy().shape))
+        #print('sss ', str(weights.numpy().shape))
         aux_loss_weighting_total = self.weight_loss(loss_aux_visual,  weights[:,0], alpha) + \
                                    self.weight_loss(loss_aux_proprio, weights[:,1], alpha) + \
                                    self.weight_loss(loss_aux_motor,   weights[:,2], alpha)
