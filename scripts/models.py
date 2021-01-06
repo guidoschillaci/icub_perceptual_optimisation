@@ -356,7 +356,7 @@ class Models:
         else:
             self.keras_training_loop()
 
-    #@tf.function
+    @tf.function
     def custom_training_loop(self):
         print('starting training the model with custom training loop')
         self.train_callback.on_train_begin()
