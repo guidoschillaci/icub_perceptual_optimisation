@@ -27,7 +27,7 @@ class Parameters:
             'model_custom_training_loop': True, # if False, use standard compile/fit functions
             'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 16,
-            'model_epochs': 50,
+            'model_epochs': 2,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
 
@@ -36,7 +36,7 @@ class Parameters:
             'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
 
-            'make_plots': False,
+            'make_plots': True,
             'plots_predict_size': 10,
             'verbosity_level': 3
         }
