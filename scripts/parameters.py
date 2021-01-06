@@ -21,6 +21,7 @@ class Parameters:
             'image_size': 32,
             'image_channels': 1,
 
+            'dataset_shuffle': False,
             'test_dataset_factor': 0.1, # the size of the test dataset compared to the train
             'use_skin_data': False,
 
