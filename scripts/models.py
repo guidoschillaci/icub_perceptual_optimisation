@@ -393,7 +393,7 @@ class Models:
                 # the value of the variables to minimize the loss.
                 self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
 
-                self.train_callback.on_batch_end()
+                self.train_callback.on_batch_end(batch=step)
 
 
             for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_test_dataset)):
@@ -406,7 +406,7 @@ class Models:
                                                         weights_predictions)
                 epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
-            self.train_callback.on_epoch_end()
+            self.train_callback.on_epoch_end(epoch=epoch)
             print("Epoch {:03d}: Loss: {:.6f},  ValLoss: {:.6f}".format(epoch,\
                                                                         epoch_loss_avg.result(), \
                                                                         epoch_val_loss_avg.result()))
