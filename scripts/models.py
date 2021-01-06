@@ -330,7 +330,7 @@ class Models:
                 # end auxiliary shared layers
             else:
                 self.optimiser =  Adam(lr=0.001)
-                self.train_callback = MyCallback(self.parameters, self.datasets)
+                self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
 
             self.model_fusion_weights = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
