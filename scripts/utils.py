@@ -31,11 +31,12 @@ class Split(tf.keras.layers.Layer):
 
 
 class MyCallback(Callback):
-    def __init__(self, param, datasets, model):
+    def __init__(self, param, datasets, model, logs):
         self.parameters =param
         self.datasets = datasets
         if self.parameters.get('model_custom_training_loop'):
             self.model = model
+            self.logs = logs
 
     def on_train_begin(self, logs={}):
         #print('log key', str(logs.keys()))
@@ -80,20 +81,20 @@ class MyCallback(Callback):
         #print('log key', str(logs.keys()))
         #print('hostiry key', str(self.history.keys()))
         if not self.parameters.get('model_auxiliary'):
-            self.history['loss'].append(logs.get('loss'))
-            self.history['val_loss'].append(logs.get('val_loss'))
+            self.history['loss'].append(self.logs.get('loss'))
+            self.history['val_loss'].append(self.logs.get('val_loss'))
         else:
-            self.history['loss'].append(logs.get('loss'))
-            self.history['main_output_loss'].append(logs.get('main_output_loss'))
-            self.history['aux_visual_output_loss'].append(logs.get('aux_visual_output_loss'))
-            self.history['aux_proprio_output_loss'].append(logs.get('aux_proprio_output_loss'))
-            self.history['aux_motor_output_loss'].append(logs.get('aux_motor_output_loss'))
+            self.history['loss'].append(self.logs.get('loss'))
+            self.history['main_output_loss'].append(self.logs.get('main_output_loss'))
+            self.history['aux_visual_output_loss'].append(self.logs.get('aux_visual_output_loss'))
+            self.history['aux_proprio_output_loss'].append(self.logs.get('aux_proprio_output_loss'))
+            self.history['aux_motor_output_loss'].append(self.logs.get('aux_motor_output_loss'))
 
-            self.history['val_loss'].append(logs.get('val_loss'))
-            self.history['val_main_output_loss'].append(logs.get('val_main_output_loss'))
-            self.history['val_aux_visual_output_loss'].append(logs.get('val_aux_visual_output_loss'))
-            self.history['val_aux_proprio_output_loss'].append(logs.get('val_aux_proprio_output_loss'))
-            self.history['val_aux_motor_output_loss'].append(logs.get('val_aux_motor_output_loss'))
+            self.history['val_loss'].append(self.logs.get('val_loss'))
+            self.history['val_main_output_loss'].append(self.logs.get('val_main_output_loss'))
+            self.history['val_aux_visual_output_loss'].append(self.logs.get('val_aux_visual_output_loss'))
+            self.history['val_aux_proprio_output_loss'].append(self.logs.get('val_aux_proprio_output_loss'))
+            self.history['val_aux_motor_output_loss'].append(self.logs.get('val_aux_motor_output_loss'))
 
         #if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions

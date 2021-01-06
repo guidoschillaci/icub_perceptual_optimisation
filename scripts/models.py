@@ -407,11 +407,13 @@ class Models:
                                                         weights_predictions)
                 epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
-            self.train_callback.on_epoch_end(epoch=epoch, logs=self.logs)
+            self.train_callback.logs.set('loss', epoch_loss_avg.result())
+            self.train_callback.logs.set('val_loss', epoch_val_loss_avg.result())
             print("Epoch {:03d}: Loss: {:.6f},  ValLoss: {:.6f}".format(epoch,\
                                                                         epoch_loss_avg.result(), \
                                                                         epoch_val_loss_avg.result()))
-        self.train_callback.on_train_end(logs=self.logs)
+            self.train_callback.on_epoch_end(epoch=epoch)
+        self.train_callback.on_train_end()
         print('training done')
 
     def keras_training_loop(self):
