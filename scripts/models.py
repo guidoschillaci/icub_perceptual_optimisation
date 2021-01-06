@@ -481,18 +481,20 @@ class Models:
 
     #@tf.function
     def weight_loss(self, loss_aux_mod, w, fact):
-        print('size ', str(w.numpy().shape))
+        #print('size ', str(w.numpy().shape))
         is_w_empty = tf.equal(tf.size(w), 0)
         if is_w_empty:
             print('loss weighting returns empty!!!!')
             return 0.0
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        print('size _shape ', str(np.asarray(_shape).shape))
-        # we replicate the elements
-        x = tf.repeat(w, repeats=_shape[0])#, axis=1)
-        # we add the extra dimension:
+        # add dimension
+        x = tf.expand_dims(w, axis=1)
+        # repeat elements -> shape: [batch_size, image_shape_0]
+        x = tf.tile(x, [1,_shape[1]])
+        # add dimension
         x = tf.expand_dims(x, axis=1)
-        weight = tf.repeat(x, repeats=_shape[1])#, axis=1)
+        # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
+        weight = tf.tile(x, [1, _shape[0], 1])
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
