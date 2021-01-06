@@ -1,2 +1,2 @@
 echo "Clearing previous results"
-sh ./jetson_clear_results.sh
+sh docker/jetson_clear_results.sh
