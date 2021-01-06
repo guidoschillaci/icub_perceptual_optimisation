@@ -331,6 +331,7 @@ class Models:
             else:
                 self.optimiser =  Adam(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
+                self.logs={}
 
             self.model_fusion_weights = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
@@ -359,7 +360,7 @@ class Models:
     #@tf.function
     def custom_training_loop(self):
         print('starting training the model with custom training loop')
-        self.train_callback.on_train_begin()
+        self.train_callback.on_train_begin(self.logs)
         for epoch in range(self.parameters.get('model_epochs')):
             print("\nStart of epoch %d" % (epoch,))
             start_time = time.time()
@@ -393,7 +394,7 @@ class Models:
                 # the value of the variables to minimize the loss.
                 self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
 
-                self.train_callback.on_batch_end(batch=step)
+                self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
 
             for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_test_dataset)):
@@ -406,11 +407,11 @@ class Models:
                                                         weights_predictions)
                 epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
-            self.train_callback.on_epoch_end(epoch=epoch)
+            self.train_callback.on_epoch_end(epoch=epoch, logs=self.logs)
             print("Epoch {:03d}: Loss: {:.6f},  ValLoss: {:.6f}".format(epoch,\
                                                                         epoch_loss_avg.result(), \
                                                                         epoch_val_loss_avg.result()))
-        self.train_callback.on_train_end()
+        self.train_callback.on_train_end(logs=self.logs)
         print('training done')
 
     def keras_training_loop(self):
