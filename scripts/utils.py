@@ -34,7 +34,8 @@ class MyCallback(Callback):
     def __init__(self, param, datasets, model):
         self.parameters =param
         self.datasets = datasets
-        self.model = model
+        if self.parameters.get('model_custom_training_loop'):
+            self.model = model
 
     def on_train_begin(self, logs={}):
         #print('log key', str(logs.keys()))
