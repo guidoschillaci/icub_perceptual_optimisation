@@ -507,6 +507,11 @@ class Models:
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
+    def fusion_weights_regulariser(self, loss_modality, w, fact):
+            fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(w))
+            sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
+            return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
+
     #@tf.function
     def loss_custom_loop(self, y_true, y_pred, weights):
 
@@ -528,7 +533,7 @@ class Models:
         pred_aux_motor = y_pred[3]
 
         alpha = 1#0.2
-        beta = 0.1
+        beta = 1#0.1
 
         #loss_main_out = tf.reduce_mean(mse(true_main_out, pred_main_out))
         #loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual))
@@ -542,21 +547,18 @@ class Models:
 
         #print('loss main shape', str(loss_main_out.numpy().shape))
         #print('sss ', str(weights.numpy().shape))
-        aux_loss_weighting_total = self.weight_loss(loss_aux_visual,  weights[:,0], alpha) + \
-                                   self.weight_loss(loss_aux_proprio, weights[:,1], alpha) + \
-                                   self.weight_loss(loss_aux_motor,   weights[:,2], alpha)
+        aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual,  weights[:,0], alpha)) + \
+                                   tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:,1], alpha)) + \
+                                   tf.reduce_mean(self.weight_loss(loss_aux_motor,   weights[:,2], alpha))
 
-        # fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
-        #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
-        #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
+        fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
+                                 tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
+                                 tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
 
         # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
 
         #return loss_main_out# + aux_loss_weighting_total
-        return tf.reduce_mean(loss_main_out) + \
-               tf.reduce_mean(loss_aux_visual) + \
-               tf.reduce_mean(loss_aux_proprio) + \
-               tf.reduce_mean(loss_aux_motor)
+        return tf.reduce_mean(loss_main_out) + aux_loss_weighting_total + fus_weight_regul_total
 
 
         # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
