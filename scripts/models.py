@@ -564,14 +564,14 @@ class Models:
                                    tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:,1], alpha)) + \
                                    tf.reduce_mean(self.weight_loss(loss_aux_motor,   weights[:,2], alpha))
 
-        fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
-                                 tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
-                                 tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
+        #fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
+        #                         tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
+        #                         tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
 
         # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
 
         #return loss_main_out# + aux_loss_weighting_total
-        return tf.reduce_mean(loss_main_out) + aux_loss_weighting_total + fus_weight_regul_total
+        return tf.reduce_mean(loss_main_out) + aux_loss_weighting_total #+ fus_weight_regul_total
 
 
         # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
