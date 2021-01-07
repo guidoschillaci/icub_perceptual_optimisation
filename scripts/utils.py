@@ -40,19 +40,20 @@ class MyCallback(Callback):
 
     def on_train_begin(self, logs={}):
         #print('log key', str(logs.keys()))
-        if not self.parameters.get('model_auxiliary'):
-            self.history = {'loss': [], 'val_loss': []}
-        else:
-            self.history = {'loss': [], \
-                            'main_output_loss': [], \
-                            'aux_visual_output_loss': [], \
-                            'aux_proprio_output_loss': [], \
-                            'aux_motor_output_loss': [], \
-                            'val_loss': [], \
-                            'val_main_output_loss': [], \
-                            'val_aux_visual_output_loss': [], \
-                            'val_aux_proprio_output_loss': [], \
-                            'val_aux_motor_output_loss': []}
+
+        #if not self.parameters.get('model_auxiliary'):
+        self.history = {'loss': [], 'val_loss': []}
+        #else:
+        #    self.history = {'loss': [], \
+        #                    'main_output_loss': [], \
+        #                    'aux_visual_output_loss': [], \
+        #                    'aux_proprio_output_loss': [], \
+        #                    'aux_motor_output_loss': [], \
+        #                    'val_loss': [], \
+        #                    'val_main_output_loss': [], \
+        #                    'val_aux_visual_output_loss': [], \
+        #                    'val_aux_proprio_output_loss': [], \
+        #                    'val_aux_motor_output_loss': []}
 
         #print('callback train begin')
         #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
@@ -80,21 +81,21 @@ class MyCallback(Callback):
         #print('callback epoch end')
         #print('log key', str(logs.keys()))
         #print('hostiry key', str(self.history.keys()))
-        if not self.parameters.get('model_auxiliary'):
-            self.history['loss'].append(self.logs.get('loss'))
-            self.history['val_loss'].append(self.logs.get('val_loss'))
-        else:
-            self.history['loss'].append(self.logs.get('loss'))
-            self.history['main_output_loss'].append(self.logs.get('main_output_loss'))
-            self.history['aux_visual_output_loss'].append(self.logs.get('aux_visual_output_loss'))
-            self.history['aux_proprio_output_loss'].append(self.logs.get('aux_proprio_output_loss'))
-            self.history['aux_motor_output_loss'].append(self.logs.get('aux_motor_output_loss'))
+        #if not self.parameters.get('model_auxiliary'):
+        self.history['loss'].append(self.logs.get('loss'))
+        self.history['val_loss'].append(self.logs.get('val_loss'))
+        #else:
+        #    self.history['loss'].append(self.logs.get('loss'))
+        #    self.history['main_output_loss'].append(self.logs.get('main_output_loss'))
+        #    self.history['aux_visual_output_loss'].append(self.logs.get('aux_visual_output_loss'))
+        #    self.history['aux_proprio_output_loss'].append(self.logs.get('aux_proprio_output_loss'))
+        #    self.history['aux_motor_output_loss'].append(self.logs.get('aux_motor_output_loss'))
 
-            self.history['val_loss'].append(self.logs.get('val_loss'))
-            self.history['val_main_output_loss'].append(self.logs.get('val_main_output_loss'))
-            self.history['val_aux_visual_output_loss'].append(self.logs.get('val_aux_visual_output_loss'))
-            self.history['val_aux_proprio_output_loss'].append(self.logs.get('val_aux_proprio_output_loss'))
-            self.history['val_aux_motor_output_loss'].append(self.logs.get('val_aux_motor_output_loss'))
+        #    self.history['val_loss'].append(self.logs.get('val_loss'))
+        #    self.history['val_main_output_loss'].append(self.logs.get('val_main_output_loss'))
+        #    self.history['val_aux_visual_output_loss'].append(self.logs.get('val_aux_visual_output_loss'))
+        #    self.history['val_aux_proprio_output_loss'].append(self.logs.get('val_aux_proprio_output_loss'))
+        #    self.history['val_aux_motor_output_loss'].append(self.logs.get('val_aux_motor_output_loss'))
 
         #if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
@@ -113,9 +114,9 @@ class MyCallback(Callback):
         plt.ylabel('value')
         plt.xlabel('epoch')
         for i in range(len(history_keys)):
-            if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
-                plt.plot(self.history[history_keys[i]], label=history_keys[i])
-                np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history[history_keys[i]],fmt="%s")
+            #if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
+            plt.plot(self.history[history_keys[i]], label=history_keys[i])
+            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history[history_keys[i]],fmt="%s")
         plt.legend(history_keys, loc='upper left')
         plt.savefig(self.parameters.get('directory_plots') + 'history.png')
 
