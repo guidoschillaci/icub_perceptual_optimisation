@@ -508,6 +508,11 @@ class Models:
         return loss_aux_mod * alpha_weight
 
     def fusion_weights_regulariser(self, loss_modality, w, fact):
+        is_w_empty = tf.equal(tf.size(w), 0)
+        if is_w_empty:
+            print('weight regulariser returns empty!!!!')
+            return 0.0
+        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
         x = tf.expand_dims(w, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
