@@ -35,7 +35,7 @@ class Parameters:
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
             'opt_flow_treshold': 0.05, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_only_magnitude': True,
-            'opt_flow_max_value': 25,
+            #'opt_flow_max_value': 25,
 
             'make_plots': True,
             'plots_predict_size': 10,
