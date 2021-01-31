@@ -107,8 +107,6 @@ class DatasetLoader():
         self.dataset_timestamps = np.delete(self.dataset_timestamps, len(self.dataset_timestamps)-1, 0)
 
 
-
-
         if os.path.isfile(self.parameters.get('directory_datasets') + 'dataset_optical_flow.npy'):
             print('loading optical flow dataset')
             self.dataset_optical_flow = np.load(self.parameters.get('directory_datasets') + 'dataset_optical_flow.npy')
@@ -120,7 +118,8 @@ class DatasetLoader():
                     opt_flow_polar_normalised = np.zeros((self.parameters.get('image_size'), self.parameters.get('image_size'),1))
                 else:
                     opt_flow_polar_normalised = np.zeros((self.parameters.get('image_size'), self.parameters.get('image_size'), 3))
-                flow = cv2.calcOpticalFlowFarneback(self.dataset_images_t[i], self.dataset_images_tp1[i], None, 0.5, 6, 6, 3, 5, 1.1, 0)
+                # calcOpticalFlowFarneback(, prev, next, flow, pyr_scale, levels, winsize, iterations, poly_n, poly_sigma, flags, )
+                flow = cv2.calcOpticalFlowFarneback(self.dataset_images_t[i], self.dataset_images_tp1[i], None, 0.5, 6, 3, 3, 5, 1.1, 0)
                 magnitude, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
                 #print('max OF ', np.max(np.asarray(magnitude).flatten()), ' min ',np.min(np.asarray(magnitude).flatten()) )
                 #opt_flow_polar_normalised[..., 0] = cv2.normalize(magnitude,None,0,255,cv2.NORM_MINMAX,dtype=cv2.CV_32F)
