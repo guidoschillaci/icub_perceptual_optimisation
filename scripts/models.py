@@ -25,19 +25,6 @@ import tkinter
 import matplotlib.pyplot as plt
 import pandas as pd
 
-
-'''
-def loss_aux_proprio_wrapper(input_tensor):
-    def loss_aux_proprio(y_true, y_pred):
-        return mse(y_true, y_pred) * tf.cast(self.fusion_weight_proprio.output, tf.float32)
-    return loss_aux_proprio
-
-def loss_aux_proprio_wrapper(input_tensor):
-    def loss_aux_motor(y_true, y_pred):
-        return mse(y_true, y_pred) * tf.cast(self.fusion_weight_visual.output, tf.float32)
-    retunr loss_aux_motor
-'''
-
 class Models:
     def __init__(self, param):
         print('creating models')
@@ -289,36 +276,6 @@ class Models:
             self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], \
                                outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
 
-
-            # construct the loss
-            '''
-            losses = {
-                'main_output': 'mse',
-                'aux_visual_output': 'mse',
-                'aux_proprio_output': 'mse',
-                'aux_motor_output': 'mse'
-            }
-            _loss_weights = {
-                'main_output': 1.0,
-                'aux_visual_output': 1.0,
-                'aux_proprio_output': 1.0,
-                'aux_motor_output': 1.0
-            }
-            '''
-
-            '''
-            losses = {
-                'main_loss':'mse',
-                'aux_loss':self.loss_aux_wrapper(fusion_weight_visual,\
-                                                 fusion_weight_proprio, \
-                                                 fusion_weight_motor)
-            }
-            _loss_weights = {
-                'main_loss': 1.0,
-                'aux_loss':1.0
-            }
-            '''
-
             if not self.parameters.get('model_custom_training_loop'):
                 # adam_opt = Adam(lr=0.001)
                 #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
@@ -445,77 +402,7 @@ class Models:
         self.train_callback.on_train_end()
         print('training done')
 
-    def keras_training_loop(self):
-        print('starting training the model with keras fit function')
-        myCallback = MyCallback(self.parameters, self.datasets)
-        if self.parameters.get('model_auxiliary'):
-            fusion_weights_train = self.model_fusion_weights.predict( \
-                [self.datasets.dataset_images_t[self.datasets.train_indexes], \
-                 self.datasets.dataset_joints[self.datasets.train_indexes], \
-                 self.datasets.dataset_cmd[self.datasets.train_indexes]])
 
-            fusion_weights_test = self.model_fusion_weights.predict( \
-                [self.datasets.dataset_images_t[self.datasets.test_indexes], \
-                 self.datasets.dataset_joints[self.datasets.test_indexes], \
-                 self.datasets.dataset_cmd[self.datasets.test_indexes]])
-
-            self.history = self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
-                                           self.datasets.dataset_joints[self.datasets.train_indexes], \
-                                           self.datasets.dataset_cmd[self.datasets.train_indexes]], \
-                                          [self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes]], \
-                                          epochs=self.parameters.get('model_epochs'), \
-                                          batch_size=self.parameters.get('model_batch_size'), \
-                                          validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_joints[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_cmd[self.datasets.test_indexes]], \
-                                                           [self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes]]), \
-                                          shuffle=True, \
-                                          callbacks=[myCallback], \
-                                          verbose=1)
-            #print('keras history keys ', self.history.history.keys())
-        else:
-
-            self.history=self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
-                                         self.datasets.dataset_joints[self.datasets.train_indexes],\
-                                         self.datasets.dataset_cmd[self.datasets.train_indexes]],\
-                           self.datasets.dataset_optical_flow[self.datasets.train_indexes],\
-                           epochs=self.parameters.get('model_epochs'),\
-                           batch_size=self.parameters.get('model_batch_size'), \
-                           validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
-                                             self.datasets.dataset_joints[self.datasets.test_indexes], \
-                                             self.datasets.dataset_cmd[self.datasets.test_indexes]], \
-                                             self.datasets.dataset_optical_flow[self.datasets.test_indexes]),\
-                           shuffle=True,\
-                           callbacks = [myCallback],\
-                           verbose=1)
-            #print('history keys', self.history.history.keys())
-        print('training done')
-
-    def plot_model(self):
-        print('saving plot of the model...')
-        # model plot
-        model_plt_file = self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
-        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
-
-    def save_model(self):
-        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
-        self.plot_model()
-        print('model saved')
-
-    def load_model(self):
-        model_filename = self.parameters.get('directory_models') + self.parameters.get('model_filename')
-
-        # if model file already exists (i.e. it has been already trained):
-        if os.path.isfile(model_filename):
-            # load mode
-            self.model = load_model(model_filename) # keras.load_model function
-            print('Loaded pre-trained network named: ', model_filename)
 
     #@tf.function
     def weight_loss(self, loss_aux_mod, w, fact):
@@ -572,7 +459,7 @@ class Models:
         loss_main_out = mse(true_main_out, pred_main_out)
         if self.parameters.get('model_auxiliary'):
             alpha = 0.6  # 0.2
-            beta = 0.0  # 0.01
+            beta = 0.2  # 0.01
             loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
             loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
             loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
@@ -595,64 +482,75 @@ class Models:
         else:
             return tf.reduce_mean(loss_main_out)
 
-    '''
-        # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
-    def loss_aux_wrapper(self, weight_visual_tensor, weight_proprio_tensor, weight_motor_tensor):
 
-        def auxiliary_loss_weighting(loss_aux_mod, w, fact):
-            is_w_empty = tf.equal(tf.size(w), 0)
-            if is_w_empty:
-                return 0.0
-            _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-            # we replicate the elements
-            x = K.repeat_elements(w, rep=_shape[0], axis=1)
-            # we add the extra dimension:
-            x = K.expand_dims(x, axis=1)
-            weight = K.repeat_elements(x, rep=_shape[1], axis=1)
-            alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
-            return loss_aux_mod * alpha_weight
+    def keras_training_loop(self):
+        print('starting training the model with keras fit function')
+        myCallback = MyCallback(self.parameters, self.datasets)
+        if self.parameters.get('model_auxiliary'):
+            fusion_weights_train = self.model_fusion_weights.predict( \
+                [self.datasets.dataset_images_t[self.datasets.train_indexes], \
+                 self.datasets.dataset_joints[self.datasets.train_indexes], \
+                 self.datasets.dataset_cmd[self.datasets.train_indexes]])
 
-        def fus_weight_regulariser(loss_aux_mod, w, fact):
-            fact_matrix = tf.math.scalar_mul(fact, K.ones_like(w))
-            sig_soft_loss_aux = K.softmax(K.sigmoid(K.exp(-K.pow(loss_aux_mod, 2))))
-            return fact_matrix * K.pow((w - sig_soft_loss_aux), 2)
+            fusion_weights_test = self.model_fusion_weights.predict( \
+                [self.datasets.dataset_images_t[self.datasets.test_indexes], \
+                 self.datasets.dataset_joints[self.datasets.test_indexes], \
+                 self.datasets.dataset_cmd[self.datasets.test_indexes]])
 
-        def loss_aux(y_true, y_pred):
-            #print('tensor shape true ', np.asarray(y_true).shape)
-            #print('tensor shape pred ', np.asarray(y_pred).shape)
-            #partitions = range(4)
-            # split  observatiosn and predictions
-            #true_main_out, true_aux_visual, true_aux_proprio, true_aux_motor = tf.split(y_true, 4, axis=0)
-            #pred_main_out, pred_aux_visual, pred_aux_proprio, pred_aux_motor = tf.split(y_pred, 4, axis=0)
-            true_main_out = y_true[0]
-            true_aux_visual = y_true[1]
-            true_aux_proprio = y_true[2]
-            true_aux_motor = y_true[3]
+            self.history = self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
+                                           self.datasets.dataset_joints[self.datasets.train_indexes], \
+                                           self.datasets.dataset_cmd[self.datasets.train_indexes]], \
+                                          [self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
+                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
+                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
+                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes]], \
+                                          epochs=self.parameters.get('model_epochs'), \
+                                          batch_size=self.parameters.get('model_batch_size'), \
+                                          validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
+                                                            self.datasets.dataset_joints[self.datasets.test_indexes], \
+                                                            self.datasets.dataset_cmd[self.datasets.test_indexes]], \
+                                                           [self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
+                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
+                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
+                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes]]), \
+                                          shuffle=True, \
+                                          callbacks=[myCallback], \
+                                          verbose=1)
+            #print('keras history keys ', self.history.history.keys())
+        else:
 
-            pred_main_out = y_pred[0]
-            pred_aux_visual = y_pred[1]
-            pred_aux_proprio = y_pred[2]
-            pred_aux_motor = y_pred[3]
+            self.history=self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
+                                         self.datasets.dataset_joints[self.datasets.train_indexes],\
+                                         self.datasets.dataset_cmd[self.datasets.train_indexes]],\
+                           self.datasets.dataset_optical_flow[self.datasets.train_indexes],\
+                           epochs=self.parameters.get('model_epochs'),\
+                           batch_size=self.parameters.get('model_batch_size'), \
+                           validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
+                                             self.datasets.dataset_joints[self.datasets.test_indexes], \
+                                             self.datasets.dataset_cmd[self.datasets.test_indexes]], \
+                                             self.datasets.dataset_optical_flow[self.datasets.test_indexes]),\
+                           shuffle=True,\
+                           callbacks = [myCallback],\
+                           verbose=1)
+            #print('history keys', self.history.history.keys())
+        print('training done')
 
-            alpha = 0.2
-            beta = 0.1
+    def load_model(self):
+        model_filename = self.parameters.get('directory_models') + self.parameters.get('model_filename')
 
-            loss_main_out = mse(true_main_out, pred_main_out)
-            loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
-            loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
-            loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+        # if model file already exists (i.e. it has been already trained):
+        if os.path.isfile(model_filename):
+            # load mode
+            self.model = load_model(model_filename) # keras.load_model function
+            print('Loaded pre-trained network named: ', model_filename)
 
-            aux_loss_weighting_total = auxiliary_loss_weighting(loss_aux_visual, weight_visual_tensor, alpha) + \
-                                       auxiliary_loss_weighting(loss_aux_proprio, weight_proprio_tensor, alpha) + \
-                                       auxiliary_loss_weighting(loss_aux_motor, weight_motor_tensor, alpha)
+    def plot_model(self):
+        print('saving plot of the model...')
+        # model plot
+        model_plt_file = self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
+        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
 
-            #fus_weight_regulariser_total = fus_weight_regulariser(loss_aux_visual, weight_visual_tensor, beta) + \
-            #                               fus_weight_regulariser(loss_aux_proprio, weight_proprio_tensor, beta) + \
-            #                               fus_weight_regulariser(loss_aux_motor, weight_motor_tensor, beta)
-
-            #print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
-
-            return loss_main_out + aux_loss_weighting_total #+ fus_weight_regulariser_total
-
-        return loss_aux
-    '''
+    def save_model(self):
+        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
+        self.plot_model()
+        print('model saved')
