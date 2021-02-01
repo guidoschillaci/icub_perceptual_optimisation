@@ -18,7 +18,7 @@ class Parameters:
             'model_filename':'model.h5',
             'model_plot_filename': 'model.png',
 
-            'image_size': 32,
+            'image_size': 64,
             'image_channels': 1,
 
             'dataset_shuffle': False,
@@ -27,7 +27,7 @@ class Parameters:
 
             'model_custom_training_loop': True, # if False, use standard compile/fit functions
             'model_auxiliary': True, # use auxiliary weight model
-            'model_batch_size': 32,
+            'model_batch_size': 16,
             'model_epochs': 10,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
