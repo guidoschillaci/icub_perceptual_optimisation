@@ -459,7 +459,7 @@ class Models:
         loss_main_out = mse(true_main_out, pred_main_out)
         if self.parameters.get('model_auxiliary'):
             alpha = 0.6  # 0.2
-            beta = 0.001  # 0.01
+            beta = 0.0  # 0.01
             loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
             loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
             loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
