@@ -369,7 +369,7 @@ class Models:
 
             pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
             #for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
-            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in pbar:
+            for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
                 #print('step ', str(step))
                 # Open a GradientTape to record the operations run
                 # during the forward pass, which enables auto-differentiation.
@@ -380,7 +380,7 @@ class Models:
                     #print('weights_predictions ', str(weights_predictions.numpy()))
                     #print('weights_predictions ', str(weights_predictions[0].numpy()))
                     # Compute the loss value for this minibatch.
-                    loss_value = self.loss_custom_loop((out_of,out_of,out_of,out_of), \
+                    loss_value = self.loss_custom_loop((out_of,out_aof1,out_aof2,out_aof3), \
                                                        predictions, \
                                                        weights_predictions)
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
