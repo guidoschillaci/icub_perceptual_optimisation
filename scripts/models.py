@@ -545,8 +545,8 @@ class Models:
         pred_aux_proprio = y_pred[2]
         pred_aux_motor = y_pred[3]
 
-        alpha = 0.2#0.2
-        beta = 0.01
+        alpha = 0.6#0.2
+        beta = 0.3
 
         #loss_main_out = tf.reduce_mean(mse(true_main_out, pred_main_out))
         #loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual))
