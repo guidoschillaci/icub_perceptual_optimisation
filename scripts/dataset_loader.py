@@ -57,22 +57,22 @@ class DatasetLoader():
         # images at time t
         if self.parameters.get('image_channels')==1:
             self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
-            if self.parameters.get('image_size') != 64:
-                self.dataset_images_t = []
-                for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
-                    cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
-                    self.dataset_images_t.append( np.array(cv2_img))
-            else:
-                self.dataset_images_t = self.dataset_images_t_orig
+            #if self.parameters.get('image_size') != 64:
+            self.dataset_images_t = []
+            for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
+                cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
+                self.dataset_images_t.append( np.array(cv2_img))
+            #else:
+            #    self.dataset_images_t = self.dataset_images_t_orig[:-1]
         else:
             self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
-            if self.parameters.get('image_size') != 64:
-                self.dataset_images_t = []
-                for i in tqdm(range(len(self.dataset_images_t_orig))):
-                    cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
-                    self.dataset_images_t.append( np.array(cv2_img))
-            else:
-                self.dataset_images_t = self.dataset_images_t_orig
+            #if self.parameters.get('image_size') != 64:
+            self.dataset_images_t = []
+            for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
+                cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
+                self.dataset_images_t.append( np.array(cv2_img))
+            #else:
+            #    self.dataset_images_t = self.dataset_images_t_orig[:-1]
 
 
 
