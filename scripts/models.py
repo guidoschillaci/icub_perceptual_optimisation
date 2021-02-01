@@ -368,44 +368,73 @@ class Models:
             epoch_val_loss_avg = Mean() # validation loss
 
             pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
-            #for step, (x_batch_train, y_batch_train) in tqdm(enumerate(self.datasets.tf_train_dataset)):
-            for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
-                #print('step ', str(step))
-                # Open a GradientTape to record the operations run
-                # during the forward pass, which enables auto-differentiation.
-                with tf.GradientTape() as tape:
-                    # forward pass
+            if self.parameters.get('model_auxiliary'):
+                for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
+                    #print('step ', str(step))
+                    # Open a GradientTape to record the operations run
+                    # during the forward pass, which enables auto-differentiation.
+                    with tf.GradientTape() as tape:
+                        # forward pass
+                        predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                        weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
+                        # Compute the loss value for this minibatch.
+                        loss_value = self.loss_custom_loop((out_of,out_aof1,out_aof2,out_aof3), \
+                                                           predictions, \
+                                                           weights_predictions)
+                        epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+                        pbar.set_description("Batch loss = %f" % loss_value)
+                    # Use the gradient tape to automatically retrieve
+                    # the gradients of the trainable variables with respect to the loss.
+                    grads = tape.gradient(loss_value, self.model.trainable_weights)
+                    # Run one step of gradient descent by updating
+                    # the value of the variables to minimize the loss.
+                    self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+                    self.train_callback.on_batch_end(batch=step, logs=self.logs)
+
+                for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in tqdm(enumerate(self.datasets.tf_test_dataset)):
                     predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                     weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
-                    #print('weights_predictions ', str(weights_predictions.numpy()))
-                    #print('weights_predictions ', str(weights_predictions[0].numpy()))
+
                     # Compute the loss value for this minibatch.
-                    loss_value = self.loss_custom_loop((out_of,out_aof1,out_aof2,out_aof3), \
-                                                       predictions, \
-                                                       weights_predictions)
-                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
-                    pbar.set_description("Batch loss = %f" % loss_value)
+                    val_loss_value = self.loss_custom_loop( (out_of, out_aof1, out_aof2, out_aof3), \
+                                                            predictions, \
+                                                            weights_predictions)
+                    epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
-                # Use the gradient tape to automatically retrieve
-                # the gradients of the trainable variables with respect to the loss.
-                grads = tape.gradient(loss_value, self.model.trainable_weights)
+            else: # model without auxiliary branches
+                for step, (in_img, in_j, in_cmd, out_of) in pbar:
+                    # Open a GradientTape to record the operations run
+                    # during the forward pass, which enables auto-differentiation.
+                    with tf.GradientTape() as tape:
+                        # forward pass
+                        predictions = self.model((in_img, in_j, in_cmd),
+                                                 training=True)  # predictions for this minibatch
+                        weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
+                        # Compute the loss value for this minibatch.
+                        loss_value = self.loss_custom_loop(out_of, \
+                                                           predictions, \
+                                                           weights_predictions)
+                        epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+                        pbar.set_description("Batch loss = %f" % loss_value)
+                    # Use the gradient tape to automatically retrieve
+                    # the gradients of the trainable variables with respect to the loss.
+                    grads = tape.gradient(loss_value, self.model.trainable_weights)
+                    # Run one step of gradient descent by updating
+                    # the value of the variables to minimize the loss.
+                    self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+                    self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
-                # Run one step of gradient descent by updating
-                # the value of the variables to minimize the loss.
-                self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+                for step, (in_img, in_j, in_cmd, out_of) in tqdm(
+                        enumerate(self.datasets.tf_test_dataset)):
+                    predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                    weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
 
-                self.train_callback.on_batch_end(batch=step, logs=self.logs)
+                    # Compute the loss value for this minibatch.
+                    val_loss_value = self.loss_custom_loop(out_of, \
+                                                           predictions, \
+                                                           weights_predictions)
+                    epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
-
-            for step, (in_img, in_j, in_cmd, out_of, out_of, out_of, out_of) in tqdm(enumerate(self.datasets.tf_test_dataset)):
-                predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-                weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
-
-                # Compute the loss value for this minibatch.
-                val_loss_value = self.loss_custom_loop( (out_of, out_of, out_of, out_of), \
-                                                        predictions, \
-                                                        weights_predictions)
-                epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
             self.train_callback.logs['loss']=epoch_loss_avg.result()
             self.train_callback.logs['val_loss']=epoch_val_loss_avg.result()
@@ -528,50 +557,43 @@ class Models:
     #@tf.function
     def loss_custom_loop(self, y_true, y_pred, weights):
 
-        #print ('weights ', str(weights.numpy().shape))
-        #print ('true ', str(y_true.numpy().shape))
-        #print ('true 0 ', str(y_true[0].numpy().shape))
-        #print ('true 1 ', str(y_true[1].numpy().shape))
-        #print ('true 2 ', str(y_true[2].numpy().shape))
-        #print ('true 3 ', str(y_true[3].numpy().shape))
-
         true_main_out = y_true[0]
-        true_aux_visual = y_true[1]
-        true_aux_proprio = y_true[2]
-        true_aux_motor = y_true[3]
+        if self.parameters.get('model_auxiliary'):
+            true_aux_visual = y_true[1]
+            true_aux_proprio = y_true[2]
+            true_aux_motor = y_true[3]
 
         pred_main_out = y_pred[0]
-        pred_aux_visual = y_pred[1]
-        pred_aux_proprio = y_pred[2]
-        pred_aux_motor = y_pred[3]
-
-        alpha = 0.6#0.2
-        beta = 0.0 # 0.01
-
-        #loss_main_out = tf.reduce_mean(mse(true_main_out, pred_main_out))
-        #loss_aux_visual = tf.reduce_mean(mse(true_aux_visual, pred_aux_visual))
-        #loss_aux_proprio = tf.reduce_mean(mse(true_aux_proprio, pred_aux_proprio))
-        #loss_aux_motor = tf.reduce_mean(mse(true_aux_motor, pred_aux_motor))
+        if self.parameters.get('model_auxiliary'):
+            pred_aux_visual = y_pred[1]
+            pred_aux_proprio = y_pred[2]
+            pred_aux_motor = y_pred[3]
 
         loss_main_out = mse(true_main_out, pred_main_out)
-        loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
-        loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
-        loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+        if self.parameters.get('model_auxiliary'):
+            alpha = 0.6  # 0.2
+            beta = 0.0  # 0.01
+            loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
+            loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
+            loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
 
-        #print('loss main shape', str(loss_main_out.numpy().shape))
-        #print('sss ', str(weights.numpy().shape))
-        aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual,  weights[:,0], alpha)) + \
-                                   tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:,1], alpha)) + \
-                                   tf.reduce_mean(self.weight_loss(loss_aux_motor,   weights[:,2], alpha))
+            #print('loss main shape', str(loss_main_out.numpy().shape))
+            #print('sss ', str(weights.numpy().shape))
+            aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual,  weights[:,0], alpha)) + \
+                                       tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:,1], alpha)) + \
+                                       tf.reduce_mean(self.weight_loss(loss_aux_motor,   weights[:,2], alpha))
 
-        fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
-                                 tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
-                                 tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
+            fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
+                                     tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
+                                     tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
 
-        # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
+            # print('fus_weight shape true ', tf.shape(fus_weight_regulariser_total))
 
         #return loss_main_out# + aux_loss_weighting_total
-        return tf.reduce_mean(loss_main_out) + aux_loss_weighting_total + fus_weight_regul_total
+        if self.parameters.get('model_auxiliary'):
+            return tf.reduce_mean(loss_main_out) + aux_loss_weighting_total + fus_weight_regul_total
+        else:
+            return tf.reduce_mean(loss_main_out)
 
     '''
         # re-adaoted from https://arxiv.org/pdf/1901.10610.pdf
