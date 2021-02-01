@@ -97,9 +97,9 @@ class MyCallback(Callback):
         #    self.history['val_aux_proprio_output_loss'].append(self.logs.get('val_aux_proprio_output_loss'))
         #    self.history['val_aux_motor_output_loss'].append(self.logs.get('val_aux_motor_output_loss'))
 
-        if self.parameters.get('make_plots'):
+        #if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
-            self.plot_train_sequences(save_gif=True)
+        #    self.plot_train_sequences(save_gif=True)
         #    self.plot_predictions_test_dataset(epoch, logs, predict_size=self.parameters.get('plots_predict_size'))
 
     def save_plots(self):
