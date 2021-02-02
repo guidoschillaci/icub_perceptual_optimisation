@@ -156,7 +156,10 @@ class MyCallback(Callback):
 
     def plot_predictions(self, filename, images_t, images_tp1, joints, commands, opt_flow, save_gif=False):
         predictions_all_outputs = self.model.predict([images_t, joints, commands])
-        predictions = predictions_all_outputs[0]
+        if self.parameters.get('model_auxiliary'):
+            predictions = predictions_all_outputs[0]
+        else:
+            predictions = predictions_all_outputs
         #print ('plotpred shape all ', np.asarray(predictions_all_outputs).shape)
         #print ('plotpred shape ', np.asarray(predictions).shape)
         # get activations of the fusion weights layer
