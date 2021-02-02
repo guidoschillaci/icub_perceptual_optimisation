@@ -368,7 +368,7 @@ class Models:
                         # forward pass
                         predictions = self.model((in_img, in_j, in_cmd),
                                                  training=True)  # predictions for this minibatch
-                        weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
+                        weights_predictions = []# self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
                         # Compute the loss value for this minibatch.
                         loss_value = self.loss_custom_loop(out_of, \
                                                            predictions, \
@@ -386,7 +386,7 @@ class Models:
                 for step, (in_img, in_j, in_cmd, out_of) in tqdm(
                         enumerate(self.datasets.tf_test_dataset)):
                     predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-                    weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
+                    weights_predictions =[]# self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
 
                     # Compute the loss value for this minibatch.
                     val_loss_value = self.loss_custom_loop(out_of, \
