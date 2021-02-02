@@ -26,7 +26,7 @@ class Parameters:
             'use_skin_data': False,
 
             'model_custom_training_loop': True, # if False, use standard compile/fit functions
-            'model_auxiliary': True, # use auxiliary weight model
+            'model_auxiliary': False, # use auxiliary weight model
             'model_batch_size': 32,
             'model_epochs': 10,
             'model_max_pool_size': 2,
