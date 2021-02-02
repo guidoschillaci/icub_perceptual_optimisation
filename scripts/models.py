@@ -303,6 +303,8 @@ class Models:
                 self.model.compile(optimizer='adam',loss='mean_squared_error')
             else:
                 self.optimiser = Adam(lr=0.001)
+                self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
+                self.logs = {}
 
         if self.parameters.get('verbosity_level') >0:
             self.model.summary()
