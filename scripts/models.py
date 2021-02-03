@@ -330,18 +330,18 @@ class Models:
             if self.parameters.get('model_auxiliary'):
                 for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
                     #print('step ', str(step))
+                    weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd))
                     # Open a GradientTape to record the operations run
                     # during the forward pass, which enables auto-differentiation.
                     with tf.GradientTape() as tape:
                         # forward pass
                         predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-                        weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
                         # Compute the loss value for this minibatch.
                         loss_value = self.loss_custom_loop((out_of,out_aof1,out_aof2,out_aof3), \
                                                            predictions, \
                                                            weights=weights_predictions)
-                        epoch_loss_avg.update_state(loss_value)  # Add current batch loss
-                        pbar.set_description("Batch loss = %f" % loss_value)
+                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+                    pbar.set_description("Batch loss = %f" % loss_value)
                     # Use the gradient tape to automatically retrieve
                     # the gradients of the trainable variables with respect to the loss.
                     grads = tape.gradient(loss_value, self.model.trainable_weights)
@@ -351,11 +351,11 @@ class Models:
                     self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
                 for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in tqdm(enumerate(self.datasets.tf_test_dataset)):
-                    predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-                    weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd), training=True)
-
-                    # Compute the loss value for this minibatch.
-                    val_loss_value = self.loss_custom_loop( (out_of, out_aof1, out_aof2, out_aof3), \
+                    weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd))
+                    with tf.GradientTape() as tape:
+                        predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                        # Compute the loss value for this minibatch.
+                        val_loss_value = self.loss_custom_loop( (out_of, out_aof1, out_aof2, out_aof3), \
                                                             predictions, \
                                                             weights=weights_predictions)
                     epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
@@ -371,8 +371,8 @@ class Models:
                         # Compute the loss value for this minibatch.
                         loss_value = self.loss_custom_loop((out_of), \
                                                            predictions)
-                        epoch_loss_avg.update_state(loss_value)  # Add current batch loss
-                        pbar.set_description("Batch loss = %f" % loss_value)
+                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+                    pbar.set_description("Batch loss = %f" % loss_value)
                     # Use the gradient tape to automatically retrieve
                     # the gradients of the trainable variables with respect to the loss.
                     grads = tape.gradient(loss_value, self.model.trainable_weights)
@@ -383,10 +383,11 @@ class Models:
 
                 for step, (in_img, in_j, in_cmd, out_of) in tqdm(
                         enumerate(self.datasets.tf_test_dataset)):
-                    predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                    with tf.GradientTape() as tape:
+                        predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
 
-                    # Compute the loss value for this minibatch.
-                    val_loss_value = self.loss_custom_loop((out_of), \
+                        # Compute the loss value for this minibatch.
+                        val_loss_value = self.loss_custom_loop((out_of), \
                                                            predictions)
                     epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
