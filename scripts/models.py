@@ -329,7 +329,7 @@ class Models:
             pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
             if self.parameters.get('model_auxiliary'):
                 for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
-                    #print('step ', str(step))
+
                     weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd))
                     # Open a GradientTape to record the operations run
                     # during the forward pass, which enables auto-differentiation.
@@ -361,6 +361,7 @@ class Models:
 
             else: # model without auxiliary branches
                 for step, (in_img, in_j, in_cmd, out_of) in pbar:
+                    print('in_j shape ', in_j.shape)
                     # Open a GradientTape to record the operations run
                     # during the forward pass, which enables auto-differentiation.
                     with tf.GradientTape() as tape:
