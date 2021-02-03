@@ -451,13 +451,13 @@ class Models:
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
-        loss_main_out = tf.reduce_mean(tf.squared_difference(pred_main_out, true_main_out))
+        loss_main_out = tf.reduce_mean(tf.math.squared_difference(pred_main_out, true_main_out))
         if self.parameters.get('model_auxiliary'):
             alpha = 1.0  # 0.6 is good
             beta = 0.0  # 0.0
-            loss_aux_visual = tf.reduce_mean(tf.squared_difference(true_aux_visual, pred_aux_visual))
-            loss_aux_proprio = tf.reduce_mean(tf.squared_difference(true_aux_proprio, pred_aux_proprio))
-            loss_aux_motor = tf.reduce_mean(tf.squared_difference(true_aux_motor, pred_aux_motor))
+            loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(true_aux_visual, pred_aux_visual))
+            loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(true_aux_proprio, pred_aux_proprio))
+            loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(true_aux_motor, pred_aux_motor))
 
             #print('loss main shape', str(loss_main_out.numpy().shape))
             #print('sss ', str(weights.numpy().shape))
