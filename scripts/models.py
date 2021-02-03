@@ -352,10 +352,9 @@ class Models:
 
                 for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in tqdm(enumerate(self.datasets.tf_test_dataset)):
                     weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd))
-                    with tf.GradientTape() as tape:
-                        predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-                        # Compute the loss value for this minibatch.
-                        val_loss_value = self.loss_custom_loop( (out_of, out_aof1, out_aof2, out_aof3), \
+                    predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                    # Compute the loss value for this minibatch.
+                    val_loss_value = self.loss_custom_loop( (out_of, out_aof1, out_aof2, out_aof3), \
                                                             predictions, \
                                                             weights=weights_predictions)
                     epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
@@ -383,12 +382,9 @@ class Models:
 
                 for step, (in_img, in_j, in_cmd, out_of) in tqdm(
                         enumerate(self.datasets.tf_test_dataset)):
-                    with tf.GradientTape() as tape:
-                        predictions = self.model((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-
-                        # Compute the loss value for this minibatch.
-                        val_loss_value = self.loss_custom_loop((out_of), \
-                                                           predictions)
+                    predictions = self.model((in_img, in_j, in_cmd))  # predictions for this minibatch
+                    # Compute the loss value for this minibatch.
+                    val_loss_value = self.loss_custom_loop((out_of), predictions)
                     epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
 
@@ -455,13 +451,13 @@ class Models:
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
-        loss_main_out = mse(true_main_out, pred_main_out)
+        loss_main_out = tf.reduce_mean(tf.squared_difference(pred_main_out, true_main_out))
         if self.parameters.get('model_auxiliary'):
             alpha = 1.0  # 0.6 is good
             beta = 0.0  # 0.0
-            loss_aux_visual = mse(true_aux_visual, pred_aux_visual)
-            loss_aux_proprio = mse(true_aux_proprio, pred_aux_proprio)
-            loss_aux_motor = mse(true_aux_motor, pred_aux_motor)
+            loss_aux_visual = tf.reduce_mean(tf.squared_difference(true_aux_visual, pred_aux_visual))
+            loss_aux_proprio = tf.reduce_mean(tf.squared_difference(true_aux_proprio, pred_aux_proprio))
+            loss_aux_motor = tf.reduce_mean(tf.squared_difference(true_aux_motor, pred_aux_motor))
 
             #print('loss main shape', str(loss_main_out.numpy().shape))
             #print('sss ', str(weights.numpy().shape))
@@ -477,9 +473,9 @@ class Models:
 
         #return loss_main_out# + aux_loss_weighting_total
         if self.parameters.get('model_auxiliary'):
-            return tf.reduce_mean(loss_main_out) + aux_loss_weighting_total + fus_weight_regul_total
+            return loss_main_out + aux_loss_weighting_total + fus_weight_regul_total
         else:
-            return tf.reduce_mean(loss_main_out)
+            return loss_main_out
 
 
     def keras_training_loop(self):
