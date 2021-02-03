@@ -286,7 +286,7 @@ class Models:
                                #experimental_run_tf_function=False)
                 # end auxiliary shared layers
             else:
-                self.optimiser = Adadelta()# Adam(lr=0.001)
+                self.optimiser = Adam()# Adam(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs={}
 
@@ -302,7 +302,7 @@ class Models:
             if not self.parameters.get('model_custom_training_loop'):
                 self.model.compile(optimizer='adam',loss='mean_squared_error')
             else:
-                self.optimiser = Adadelta()#Adam(lr=0.001)
+                self.optimiser = Adam()#(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs = {}
 
