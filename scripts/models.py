@@ -8,7 +8,7 @@ from tensorflow.keras import Model
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
 from tensorflow.keras.losses import mse
-from tensorflow.keras.optimizers import Adam
+from tensorflow.keras.optimizers import Adam, Adadelta
 from tensorflow.keras.metrics import Mean
 from utils import Split, MyCallback, activation_opt_flow
 #from keract import get_activations, display_activations
@@ -286,7 +286,7 @@ class Models:
                                #experimental_run_tf_function=False)
                 # end auxiliary shared layers
             else:
-                self.optimiser =  Adam(lr=0.001)
+                self.optimiser = Adadelta()# Adam(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs={}
 
@@ -302,7 +302,7 @@ class Models:
             if not self.parameters.get('model_custom_training_loop'):
                 self.model.compile(optimizer='adam',loss='mean_squared_error')
             else:
-                self.optimiser = Adam(lr=0.001)
+                self.optimiser = Adadelta()#Adam(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs = {}
 
@@ -340,7 +340,7 @@ class Models:
                         loss_value = self.loss_custom_loop((out_of,out_aof1,out_aof2,out_aof3), \
                                                            predictions, \
                                                            weights=weights_predictions)
-                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+
                     pbar.set_description("Batch loss = %f" % loss_value)
                     # Use the gradient tape to automatically retrieve
                     # the gradients of the trainable variables with respect to the loss.
@@ -348,6 +348,7 @@ class Models:
                     # Run one step of gradient descent by updating
                     # the value of the variables to minimize the loss.
                     self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
                     self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
                 for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in tqdm(enumerate(self.datasets.tf_test_dataset)):
@@ -361,7 +362,7 @@ class Models:
 
             else: # model without auxiliary branches
                 for step, (in_img, in_j, in_cmd, out_of) in pbar:
-                    print('in_j shape ', in_j.shape)
+
                     # Open a GradientTape to record the operations run
                     # during the forward pass, which enables auto-differentiation.
                     with tf.GradientTape() as tape:
@@ -371,7 +372,6 @@ class Models:
                         # Compute the loss value for this minibatch.
                         loss_value = self.loss_custom_loop((out_of), \
                                                            predictions)
-                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
                     pbar.set_description("Batch loss = %f" % loss_value)
                     # Use the gradient tape to automatically retrieve
                     # the gradients of the trainable variables with respect to the loss.
@@ -379,6 +379,7 @@ class Models:
                     # Run one step of gradient descent by updating
                     # the value of the variables to minimize the loss.
                     self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+                    epoch_loss_avg.update_state(loss_value)  # Add current batch loss
                     self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
                 for step, (in_img, in_j, in_cmd, out_of) in tqdm(
