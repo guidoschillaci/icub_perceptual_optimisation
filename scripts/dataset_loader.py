@@ -8,6 +8,7 @@ import time
 from tqdm import tqdm
 import sys
 import tensorflow as tf
+from sklearn.model_selection import train_test_split
 
 class DatasetLoader():
 
@@ -16,6 +17,7 @@ class DatasetLoader():
 
     def split_train_test(self):
         print('splitting train/test datasets')
+        '''
         self.len_original_dataset = len(self.dataset_joints)
         self.len_test_dataset = int(self.len_original_dataset* self.parameters.get('test_dataset_factor'))
         # set fixed seed to get always the same test indexes (for comparison between runs)
@@ -25,6 +27,21 @@ class DatasetLoader():
         random.seed(int(time.time()))
         self.train_indexes = np.ones(self.len_original_dataset, np.bool)
         self.train_indexes[self.test_indexes] = 0
+        '''
+
+        self.train_dataset_images_t, self.test_dataset_images_t = train_test_split(self.dataset_images_t,
+                                                            test_size = self.parameters.get('test_dataset_factor'),
+                                                            random_state = self.parameters.get('dataset_split_seed'))
+        self.train_dataset_joints, self.test_dataset_joints = train_test_split(self.dataset_joints,
+                                                            test_size = self.parameters.get('test_dataset_factor'),
+                                                            random_state = self.parameters.get('dataset_split_seed'))
+        self.train_dataset_cmd, self.test_dataset_cmd = train_test_split(self.dataset_cmd,
+                                                            test_size = self.parameters.get('test_dataset_factor'),
+                                                            random_state = self.parameters.get('dataset_split_seed'))
+        self.train_dataset_optical_flow, self.test_dataset_optical_flow = train_test_split(self.dataset_optical_flow,
+                                                            test_size = self.parameters.get('test_dataset_factor'),
+                                                            random_state = self.parameters.get('dataset_split_seed'))
+
 
     def load_datasets(self):
         print('loading datasets')
@@ -187,6 +204,15 @@ class DatasetLoader():
         print('making tf dataset')
         if self.parameters.get('model_auxiliary'):
             self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
+                self.train_dataset_images_t, self.train_dataset_joints, self.train_dataset_cmd, \
+                self.train_dataset_optical_flow, self.train_dataset_optical_flow, self.train_dataset_optical_flow, self.train_dataset_optical_flow \
+                ))
+            self.tf_test_dataset = tf.data.Dataset.from_tensor_slices(( \
+                self.test_dataset_images_t, self.test_dataset_joints, self.test_dataset_cmd, \
+                self.test_dataset_optical_flow, self.test_dataset_optical_flow, self.test_dataset_optical_flow, self.test_dataset_optical_flow \
+                ))
+            '''
+            self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
                 self.dataset_images_t[self.train_indexes], \
                  self.dataset_joints[self.train_indexes], \
                  self.dataset_cmd[self.train_indexes], \
@@ -204,7 +230,17 @@ class DatasetLoader():
                  self.dataset_optical_flow[self.test_indexes], \
                  self.dataset_optical_flow[self.test_indexes] \
                 ))
+            '''
         else:
+            self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
+                self.train_dataset_images_t, self.train_dataset_joints, self.train_dataset_cmd, \
+                self.train_dataset_optical_flow \
+                ))
+            self.tf_test_dataset = tf.data.Dataset.from_tensor_slices(( \
+                self.test_dataset_images_t, self.test_dataset_joints, self.test_dataset_cmd, \
+                self.test_dataset_optical_flow \
+                ))
+            '''
             self.tf_train_dataset = tf.data.Dataset.from_tensor_slices(( \
                 self.dataset_images_t[self.train_indexes], \
                  self.dataset_joints[self.train_indexes], \
@@ -217,6 +253,7 @@ class DatasetLoader():
                  self.dataset_cmd[self.test_indexes], \
                 self.dataset_optical_flow[self.test_indexes] \
                 ))
+            '''
 
         if self.parameters.get('dataset_shuffle'):
             self.tf_train_dataset = self.tf_train_dataset.shuffle(100000, reshuffle_each_iteration=True).batch(self.parameters.get('model_batch_size'), drop_remainder=True)

@@ -24,6 +24,7 @@ class Parameters:
             'dataset_shuffle': True,
             'dataset_shuffle_seed': 42,
             'test_dataset_factor': 0.1, # the portion of the train dataset to be used as test
+            'dataset_split_seed': 33, # the portion of the train dataset to be used as test
             'use_skin_data': False,
 
             'model_custom_training_loop': False, # if False, use standard keras fit functions

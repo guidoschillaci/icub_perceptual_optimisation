@@ -498,47 +498,47 @@ class Models:
         myCallback = MyCallback(self.parameters, self.datasets,self.model)
         if self.parameters.get('model_auxiliary'):
             fusion_weights_train = self.model_fusion_weights.predict( \
-                [self.datasets.dataset_images_t[self.datasets.train_indexes], \
-                 self.datasets.dataset_joints[self.datasets.train_indexes], \
-                 self.datasets.dataset_cmd[self.datasets.train_indexes]])
+                [self.datasets.train_dataset_images_t, \
+                 self.datasets.train_dataset_joints, \
+                 self.datasets.train_dataset_cmd])
 
             fusion_weights_test = self.model_fusion_weights.predict( \
-                [self.datasets.dataset_images_t[self.datasets.test_indexes], \
-                 self.datasets.dataset_joints[self.datasets.test_indexes], \
-                 self.datasets.dataset_cmd[self.datasets.test_indexes]])
+                [self.datasets.test_dataset_images_t, \
+                 self.datasets.test_dataset_joints, \
+                 self.datasets.test_dataset_cmd])
 
-            self.history = self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
-                                           self.datasets.dataset_joints[self.datasets.train_indexes], \
-                                           self.datasets.dataset_cmd[self.datasets.train_indexes]], \
-                                          [self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes], \
-                                           self.datasets.dataset_optical_flow[self.datasets.train_indexes]], \
+            self.history = self.model.fit([self.datasets.train_dataset_images_t, \
+                                           self.datasets.train_dataset_joints, \
+                                           self.datasets.train_dataset_cmd], \
+                                          [self.datasets.train_dataset_optical_flow, \
+                                           self.datasets.train_dataset_optical_flow, \
+                                           self.datasets.train_dataset_optical_flow, \
+                                           self.datasets.train_dataset_optical_flow], \
                                           epochs=self.parameters.get('model_epochs'), \
                                           batch_size=self.parameters.get('model_batch_size'), \
-                                          validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_joints[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_cmd[self.datasets.test_indexes]], \
-                                                           [self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes], \
-                                                            self.datasets.dataset_optical_flow[self.datasets.test_indexes]]), \
+                                          validation_data=([self.datasets.test_dataset_images_t, \
+                                                            self.datasets.test_dataset_joints, \
+                                                            self.datasets.test_dataset_cmd], \
+                                                           [self.datasets.test_dataset_optical_flow, \
+                                                            self.datasets.test_dataset_optical_flow, \
+                                                            self.datasets.test_dataset_optical_flow, \
+                                                            self.datasets.test_dataset_optical_flow]), \
                                           shuffle=True, \
                                           callbacks=[myCallback], \
                                           verbose=1)
             #print('keras history keys ', self.history.history.keys())
         else:
 
-            self.history=self.model.fit([self.datasets.dataset_images_t[self.datasets.train_indexes], \
-                                         self.datasets.dataset_joints[self.datasets.train_indexes],\
-                                         self.datasets.dataset_cmd[self.datasets.train_indexes]],\
-                           self.datasets.dataset_optical_flow[self.datasets.train_indexes],\
+            self.history=self.model.fit([self.datasets.train_dataset_images_t, \
+                                         self.datasets.train_dataset_joints,\
+                                         self.datasets.train_dataset_cmd],\
+                           self.datasets.train_dataset_optical_flow,\
                            epochs=self.parameters.get('model_epochs'),\
                            batch_size=self.parameters.get('model_batch_size'), \
-                           validation_data=([self.datasets.dataset_images_t[self.datasets.test_indexes], \
-                                             self.datasets.dataset_joints[self.datasets.test_indexes], \
-                                             self.datasets.dataset_cmd[self.datasets.test_indexes]], \
-                                             self.datasets.dataset_optical_flow[self.datasets.test_indexes]),\
+                           validation_data=([self.datasets.test_dataset_images_t, \
+                                             self.datasets.test_dataset_joints, \
+                                             self.datasets.test_dataset_cmd], \
+                                             self.datasets.test_dataset_optical_flow),\
                            shuffle=True,\
                            callbacks = [myCallback],\
                            verbose=1)
