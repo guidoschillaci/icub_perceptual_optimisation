@@ -30,24 +30,85 @@ loss_tracker = tfk.metrics.Mean(name="loss")
 #mae_metric = tfk.metrics.MeanSquaredError(name="mae")
 
 class CustomModel(Model):
+
+    def __init__(self, param):
+        super(CustomModel, self).__init__()
+        self.set_param(param)
+
+    def set_param(self, param):
+        self.parameters=param
+
+    def link_fusion_model(self, fusion_model):
+        self.fusion_model = fusion_model
+
+    def loss_fn(self, y_true, y_pred, weights=[]):
+        true_main_out = y_true[0]
+        if self.parameters.get('model_auxiliary'):
+            true_aux_visual = y_true[1]
+            true_aux_proprio = y_true[2]
+            true_aux_motor = y_true[3]
+        pred_main_out = y_pred[0]
+        if self.parameters.get('model_auxiliary'):
+            pred_aux_visual = y_pred[1]
+            pred_aux_proprio = y_pred[2]
+            pred_aux_motor = y_pred[3]
+
+        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
+        if self.parameters.get('model_auxiliary'):
+            alpha = 1.0  # 0.6 is good
+            beta = 0.0  # 0.0
+            loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual,pred_aux_visual) * weights[:, 0]
+            loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio) * weights[:, 1]
+            loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor) * weights[:, 2]
+
+            weighted_aux_loss = loss_aux_visual + loss_aux_proprio + loss_aux_motor
+
+        if self.parameters.get('model_auxiliary'):
+            return loss_main_out + weighted_aux_loss
+        else:
+            return loss_main_out
+
     def train_step(self, data):
-        (in_img, in_j, in_cmd), out_of  = data
+        if self.parameters.get('model_auxiliary'):
+            (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
 
-        with tf.GradientTape() as tape:
-            # forward pass
-            predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-            # Compute the loss value for this minibatch.
-            loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
-            # compute gradients
-            grads = tape.gradient(loss_value, self.model.trainable_weights)
-            # Run one step of gradient descent by updating
-            # the value of the variables to minimize the loss.
-            self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+            weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
 
-            loss_tracker.update_state(loss)
-            self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+            with tf.GradientTape() as tape:
+                # forward pass
+                predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                # Compute the loss value for this minibatch.
+                loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
+                                                       predictions, \
+                                                       weights=weights_predictions)
 
-            return {"loss": loss_tracker.result()}
+                grads = tape.gradient(loss_value, self.model.trainable_weights)
+
+                self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+
+                loss_tracker.update_state(loss_value)
+                self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+
+                return {"loss": loss_tracker.result()}
+
+        else: # simple model
+            (in_img, in_j, in_cmd), out_of  = data
+
+            with tf.GradientTape() as tape:
+                # forward pass
+                predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                # Compute the loss value for this minibatch.
+                loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+                # compute gradients
+                grads = tape.gradient(loss_value, self.model.trainable_weights)
+                # Run one step of gradient descent by updating
+                # the value of the variables to minimize the loss.
+                self.optimiser.apply_gradients(zip(grads, self.trainable_weights))
+
+                loss_tracker.update_state(loss_value)
+                self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+
+                return {"loss": loss_tracker.result()}
 
     @property
     def metrics(self):
@@ -304,8 +365,9 @@ class Models:
                                                name='aux_motor_output')(x)
 
             # define the model
-            self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], \
-                               outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
+            self.model = CustomModel(param=self.parameters,
+                                     inputs=[input_visual, input_proprioceptive, input_motor],
+                                     outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
 
             if not self.parameters.get('model_custom_training_loop'):
                 # adam_opt = Adam(lr=0.001)
@@ -323,13 +385,17 @@ class Models:
 
             self.model_fusion_weights = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
+            self.model.set_param(self.parameters)
+            self.model.link_fusion_model(self.model_fusion_weights)
 
         ##########
         else:
             # without auxiliary model
             # define the model
-            self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor], outputs=out_main_model)
-
+            self.model = CustomModel(param=self.parameters,
+                                     inputs=[input_visual, input_proprioceptive, input_motor],
+                                     outputs=out_main_model)
+            self.model.set_param(self.parameters)
             if not self.parameters.get('model_custom_training_loop'):
                 self.model.compile(optimizer='adam',loss='mean_squared_error')
             else:
