@@ -367,10 +367,10 @@ class Models:
             if not self.parameters.get('model_custom_training_loop'):
                 # adam_opt = Adam(lr=0.001)
                 #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
-                self.model.compile(optimizer='adam', \
-                               loss=self.loss_aux_wrapper(fusion_weight_visual,\
-                                                          fusion_weight_proprio, \
-                                                          fusion_weight_motor))#, \
+                self.model.compile(optimizer='adam')#, \
+                               #loss=self.loss_aux_wrapper(fusion_weight_visual,\
+                               #                           fusion_weight_proprio, \
+                               #                           fusion_weight_motor))#, \
                                #experimental_run_tf_function=False)
                 # end auxiliary shared layers
             else:
