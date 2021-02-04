@@ -455,6 +455,9 @@ class Models:
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
+        print ('shape pred ', str(pred_main_out.numpy().shape))
+        print ('shape true ', str(true_main_out.numpy().shape))
+
         loss_main_out = tf.reduce_mean(tf.math.squared_difference(pred_main_out, true_main_out))
         if self.parameters.get('model_auxiliary'):
             alpha = 1.0  # 0.6 is good
