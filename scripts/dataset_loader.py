@@ -219,7 +219,7 @@ class DatasetLoader():
                 ))
 
         if self.parameters.get('dataset_shuffle'):
-            self.tf_train_dataset = self.tf_train_dataset.shuffle(100000, reshuffle_each_iteration=True).batch(self.parameters.get('model_batch_size'), drop_remainder=True).repeat(self.parameters.get('model_epochs'))
+            self.tf_train_dataset = self.tf_train_dataset.shuffle(100000, reshuffle_each_iteration=True).batch(self.parameters.get('model_batch_size'), drop_remainder=True)
             self.tf_test_dataset = self.tf_test_dataset.batch(self.parameters.get('model_batch_size'))
         else:
             self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('model_batch_size'))
