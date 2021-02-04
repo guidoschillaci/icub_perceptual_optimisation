@@ -13,7 +13,6 @@ class DatasetLoader():
 
     def __init__(self, param):
         self.parameters = param
-        #self.load_dataset()
 
     def split_train_test(self):
         print('splitting train/test datasets')
@@ -26,30 +25,6 @@ class DatasetLoader():
         np.random.seed(int(time.time()))
         self.train_indexes = np.ones(self.len_original_dataset, np.bool)
         self.train_indexes[self.test_indexes] = 0
-
-
-        #print('len original ', self.len_original_dataset)
-        #print('len test ', len(test_indexes))
-        #print('len train', len(train_indexes))
-        '''
-        # train datasets
-        self.train_ds_images_t = (self.dataset_images_t[train_indexes])
-        self.train_ds_images_tp1 = (self.dataset_images_tp1[train_indexes])
-        self.train_ds_opt_flow = (self.dataset_optical_flow[train_indexes])
-        self.train_ds_joints = (self.dataset_joints[train_indexes])
-        self.train_ds_cmd = (self.dataset_cmd[train_indexes])
-        if self.parameters.get('use_skin_data'):
-            self.train_ds_skin = (self.dataset_skin_values[train_indexes])
-        # test datasets
-        self.test_ds_images_t = (self.dataset_images_t[test_indexes])
-        self.test_ds_images_tp1 = (self.dataset_images_tp1[test_indexes])
-        self.test_ds_opt_flow = (self.dataset_optical_flow[test_indexes])
-        self.test_ds_joints = (self.dataset_joints[test_indexes])
-        self.test_ds_cmd = (self.dataset_cmd[test_indexes])
-        if self.parameters.get('use_skin_data'):
-            self.test_ds_skin = (self.dataset_skin_values[test_indexes])
-
-        '''
 
     def load_datasets(self):
         print('loading datasets')
@@ -153,16 +128,6 @@ class DatasetLoader():
         #normalise images
         self.dataset_images_t = np.asarray(self.dataset_images_t) / 255.
         self.dataset_images_tp1 = np.asarray(self.dataset_images_tp1) / 255.
-        # normalise optical flow
-        #max_optflow = np.max(np.asarray(self.dataset_optical_flow).flatten())
-        #self.dataset_optical_flow = self.dataset_optical_flow/max_optflow
-
-
-        #if self.parameters.get('verbosity_level') >= 2:
-        #    print('min opt', np.min(np.asarray(self.dataset_optical_flow).flatten()))
-        #    print('max opt', max_optflow)
-        #    print('max opt norm', np.max(np.asarray(self.dataset_optical_flow).flatten())/max_optflow)
-
         self.dataset_joints = self.scaler_dataset_joints.fit_transform(self.dataset_joints)
         self.dataset_cmd = self.scaler_dataset_cmd.fit_transform(self.dataset_cmd)
         if self.parameters.get('use_skin_data'):
@@ -213,7 +178,6 @@ class DatasetLoader():
                                                                           self.parameters.get('image_size'), \
                                                                           3)
 
-
         self.split_train_test()
         if self.parameters.get('model_custom_training_loop'):
             self.make_tf_dataset()
@@ -254,8 +218,8 @@ class DatasetLoader():
                 self.dataset_optical_flow[self.test_indexes] \
                 ))
 
-        if self.parameters.get('dataset_shuffle'):
-            self.tf_train_dataset = self.tf_train_dataset.shuffle(buffer_size=1024).batch(self.parameters.get('model_batch_size'))
-        else:
-            self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('model_batch_size'))
+        #if self.parameters.get('dataset_shuffle'):
+        #    self.tf_train_dataset = self.tf_train_dataset.shuffle(buffer_size=1024).batch(self.parameters.get('model_batch_size'))
+        #else:
+        self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('model_batch_size'))
         self.tf_test_dataset = self.tf_test_dataset.batch(self.parameters.get('model_batch_size'))
