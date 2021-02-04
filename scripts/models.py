@@ -78,9 +78,9 @@ class CustomModel(Model):
                                                        predictions, \
                                                        weights=weights_predictions)
 
-                grads = tape.gradient(loss_value, self.model.trainable_weights)
+                grads = tape.gradient(loss_value, self.trainable_weights)
 
-                self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+                self.optimiser.apply_gradients(zip(grads, self.trainable_weights))
 
                 loss_tracker.update_state(loss_value)
                 self.train_callback.on_batch_end(batch=-1, logs=self.logs)
@@ -96,7 +96,7 @@ class CustomModel(Model):
                 # Compute the loss value for this minibatch.
                 loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
                 # compute gradients
-                grads = tape.gradient(loss_value, self.model.trainable_weights)
+                grads = tape.gradient(loss_value, self.trainable_weights)
                 # Run one step of gradient descent by updating
                 # the value of the variables to minimize the loss.
                 self.optimiser.apply_gradients(zip(grads, self.trainable_weights))
