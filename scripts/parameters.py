@@ -28,7 +28,7 @@ class Parameters:
             'use_skin_data': False,
 
             'model_custom_training_loop': False, # if False, use standard keras fit functions
-            'model_auxiliary': False, # use auxiliary weight model
+            'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 32,
             'model_epochs': 2,
             'model_max_pool_size': 2,
