@@ -37,6 +37,24 @@ class CustomModel(Model):
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
 
+    def weight_loss(self, loss_aux_mod, w, fact):
+        #print('size ', str(w.numpy().shape))
+        is_w_empty = tf.equal(tf.size(w), 0)
+        if is_w_empty:
+            print('loss weighting returns empty!!!!')
+            return 0.0
+        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        # add dimension
+        x = tf.expand_dims(w, axis=1)
+        # repeat elements -> shape: [batch_size, image_shape_0]
+        x = tf.tile(x, [1,_shape[1]])
+        # add dimension
+        x = tf.expand_dims(x, axis=1)
+        # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
+        weight = tf.tile(x, [1, _shape[0], 1])
+        alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
+        return loss_aux_mod * alpha_weight
+
     def loss_fn(self, y_true, y_pred, weights=[]):
         true_main_out = y_true[0]
         if self.parameters.get('model_auxiliary'):
@@ -53,14 +71,17 @@ class CustomModel(Model):
         if self.parameters.get('model_auxiliary'):
             alpha = 1.0  # 0.6 is good
             beta = 0.0  # 0.0
-            loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual,pred_aux_visual) * weights[:, 0]
-            loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio) * weights[:, 1]
-            loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor) * weights[:, 2]
+            loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
+            loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
+            loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
 
-            weighted_aux_loss = loss_aux_visual + loss_aux_proprio + loss_aux_motor
+            aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual, weights[:, 0], alpha)) + \
+                                       tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
+                                       tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
+
 
         if self.parameters.get('model_auxiliary'):
-            return loss_main_out + weighted_aux_loss
+            return loss_main_out + aux_loss_weighting_total
         else:
             return loss_main_out
 
