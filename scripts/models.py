@@ -31,7 +31,7 @@ loss_tracker = tfk.metrics.Mean(name="loss")
 
 class CustomModel(Model):
     def train_step(self, data):
-        in_img, in_j, in_cmd, out_of  = data
+        (in_img, in_j, in_cmd), out_of  = data
 
         with tf.GradientTape() as tape:
             # forward pass
