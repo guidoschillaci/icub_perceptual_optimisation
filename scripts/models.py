@@ -286,7 +286,7 @@ class Models:
                                #experimental_run_tf_function=False)
                 # end auxiliary shared layers
             else:
-                self.optimiser = Adam()# Adam(lr=0.001)
+                self.optimiser = Adam(lr=0.0001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs={}
 
