@@ -27,7 +27,7 @@ class Parameters:
             'dataset_split_seed': 33, # the portion of the train dataset to be used as test
             'use_skin_data': False,
 
-            'model_custom_training_loop': False, # if False, use standard keras fit functions
+            'model_custom_training_loop': True, # if False, use standard keras fit functions
             'model_auxiliary': False, # use auxiliary weight model
             'model_batch_size': 32,
             'model_epochs': 2,
