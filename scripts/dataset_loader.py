@@ -19,10 +19,10 @@ class DatasetLoader():
         self.len_original_dataset = len(self.dataset_joints)
         self.len_test_dataset = int(self.len_original_dataset* self.parameters.get('test_dataset_factor'))
         # set fixed seed to get always the same test indexes (for comparison between runs)
-        np.random.seed(42)
-        self.test_indexes = np.random.sample(list(np.arange(self.len_original_dataset)), self.len_test_dataset)
+        random.seed(42)
+        self.test_indexes = random.sample(list(np.arange(self.len_original_dataset)), self.len_test_dataset)
         # reset the seed
-        np.random.seed(int(time.time()))
+        random.seed(int(time.time()))
         self.train_indexes = np.ones(self.len_original_dataset, np.bool)
         self.train_indexes[self.test_indexes] = 0
 
