@@ -341,7 +341,7 @@ class Models:
                                                            predictions, \
                                                            weights=weights_predictions)
 
-                    pbar.set_description("Batch loss = %f" % loss_value)
+
                     # Use the gradient tape to automatically retrieve
                     # the gradients of the trainable variables with respect to the loss.
                     grads = tape.gradient(loss_value, self.model.trainable_weights)
@@ -349,6 +349,8 @@ class Models:
                     # the value of the variables to minimize the loss.
                     self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
+                    #pbar.set_description("Epoch loss = %f" % loss_value)
+                    pbar.set_description("Epoch loss = %f" % epoch_loss_avg.result())
                     self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
                 for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in tqdm(enumerate(self.datasets.tf_test_dataset)):
