@@ -10,6 +10,7 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.losses import mse
 from tensorflow.keras.optimizers import Adam, Adadelta
 from tensorflow.keras.metrics import Mean
+from tensorflow import keras as tfk
 from utils import Split, MyCallback, activation_opt_flow
 #from keract import get_activations, display_activations
 from copy import deepcopy
@@ -320,11 +321,13 @@ class Models:
     def custom_training_loop(self):
         print('starting training the model with custom training loop')
         self.train_callback.on_train_begin(self.logs)
+        epoch_loss_avg = Mean()
+        epoch_val_loss_avg = Mean()  # validation loss
         for epoch in range(self.parameters.get('model_epochs')):
             print("\nStart of epoch %d" % (epoch,))
             start_time = time.time()
-            epoch_loss_avg = Mean()
-            epoch_val_loss_avg = Mean() # validation loss
+            epoch_loss_avg.reset_states()
+            epoch_val_loss_avg.reset_states()
 
             pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
             if self.parameters.get('model_auxiliary'):
