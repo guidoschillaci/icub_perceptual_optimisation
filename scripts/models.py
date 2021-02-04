@@ -83,7 +83,7 @@ class CustomModel(Model):
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
 
                 loss_tracker.update_state(loss_value)
-                self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+                #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
 
                 return {"loss": loss_tracker.result()}
 
@@ -102,7 +102,7 @@ class CustomModel(Model):
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
 
                 loss_tracker.update_state(loss_value)
-                self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+                #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
 
                 return {"loss": loss_tracker.result()}
 
