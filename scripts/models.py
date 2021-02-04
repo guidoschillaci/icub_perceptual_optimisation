@@ -286,7 +286,7 @@ class Models:
                                #experimental_run_tf_function=False)
                 # end auxiliary shared layers
             else:
-                self.optimiser = Adam(lr=0.0001)
+                self.optimiser = Adam(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs={}
 
@@ -302,7 +302,7 @@ class Models:
             if not self.parameters.get('model_custom_training_loop'):
                 self.model.compile(optimizer='adam',loss='mean_squared_error')
             else:
-                self.optimiser = Adam(lr=0.0001)
+                self.optimiser = Adam(lr=0.001)
                 self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
                 self.logs = {}
 
@@ -382,8 +382,7 @@ class Models:
                     epoch_loss_avg.update_state(loss_value)  # Add current batch loss
                     self.train_callback.on_batch_end(batch=step, logs=self.logs)
 
-                for step, (in_img, in_j, in_cmd, out_of) in tqdm(
-                        enumerate(self.datasets.tf_test_dataset)):
+                for step, (in_img, in_j, in_cmd, out_of) in tqdm(enumerate(self.datasets.tf_test_dataset)):
                     predictions = self.model((in_img, in_j, in_cmd))  # predictions for this minibatch
                     # Compute the loss value for this minibatch.
                     val_loss_value = self.loss_custom_loop((out_of), predictions)

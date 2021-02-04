@@ -20,7 +20,7 @@ class DatasetLoader():
         self.len_test_dataset = int(self.len_original_dataset* self.parameters.get('test_dataset_factor'))
         # set fixed seed to get always the same test indexes (for comparison between runs)
         np.random.seed(42)
-        self.test_indexes = random.sample(list(np.arange(self.len_original_dataset)), self.len_test_dataset)
+        self.test_indexes = np.random.sample(list(np.arange(self.len_original_dataset)), self.len_test_dataset)
         # reset the seed
         np.random.seed(int(time.time()))
         self.train_indexes = np.ones(self.len_original_dataset, np.bool)
@@ -218,8 +218,10 @@ class DatasetLoader():
                 self.dataset_optical_flow[self.test_indexes] \
                 ))
 
-        #if self.parameters.get('dataset_shuffle'):
-        #    self.tf_train_dataset = self.tf_train_dataset.shuffle(buffer_size=1024).batch(self.parameters.get('model_batch_size'))
-        #else:
-        self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('model_batch_size'))
-        self.tf_test_dataset = self.tf_test_dataset.batch(self.parameters.get('model_batch_size'))
+        if self.parameters.get('dataset_shuffle'):
+            self.tf_train_dataset = self.tf_train_dataset.shuffle(buffer_size=1024, \
+                                                                  seed=self.parameters.get('dataset_shuffle_seed') \
+                                                                  ).batch(self.parameters.get('model_batch_size'))
+        else:
+            self.tf_train_dataset = self.tf_train_dataset.batch(self.parameters.get('model_batch_size'))
+            self.tf_test_dataset = self.tf_test_dataset.batch(self.parameters.get('model_batch_size'))
