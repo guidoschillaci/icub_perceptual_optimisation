@@ -455,8 +455,8 @@ class Models:
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
-        print ('shape pred ', str(pred_main_out.numpy().shape))
-        print ('shape true ', str(true_main_out.numpy().shape))
+        #print ('shape pred ', str(pred_main_out.numpy().shape))
+        #print ('shape true ', str(true_main_out.numpy().shape))
 
         loss_main_out = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(pred_main_out), tf.squeeze(true_main_out)))
         if self.parameters.get('model_auxiliary'):
