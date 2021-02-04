@@ -372,7 +372,6 @@ class Models:
             else: # model without auxiliary branches
                 for step, (in_img, in_j, in_cmd, out_of) in pbar:
                 #for (in_img, in_j, in_cmd, out_of) in pbar:
-
                     # Open a GradientTape to record the operations run
                     # during the forward pass, which enables auto-differentiation.
                     with tf.GradientTape() as tape:
