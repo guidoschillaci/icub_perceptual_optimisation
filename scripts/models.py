@@ -31,10 +31,6 @@ loss_tracker = tfk.metrics.Mean(name="loss")
 
 class CustomModel(Model):
 
-    def __init__(self, param):
-        super(CustomModel, self).__init__()
-        self.set_param(param)
-
     def set_param(self, param):
         self.parameters=param
 
@@ -365,8 +361,7 @@ class Models:
                                                name='aux_motor_output')(x)
 
             # define the model
-            self.model = CustomModel(param=self.parameters,
-                                     inputs=[input_visual, input_proprioceptive, input_motor],
+            self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
 
             if not self.parameters.get('model_custom_training_loop'):
@@ -392,8 +387,7 @@ class Models:
         else:
             # without auxiliary model
             # define the model
-            self.model = CustomModel(param=self.parameters,
-                                     inputs=[input_visual, input_proprioceptive, input_motor],
+            self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=out_main_model)
             self.model.set_param(self.parameters)
             if not self.parameters.get('model_custom_training_loop'):
