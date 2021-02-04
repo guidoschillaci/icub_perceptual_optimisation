@@ -29,7 +29,7 @@ class Parameters:
             'model_custom_training_loop': True, # if False, use standard keras fit functions
             'model_auxiliary': False, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 10,
+            'model_epochs': 5,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
 
