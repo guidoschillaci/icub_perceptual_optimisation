@@ -69,7 +69,7 @@ class CustomModel(Model):
 
         loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
         if self.parameters.get('model_auxiliary'):
-            alpha = 1.0  # 0.6 is good
+            alpha = 0.5  # 0.6 is good
             beta = 0.0  # 0.0
             loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
             loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
