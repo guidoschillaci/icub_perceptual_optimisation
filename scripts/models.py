@@ -461,7 +461,8 @@ class Models:
         #print ('shape pred ', str(pred_main_out.numpy().shape))
         #print ('shape true ', str(true_main_out.numpy().shape))
 
-        loss_main_out = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(pred_main_out), tf.squeeze(true_main_out)))
+        #loss_main_out = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(pred_main_out), tf.squeeze(true_main_out)))
+        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
         if self.parameters.get('model_auxiliary'):
             alpha = 1.0  # 0.6 is good
             beta = 0.0  # 0.0
