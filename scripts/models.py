@@ -333,6 +333,7 @@ class Models:
 
             #pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
             pbar = tqdm(enumerate(tf_dataset), desc='Loss')
+            print ('tf_dataset shape ', str(tf_dataset.numpy().shape))
             if self.parameters.get('model_auxiliary'):
                 #for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
                 for (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
