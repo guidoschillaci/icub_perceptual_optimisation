@@ -144,11 +144,11 @@ class MyCallback(Callback):
         for i in tqdm(range(len(start))):
             #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
-                                                   self.datasets.dataset_images_t[self.datasets.train_indexes][start[i]:end[i]], \
-                                                   self.datasets.dataset_images_tp1[self.datasets.train_indexes][start[i]:end[i]], \
-                                                   self.datasets.dataset_joints[self.datasets.train_indexes][start[i]:end[i]], \
-                                                   self.datasets.dataset_cmd[self.datasets.train_indexes][start[i]:end[i]], \
-                                                   self.datasets.dataset_optical_flow[self.datasets.train_indexes][start[i]:end[i]],\
+                                                   self.datasets.train_dataset_images_t[start[i]:end[i]], \
+                                                   self.datasets.train_dataset_images_tp1[start[i]:end[i]], \
+                                                   self.datasets.train_dataset_joints[start[i]:end[i]], \
+                                                   self.datasets.train_dataset_cmd[start[i]:end[i]], \
+                                                   self.datasets.train_dataset_optical_flow[start[i]:end[i]],\
                                                    save_gif=save_gif)
 
     def get_fusion_weights(self):
@@ -243,11 +243,11 @@ class MyCallback(Callback):
     def plot_predictions_test_dataset(self, epoch, logs):
         print('Callback: saving predicted images')
         fusion_weights = self.plot_predictions('predictions_epoch_' + str(epoch),\
-                                               self.datasets.dataset_images_t[self.datasets.test_indexes][0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.dataset_images_tp1[self.datasets.test_indexes][0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.dataset_joints[self.datasets.test_indexes][0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.dataset_cmd[self.datasets.test_indexes][0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.dataset_optical_flow[self.datasets.test_indexes][0:self.parameters.get('plots_predict_size')])
+                                               self.datasets.test_dataset_images_t[0:self.parameters.get('plots_predict_size')], \
+                                               self.datasets.test_dataset_images_tp1[0:self.parameters.get('plots_predict_size')], \
+                                               self.datasets.test_dataset_joints[0:self.parameters.get('plots_predict_size')], \
+                                               self.datasets.test_dataset_cmd[0:self.parameters.get('plots_predict_size')], \
+                                               self.datasets.test_dataset_optical_flow[0:self.parameters.get('plots_predict_size')])
 
         np.savetxt(self.parameters.get('directory_plots') + "fusion_weights_" + str(epoch) + ".txt", fusion_weights,
                    fmt="%s")

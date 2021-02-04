@@ -32,6 +32,9 @@ class DatasetLoader():
         self.train_dataset_images_t, self.test_dataset_images_t = train_test_split(self.dataset_images_t,
                                                             test_size = self.parameters.get('test_dataset_factor'),
                                                             random_state = self.parameters.get('dataset_split_seed'))
+        self.train_dataset_images_tp1, self.test_dataset_images_tp1 = train_test_split(self.dataset_images_tp1,
+                                                            test_size=self.parameters.get('test_dataset_factor'),
+                                                            random_state=self.parameters.get('dataset_split_seed'))
         self.train_dataset_joints, self.test_dataset_joints = train_test_split(self.dataset_joints,
                                                             test_size = self.parameters.get('test_dataset_factor'),
                                                             random_state = self.parameters.get('dataset_split_seed'))
