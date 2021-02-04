@@ -39,10 +39,10 @@ class CustomModel(Model):
 
     def weight_loss(self, loss_aux_mod, w, fact):
         #print('size ', str(w.numpy().shape))
-        is_w_empty = tf.equal(tf.size(w), 0)
-        if is_w_empty:
-            print('loss weighting returns empty!!!!')
-            return 0.0
+        #is_w_empty = tf.equal(tf.size(w), 0)
+        #if is_w_empty:
+        #    print('loss weighting returns empty!!!!')
+        #    return 0.0
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
         x = tf.expand_dims(w, axis=1)
