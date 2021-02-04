@@ -26,6 +26,36 @@ import tkinter
 import matplotlib.pyplot as plt
 import pandas as pd
 
+loss_tracker = tfk.metrics.Mean(name="loss")
+#mae_metric = tfk.metrics.MeanSquaredError(name="mae")
+
+class CustomModel(Model):
+    def train_step(self, data):
+        in_img, in_j, in_cmd, out_of  = data
+
+        with tf.GradientTape() as tape:
+            # forward pass
+            predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+            # Compute the loss value for this minibatch.
+            loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+            # compute gradients
+            grads = tape.gradient(loss_value, self.model.trainable_weights)
+            # Run one step of gradient descent by updating
+            # the value of the variables to minimize the loss.
+            self.optimiser.apply_gradients(zip(grads, self.model.trainable_weights))
+
+            loss_tracker.update_state(loss)
+            self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+
+            return {"loss": loss_tracker.result()}
+
+    @property
+    def metrics(self):
+        # list `Metric` objects  so that `reset_states()` can be
+        # called automatically at the start of each epoch
+        # or at the start of `evaluate()`.
+        return [loss_tracker]
+
 class Models:
     def __init__(self, param):
         print('creating models')
@@ -298,7 +328,7 @@ class Models:
         else:
             # without auxiliary model
             # define the model
-            self.model = Model(inputs=[input_visual, input_proprioceptive, input_motor], outputs=out_main_model)
+            self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor], outputs=out_main_model)
 
             if not self.parameters.get('model_custom_training_loop'):
                 self.model.compile(optimizer='adam',loss='mean_squared_error')
@@ -347,7 +377,6 @@ class Models:
                         loss_value = self.loss_custom_loop((out_of,out_aof1,out_aof2,out_aof3), \
                                                            predictions, \
                                                            weights=weights_predictions)
-
 
                     # Use the gradient tape to automatically retrieve
                     # the gradients of the trainable variables with respect to the loss.
@@ -544,6 +573,7 @@ class Models:
                            verbose=1)
             #print('history keys', self.history.history.keys())
         print('training done')
+
 
     def load_model(self):
         model_filename = self.parameters.get('directory_models') + self.parameters.get('model_filename')
