@@ -324,19 +324,18 @@ class Models:
         epoch_loss_avg = Mean()
         epoch_val_loss_avg = Mean()  # validation loss
 
-        #for epoch in range(self.parameters.get('model_epochs')):
-        for epoch, tf_dataset in self.datasets.tf_train_dataset.enumerate():
+        for epoch in range(self.parameters.get('model_epochs')):
+        #for epoch, tf_dataset in self.datasets.tf_train_dataset.enumerate():
             print("\nStart of epoch %d" % (epoch,))
             start_time = time.time()
             epoch_loss_avg.reset_states()
             epoch_val_loss_avg.reset_states()
 
-            #pbar = tqdm(enumerate(self.datasets.tf_train_dataset), desc='Loss')
-            pbar = tqdm(enumerate(tf_dataset), desc='Loss')
-            print ('tf_dataset shape ', str(tf_dataset.numpy().shape))
+            pbar = tqdm(enumerate(self.datasets.tf_train_dataset.as_numpy_iterator()), desc='Loss')
+            #pbar = tqdm(enumerate(tf_dataset), desc='Loss')
             if self.parameters.get('model_auxiliary'):
-                #for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
-                for (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
+                for step, (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
+                #for (in_img, in_j, in_cmd, out_of, out_aof1, out_aof2, out_aof3) in pbar:
 
                     weights_predictions = self.model_fusion_weights((in_img, in_j, in_cmd))
                     # Open a GradientTape to record the operations run
@@ -371,8 +370,8 @@ class Models:
                     epoch_val_loss_avg.update_state(val_loss_value)  # Add current batch loss
 
             else: # model without auxiliary branches
-                #for step, (in_img, in_j, in_cmd, out_of) in pbar:
-                for (in_img, in_j, in_cmd, out_of) in pbar:
+                for step, (in_img, in_j, in_cmd, out_of) in pbar:
+                #for (in_img, in_j, in_cmd, out_of) in pbar:
 
                     # Open a GradientTape to record the operations run
                     # during the forward pass, which enables auto-differentiation.
