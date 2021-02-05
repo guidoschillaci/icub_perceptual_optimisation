@@ -199,8 +199,8 @@ class DatasetLoader():
                                                                           3)
 
         self.split_train_test()
-        if self.parameters.get('model_custom_training_loop'):
-            self.make_tf_dataset()
+        #if self.parameters.get('model_custom_training_loop'):
+        #    self.make_tf_dataset()
         print ('Datasets loaded!')
 
     def make_tf_dataset(self):
