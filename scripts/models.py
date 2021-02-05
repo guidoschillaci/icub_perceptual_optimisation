@@ -73,8 +73,9 @@ class CustomModel(Model):
         ##weight = tf.tile(x, [1, _shape[0], 1])
         #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(w))
-        sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
-        return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
+        #sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
+        sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
+        return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def loss_fn(self, y_true, y_pred, weights=[]):
         true_main_out = y_true[0]
