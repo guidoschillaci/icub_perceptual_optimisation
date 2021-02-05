@@ -22,9 +22,6 @@ def activation_opt_flow(x):
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     unnorm_pred = (np.zeros(next_image.shape, dtype=np.uint8) + (1.0 - predicted_opt_flow)*255).astype(np.uint8)
     unnorm_next = (next_image * 255).astype(np.uint8)
-    print('unnomr dtype ', unnorm_pred.dtype)
-    print('next_image dtype ', next_image.dtype)
-    print('background_image dtypedtype ', background_image.dtype)
     # convert grayscale img to 3-channles + alpha
     attenuated_image = cv2.merge((unnorm_next,unnorm_next,unnorm_next,unnorm_pred))
     return np.uint8(cv2.addWeighted(background_image, 255.0, attenuated_image, 255.0, 0.0), dtype=next_image.dtype)
@@ -177,7 +174,7 @@ class MyCallback(Callback):
                                                             joints, \
                                                             commands])
         bar_label = ['v', 'p', 'm']
-        fig = plt.figure(figsize=(12, 4))
+        fig = plt.figure(figsize=(12, 6))
         for i in range(self.parameters.get('plots_predict_size')):
             # display original
             ax1 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 1)
