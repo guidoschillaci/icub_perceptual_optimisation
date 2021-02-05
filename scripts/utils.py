@@ -23,6 +23,8 @@ def activation_opt_flow(x):
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     unnorm_pred = (1.0 - predicted_opt_flow)*255
+    print('unnomr shape ', unnorm_pred.shape)
+    print('next_image shape ', next_image.shape)
     # convert grayscale img to 3-channles + alpha
     attenuated_image = cv2.merge((next_image,next_image,next_image,unnorm_pred))
     return np.uint8(cv2.addWeighted(background_image, 255.0, attenuated_image, 255.0, 0.0))
