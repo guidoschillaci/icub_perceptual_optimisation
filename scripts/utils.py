@@ -19,8 +19,6 @@ def activation_opt_flow(x):
     #out = [x0,x1,x2]
     return tf.stack((x0,x1,x2),axis=-1)
 
-
-
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     unnorm_pred = (1.0 - predicted_opt_flow)*255
     print('unnomr shape ', unnorm_pred.shape)
