@@ -28,8 +28,6 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     attenuated_image = cv2.merge((next_image,next_image,next_image,unnorm_pred))
     return np.uint8(cv2.addWeighted(background_image, 255.0, attenuated_image, 255.0, 0.0))
 
-
-
 class Split(tf.keras.layers.Layer):
     def __init__(self):
         super(Split, self).__init__()
@@ -39,7 +37,6 @@ class Split(tf.keras.layers.Layer):
 
     def call(self, input, **kwargs):
         return tf.split(input, 3, axis=1)
-
 
 class MyCallback(Callback):
     def __init__(self, param, datasets, model):
