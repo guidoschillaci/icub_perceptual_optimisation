@@ -250,7 +250,7 @@ class MyCallback(Callback):
             ax6 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 5 * (self.parameters.get('plots_predict_size')) + 1)
             attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                                 images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
-                                self.datasets.background_image.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')))
+                                self.datasets.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
             ax6.set_ylabel('attenuated(t+1)', rotation=0)
