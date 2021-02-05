@@ -8,6 +8,7 @@ import numpy as np
 from copy import deepcopy
 import pandas as pd
 from tqdm import tqdm
+import cv2
 
 # the activation function of the output layer of the model
 def activation_opt_flow(x):
@@ -17,6 +18,15 @@ def activation_opt_flow(x):
     x2 = K.tanh(x[..., 2])  # sin(alpha) can have values between -1 and 1
     #out = [x0,x1,x2]
     return tf.stack((x0,x1,x2),axis=-1)
+
+
+
+def sensory_attenuation(predicted_opt_flow, next_image, background_image):
+    unnorm_pred = (1.0 - predicted_opt_flow)*255
+    # convert grayscale img to 3-channles + alpha
+    attenuated_image = cv2.merge((next_image,next_image,next_image,unnorm_pred))
+    return np.uint8(cv2.addWeighted(background_image, 255.0, attenuated_image, 255.0, 0.0))
+
 
 
 class Split(tf.keras.layers.Layer):
@@ -171,14 +181,14 @@ class MyCallback(Callback):
         fig = plt.figure(figsize=(12, 4))
         for i in range(self.parameters.get('plots_predict_size')):
             # display original
-            ax1 = plt.subplot(5, self.parameters.get('plots_predict_size'), i + 1)
+            ax1 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 1)
             plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
             ax1.get_xaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
             if i != 0:
                 ax1.get_yaxis().set_visible(False)
 
-            ax2 = plt.subplot(5, self.parameters.get('plots_predict_size'), i + self.parameters.get('plots_predict_size') + 1)
+            ax2 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + self.parameters.get('plots_predict_size') + 1)
             plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                        cmap='gray')
             ax2.get_xaxis().set_visible(False)
@@ -190,7 +200,7 @@ class MyCallback(Callback):
                 extent_2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_imgp1_'+str(i)+ '.png', bbox_inches=extent_2)
 
-            ax3 = plt.subplot(5, self.parameters.get('plots_predict_size'), i + 2 * (self.parameters.get('plots_predict_size')) + 1)
+            ax3 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 2 * (self.parameters.get('plots_predict_size')) + 1)
             opt_unnorm = deepcopy(opt_flow[i])
             if self.parameters.get('opt_flow_only_magnitude'):
                 opt_unnorm = opt_unnorm * self.parameters.get('opt_flow_max_value')
@@ -207,7 +217,7 @@ class MyCallback(Callback):
                 extent_3 = ax3.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_trueOF_'+str(i)+ '.png', bbox_inches=extent_3)
 
-            ax4 = plt.subplot(5, self.parameters.get('plots_predict_size'), i + 3 * (self.parameters.get('plots_predict_size')) + 1)
+            ax4 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 3 * (self.parameters.get('plots_predict_size')) + 1)
             pred_unnorm = deepcopy(predictions[i])
 
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
@@ -226,7 +236,7 @@ class MyCallback(Callback):
                 extent_4 = ax4.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_predOF_'+str(i)+ '.png', bbox_inches=extent_4)
 
-            ax5 = plt.subplot(5, self.parameters.get('plots_predict_size'), i + 4 * (self.parameters.get('plots_predict_size')) + 1)
+            ax5 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 4 * (self.parameters.get('plots_predict_size')) + 1)
             ax5.set_ylim(0, 1)
             plt.bar(bar_label, fusion_weights[i])
             ax5.set_ylabel('fus. w.', rotation=0)
@@ -236,6 +246,22 @@ class MyCallback(Callback):
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_5 = ax5.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_fw_'+str(i)+ '.png', bbox_inches=extent_5)
+
+            ax6 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 5 * (self.parameters.get('plots_predict_size')) + 1)
+            attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
+                                images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
+                                self.datasets.background_image.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')))
+            plt.imshow(attenuated_image_tp1, cmap='gray')
+            ax6.get_xaxis().set_visible(False)
+            ax6.set_ylabel('attenuated(t+1)', rotation=0)
+            if i != 0:
+                ax6.get_yaxis().set_visible(False)
+            if save_gif:
+                # Save just the portion _inside_ the second axis's boundaries
+                extent_6 = ax6.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+                fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_attenuated_'+str(i)+ '.png', bbox_inches=extent_6)
+
+
         plt.savefig(self.parameters.get('directory_plots') + filename + '.png')
 
         return fusion_weights
@@ -251,3 +277,4 @@ class MyCallback(Callback):
 
         np.savetxt(self.parameters.get('directory_plots') + "fusion_weights_" + str(epoch) + ".txt", fusion_weights,
                    fmt="%s")
+
