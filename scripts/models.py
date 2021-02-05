@@ -38,22 +38,23 @@ class CustomModel(Model):
         self.fusion_model = fusion_model
 
     def weight_loss(self, loss_aux_mod, w, fact):
-        print('shape  loss_aux_mod', str(loss_aux_mod.numpy().shape))
-        print('shape  weight', str(w.numpy().shape))
+        #print('shape  loss_aux_mod', str(loss_aux_mod.numpy().shape))
+        #print('shape  weight', str(w.numpy().shape))
         #is_w_empty = tf.equal(tf.size(w), 0)
         #if is_w_empty:
         #    print('loss weighting returns empty!!!!')
         #    return 0.0
-        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
-        x = tf.expand_dims(w, axis=1)
+        ##x = tf.expand_dims(w, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
-        x = tf.tile(x, [1,_shape[1]])
+        ##x = tf.tile(x, [1,_shape[1]])
         # add dimension
-        x = tf.expand_dims(x, axis=1)
+        ##x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, _shape[0], 1])
-        alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
+        ##weight = tf.tile(x, [1, _shape[0], 1])
+        #alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
+        alpha_weight = tf.math.scalar_mul(fact, tf.identity(w))
         return loss_aux_mod * alpha_weight
 
     def fusion_weights_regulariser(self, loss_modality, w, fact):
@@ -61,16 +62,17 @@ class CustomModel(Model):
         #if is_w_empty:
         #    print('weight regulariser returns empty!!!!')
         #    return 0.0
-        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
-        x = tf.expand_dims(w, axis=1)
+        ##x = tf.expand_dims(w, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
-        x = tf.tile(x, [1, _shape[1]])
+        ##x = tf.tile(x, [1, _shape[1]])
         # add dimension
-        x = tf.expand_dims(x, axis=1)
+        ##x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, _shape[0], 1])
-        fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
+        ##weight = tf.tile(x, [1, _shape[0], 1])
+        #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
+        fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(w))
         sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
         return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
