@@ -24,7 +24,7 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     unnorm_next = (next_image * 255).astype(np.uint8)
     # convert grayscale img to 3-channles + alpha
     attenuated_image = cv2.merge((unnorm_next,unnorm_next,unnorm_next,unnorm_pred))
-    return np.uint8(cv2.addWeighted(background_image, 255.0, attenuated_image, 255.0, 0.0), dtype=next_image.dtype)
+    return np.uint8(cv2.addWeighted(background_image, 1.0, attenuated_image, 1.0, 0.0), dtype=next_image.dtype)
 
 class Split(tf.keras.layers.Layer):
     def __init__(self):
