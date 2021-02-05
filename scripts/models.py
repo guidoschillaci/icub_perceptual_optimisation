@@ -1,7 +1,7 @@
 import tensorflow as tf
 #tf.compat.v1.disable_eager_execution()
 #tf.compat.v1.experimental.output_all_intermediates(True)
-#tf.config.run_functions_eagerly(False)
+tf.config.run_functions_eagerly(False)
 
 from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
 from tensorflow.keras import Model
