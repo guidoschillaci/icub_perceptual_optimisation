@@ -54,6 +54,8 @@ class DatasetLoader():
             self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
+            self.background_image = self.dataset_images_t_orig[0]
+            cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
             for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
                 cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
                 self.dataset_images_t.append( np.array(cv2_img))

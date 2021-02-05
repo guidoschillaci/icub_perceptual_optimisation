@@ -34,7 +34,7 @@ class Parameters:
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.4,
-            'model_sensor_fusion_beta': 0.1,
+            'model_sensor_fusion_beta': 0.01,
 
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
             'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
