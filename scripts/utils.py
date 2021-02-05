@@ -20,12 +20,12 @@ def activation_opt_flow(x):
     return tf.stack((x0,x1,x2),axis=-1)
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
-    unnorm_pred = (1.0 - predicted_opt_flow)*255
+    unnorm_pred = np.zeros(next_image.shape, dtype=b.dtype) + (1.0 - predicted_opt_flow)*255
     print('unnomr shape ', unnorm_pred.shape)
     print('next_image shape ', next_image.shape)
     print('background_image shape ', background_image.shape)
     # convert grayscale img to 3-channles + alpha
-    attenuated_image = cv2.merge((next_image,next_image,next_image,next_image))
+    attenuated_image = cv2.merge((next_image,next_image,next_image,unnorm_pred))
     return np.uint8(cv2.addWeighted(background_image, 255.0, attenuated_image, 255.0, 0.0))
 
 class Split(tf.keras.layers.Layer):
