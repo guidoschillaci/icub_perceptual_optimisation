@@ -21,9 +21,9 @@ def activation_opt_flow(x):
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     result = np.zeros((next_image.shape[0], next_image.shape[1], 3), np.uint8)
-    result[:, :, 0] = (1. - predicted_opt_flow).mul(next_image[:, :, 0]) + predicted_opt_flow.mul(background_image[:, :, 0])
-    result[:, :, 1] = (1. - predicted_opt_flow).mul(next_image[:, :, 1]) + predicted_opt_flow.mul(background_image[:, :, 1])
-    result[:, :, 2] = (1. - predicted_opt_flow).mul(next_image[:, :, 2]) + predicted_opt_flow.mul(background_image[:, :, 2])
+    result[:, :, 0] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 0]) + np.multiply(predicted_opt_flow, background_image[:, :, 0])
+    result[:, :, 1] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 1]) + np.multiply(predicted_opt_flow, background_image[:, :, 1])
+    result[:, :, 2] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 2]) + np.multiply(predicted_opt_flow, background_image[:, :, 2])
     return result
 
     #unnorm_pred = (np.zeros(next_image.shape, dtype=np.uint8) + (1.0 - predicted_opt_flow)*255).astype(np.uint8)
