@@ -58,7 +58,7 @@ class DatasetLoader():
                                           self.dataset_images_t_orig[0],
                                           self.dataset_images_t_orig[0],
                                           255 * np.ones(self.dataset_images_t_orig[0].shape[0],
-                                                        self.dataset_images_t_orig[0].shape[1], np.uint8)
+                                                        self.dataset_images_t_orig[0].shape[1])
                                          ))
 
             cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
