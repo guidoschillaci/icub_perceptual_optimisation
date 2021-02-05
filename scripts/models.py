@@ -55,6 +55,24 @@ class CustomModel(Model):
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
+    def fusion_weights_regulariser(self, loss_modality, w, fact):
+        #is_w_empty = tf.equal(tf.size(w), 0)
+        #if is_w_empty:
+        #    print('weight regulariser returns empty!!!!')
+        #    return 0.0
+        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        # add dimension
+        x = tf.expand_dims(w, axis=1)
+        # repeat elements -> shape: [batch_size, image_shape_0]
+        x = tf.tile(x, [1, _shape[1]])
+        # add dimension
+        x = tf.expand_dims(x, axis=1)
+        # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
+        weight = tf.tile(x, [1, _shape[0], 1])
+        fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
+        sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
+        return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
+
     def loss_fn(self, y_true, y_pred, weights=[]):
         true_main_out = y_true[0]
         if self.parameters.get('model_auxiliary'):
@@ -69,8 +87,8 @@ class CustomModel(Model):
 
         loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
         if self.parameters.get('model_auxiliary'):
-            alpha = 0.8  # 0.6 is good
-            beta = 0.0  # 0.0
+            alpha = self.parameters.get('model_sensor_fusion_alpha')  # 0.6 is good
+            beta = self.parameters.get('model_sensor_fusion_beta')  # 0.0
             loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
             loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
             loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
@@ -79,6 +97,9 @@ class CustomModel(Model):
                                        tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
                                        tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
 
+            fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
+                                     tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
+                                     tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
 
         if self.parameters.get('model_auxiliary'):
             return loss_main_out + aux_loss_weighting_total
@@ -138,7 +159,6 @@ class Models:
     def __init__(self, param):
         print('creating models')
         self.parameters = param
-
 
     def read_data(self):
         self.datasets = dataset_loader.DatasetLoader(self.parameters)
@@ -238,16 +258,7 @@ class Models:
         x = Dense(3, activation='sigmoid')(x)
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
-        #[ fusion_weight_image, fusion_weight_joint, fusion_weight_cmd ] = Lambda(self.split_layer)(x)
-        #fusion_weight_image, fusion_weight_joint, fusion_weight_cmd = tf.split(fusion_weight_layer, num_or_size_splits=3, axis=1)
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
-
-        #print('w_img', str(fusion_weight_visual.shape))
-        #print('w_j', str(fusion_weight_proprio.shape))
-        #print('w_c', str(fusion_weight_motor.shape))
-        #weighted_visual = Lambda(self.multiply_layer)([out_image, fusion_weight_visual])
-        #weighted_proprio = Lambda(self.multiply_layer)([out_joints, fusion_weight_proprio])
-        #weighted_motor = Lambda(self.multiply_layer)([out_cmd, fusion_weight_motor])
 
         weighted_visual = Multiply(name='weighted_visual')([out_visual_main, fusion_weight_visual])
         weighted_proprio = Multiply(name='weighted_proprio')([out_proprioceptive_main, fusion_weight_proprio])
@@ -385,19 +396,16 @@ class Models:
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
 
-            if not self.parameters.get('model_custom_training_loop'):
+            #if not self.parameters.get('model_custom_training_loop'):
                 # adam_opt = Adam(lr=0.001)
                 #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
-                self.model.compile(optimizer='adam')#, \
-                               #loss=self.loss_aux_wrapper(fusion_weight_visual,\
-                               #                           fusion_weight_proprio, \
-                               #                           fusion_weight_motor))#, \
-                               #experimental_run_tf_function=False)
+            self.model.compile(optimizer='adam')
+
                 # end auxiliary shared layers
-            else:
-                self.optimiser = Adam()
-                self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
-                self.logs={}
+            #else:
+            #    self.optimiser = Adam()
+            #    self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
+            #    self.logs={}
 
             self.model_fusion_weights = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
@@ -411,23 +419,92 @@ class Models:
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=out_main_model)
             self.model.set_param(self.parameters)
-            if not self.parameters.get('model_custom_training_loop'):
-                self.model.compile(optimizer='adam',loss='mean_squared_error')
-            else:
-                self.optimiser = Adam()
-                self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
-                self.logs = {}
+            #if not self.parameters.get('model_custom_training_loop'):
+            self.model.compile(optimizer='adam',loss='mean_squared_error')
+            #else:
+            #    self.optimiser = Adam()
+            #    self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
+            #    self.logs = {}
 
         if self.parameters.get('verbosity_level') >0:
             self.model.summary()
 
     def train_model(self):
-        print('Custom training loop? ', str(self.parameters.get('model_custom_training_loop')))
-        if self.parameters.get('model_custom_training_loop'):
-            self.custom_training_loop()
-        else:
-            self.keras_training_loop()
+        #print('Custom training loop? ', str(self.parameters.get('model_custom_training_loop')))
+        #if self.parameters.get('model_custom_training_loop'):
+        #    self.custom_training_loop()
+        #else:
+        #self.keras_training_loop()
+        print('starting training the model with keras fit function')
+        myCallback = MyCallback(self.parameters, self.datasets, self.model)
+        if self.parameters.get('model_auxiliary'):
+            fusion_weights_train = self.model_fusion_weights.predict( \
+                [self.datasets.train_dataset_images_t, \
+                 self.datasets.train_dataset_joints, \
+                 self.datasets.train_dataset_cmd])
 
+            fusion_weights_test = self.model_fusion_weights.predict( \
+                [self.datasets.test_dataset_images_t, \
+                 self.datasets.test_dataset_joints, \
+                 self.datasets.test_dataset_cmd])
+
+            self.history = self.model.fit([self.datasets.train_dataset_images_t, \
+                                           self.datasets.train_dataset_joints, \
+                                           self.datasets.train_dataset_cmd], \
+                                          [self.datasets.train_dataset_optical_flow, \
+                                           self.datasets.train_dataset_optical_flow, \
+                                           self.datasets.train_dataset_optical_flow, \
+                                           self.datasets.train_dataset_optical_flow], \
+                                          epochs=self.parameters.get('model_epochs'), \
+                                          batch_size=self.parameters.get('model_batch_size'), \
+                                          validation_data=([self.datasets.test_dataset_images_t, \
+                                                            self.datasets.test_dataset_joints, \
+                                                            self.datasets.test_dataset_cmd], \
+                                                           [self.datasets.test_dataset_optical_flow, \
+                                                            self.datasets.test_dataset_optical_flow, \
+                                                            self.datasets.test_dataset_optical_flow, \
+                                                            self.datasets.test_dataset_optical_flow]), \
+                                          shuffle=True, \
+                                          callbacks=[myCallback], \
+                                          verbose=1)
+        else:
+            self.history = self.model.fit([self.datasets.train_dataset_images_t, \
+                                           self.datasets.train_dataset_joints, \
+                                           self.datasets.train_dataset_cmd], \
+                                          self.datasets.train_dataset_optical_flow, \
+                                          epochs=self.parameters.get('model_epochs'), \
+                                          batch_size=self.parameters.get('model_batch_size'), \
+                                          validation_data=([self.datasets.test_dataset_images_t, \
+                                                            self.datasets.test_dataset_joints, \
+                                                            self.datasets.test_dataset_cmd], \
+                                                           self.datasets.test_dataset_optical_flow), \
+                                          shuffle=True, \
+                                          callbacks=[myCallback], \
+                                          verbose=1)
+        print('training done')
+
+
+    def load_model(self):
+        model_filename = self.parameters.get('directory_models') + self.parameters.get('model_filename')
+
+        # if model file already exists (i.e. it has been already trained):
+        if os.path.isfile(model_filename):
+            # load mode
+            self.model = load_model(model_filename) # keras.load_model function
+            print('Loaded pre-trained network named: ', model_filename)
+
+    def plot_model(self):
+        print('saving plot of the model...')
+        # model plot
+        model_plt_file = self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
+        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
+
+    def save_model(self):
+        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
+        self.plot_model()
+        print('model saved')
+
+    '''
     #@tf.function
     def custom_training_loop(self):
         print('starting training the model with custom training loop')
@@ -602,7 +679,6 @@ class Models:
         else:
             return loss_main_out
 
-
     def keras_training_loop(self):
         print('starting training the model with keras fit function')
         myCallback = MyCallback(self.parameters, self.datasets,self.model)
@@ -654,24 +730,4 @@ class Models:
                            verbose=1)
             #print('history keys', self.history.history.keys())
         print('training done')
-
-
-    def load_model(self):
-        model_filename = self.parameters.get('directory_models') + self.parameters.get('model_filename')
-
-        # if model file already exists (i.e. it has been already trained):
-        if os.path.isfile(model_filename):
-            # load mode
-            self.model = load_model(model_filename) # keras.load_model function
-            print('Loaded pre-trained network named: ', model_filename)
-
-    def plot_model(self):
-        print('saving plot of the model...')
-        # model plot
-        model_plt_file = self.parameters.get('directory_plots') + self.parameters.get('model_plot_filename')
-        tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
-
-    def save_model(self):
-        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
-        self.plot_model()
-        print('model saved')
+    '''
