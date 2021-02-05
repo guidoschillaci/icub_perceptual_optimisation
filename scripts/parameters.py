@@ -42,7 +42,7 @@ class Parameters:
             'opt_flow_max_value': 25,
 
             'make_plots': True,
-            'plots_predict_size': 10,
+            'plots_predict_size': 5,
             'verbosity_level': 3
         }
 
