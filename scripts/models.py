@@ -39,6 +39,7 @@ class CustomModel(Model):
 
     def weight_loss(self, loss_aux_mod, w, fact):
         print('shape  loss_aux_mod', str(loss_aux_mod.numpy().shape))
+        print('shape  weight', str(w.numpy().shape))
         #is_w_empty = tf.equal(tf.size(w), 0)
         #if is_w_empty:
         #    print('loss weighting returns empty!!!!')
