@@ -55,7 +55,7 @@ class DatasetLoader():
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
             #self.background_image = cv2.cvtColor(self.dataset_images_t_orig[1000], cv2.COLOR_GRAY2RGBA)
-            self.background_image = cv2.resize(self.background_image, (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
+            self.background_image = cv2.resize(self.dataset_images_t_orig[1000], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
             #self.background_image[:, :, 3] = 255*np.ones((self.parameters.get('image_size'), self.parameters.get('image_size'))) # alpha channel
 
             cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
