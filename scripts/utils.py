@@ -72,10 +72,10 @@ class MyCallback(Callback):
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
 
-        #if self.parameters.get('make_plots'):
-        #    self.plot_predictions_test_dataset(-1, logs)
+        if self.parameters.get('make_plots'):
+            self.plot_predictions_test_dataset(-1, logs)
             # plot also sequences of predictions
-        #    self.plot_train_sequences()
+            self.plot_train_sequences()
 
     def on_batch_end (self, batch, logs={}):
         pass
