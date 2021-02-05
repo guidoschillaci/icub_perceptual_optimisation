@@ -38,7 +38,7 @@ class CustomModel(Model):
         self.fusion_model = fusion_model
 
     def weight_loss(self, loss_aux_mod, w, fact):
-        #print('size ', str(w.numpy().shape))
+        print('shape  loss_aux_mod', str(loss_aux_mod.numpy().shape))
         #is_w_empty = tf.equal(tf.size(w), 0)
         #if is_w_empty:
         #    print('loss weighting returns empty!!!!')
@@ -102,7 +102,7 @@ class CustomModel(Model):
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
 
         if self.parameters.get('model_auxiliary'):
-            return loss_main_out + aux_loss_weighting_total
+            return loss_main_out + aux_loss_weighting_total + fus_weight_regul_total
         else:
             return loss_main_out
 
@@ -111,6 +111,7 @@ class CustomModel(Model):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
 
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
+            print ('weights ', weights_predictions)
 
             with tf.GradientTape() as tape:
                 # forward pass
