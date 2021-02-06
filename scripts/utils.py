@@ -195,7 +195,7 @@ class MyCallback(Callback):
         w_m = np.ones(shape=[len(images_t),256])*0.1
         pred_pre_fusion = self.model_pre_fusion([images_t, joints, commands])
         print(pred_pre_fusion[0].shape)
-        pred_custom_fusion_allvision = self.model_custom_fusion([pred_pre_fusion[0], w_v,
+        pred_custom_fusion_allvision = self.model_custom_fusion.predict([pred_pre_fusion[0], w_v,
                                                                  pred_pre_fusion[1], w_j,
                                                                  pred_pre_fusion[2], w_m])
 
