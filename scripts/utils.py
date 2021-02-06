@@ -21,18 +21,20 @@ def activation_opt_flow(x):
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     #result = np.zeros((next_image.shape[0], next_image.shape[1], 3), np.uint8)
-    #result = np.multiply((1.0 - predicted_opt_flow), next_image) + np.multiply(predicted_opt_flow, background_image)
+    unnorm_next = (next_image * 255).astype(np.uint8)
+    result = np.multiply((1.0 - predicted_opt_flow), unnorm_next) + np.multiply(predicted_opt_flow, background_image)
 
-    print('max optflow', np.amax(predicted_opt_flow))
-    print('min optflow', np.amin(predicted_opt_flow))
-    print('max next_image', np.amax(next_image))
-    print('min next_image', np.amin(next_image))
+    return result
+    #print('max optflow', np.amax(predicted_opt_flow))
+    #print('min optflow', np.amin(predicted_opt_flow))
+    #print('max next_image', np.amax(next_image))
+    #print('min next_image', np.amin(next_image))
 
-    print('max background_image', np.amax(background_image))
-    print('min background_image', np.amin(background_image))
+    #print('max background_image', np.amax(background_image))
+    #print('min background_image', np.amin(background_image))
 
 
-    result = np.multiply(predicted_opt_flow, background_image).astype(np.uint8)
+    #result = np.multiply(predicted_opt_flow, background_image).astype(np.uint8)
     #result[:, :, 1] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 1]) + np.multiply(predicted_opt_flow, background_image[:, :, 1])
     #result[:, :, 2] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 2]) + np.multiply(predicted_opt_flow, background_image[:, :, 2])
     #return result
@@ -40,8 +42,8 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     #unnorm_pred = (np.zeros(next_image.shape, dtype=np.uint8) + (1.0 - predicted_opt_flow)*255).astype(np.uint8)
     #unnorm_next = (next_image * 255).astype(np.uint8)
     # convert grayscale img to 3-channles + alpha
-    attenuated_image = cv2.merge((unnorm_next,unnorm_next,unnorm_next,unnorm_pred))
-    return np.uint8(cv2.addWeighted(next_image.astype(np.uint8), 0.5, result, 0.5, 0.0), dtype=np.uint8)
+    #attenuated_image = cv2.merge((unnorm_next,unnorm_next,unnorm_next,unnorm_pred))
+    #return np.uint8(cv2.addWeighted(next_image.astype(np.uint8), 0.5, result, 0.5, 0.0), dtype=np.uint8)
 
 class Split(tf.keras.layers.Layer):
     def __init__(self):
