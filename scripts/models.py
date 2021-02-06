@@ -458,6 +458,18 @@ class Models:
             self.custom_proprio_inp = Input(shape=out_proprioceptive_main.shape)
             self.custom_motor_inp = Input(shape=out_motor_main.shape)
 
+            # link them
+            self.out_custom_weight_model = final_5(
+                final_4(final_3(
+                final_2(final_1(addition([weighted_visual([self.custom_visual_inp, self.custom_weight_visual_inp]),
+                                          weighted_proprio([self.custom_proprio_inp, self.custom_weight_proprio_inp]),
+                                          weighted_motor([self.custom_motor_inp, self.custom_weight_motor_inp])]
+                                                         ))))))
+            self.model_custom_fusion = Model(inputs=[self.custom_visual_inp, self.custom_weight_visual_inp,
+                                              self.custom_proprio_inp, self.custom_weight_proprio_inp,
+                                              self.custom_motor_inp, self.custom_weight_motor_inp],
+                                            outputs=self.out_custom_weight_model)
+
         #self.model_custom_fusion = Model(inputs=(self.model.input, self.model.get_layer(name='fusion_weights'),
             #                                  outputs=self.model.get_layer(name='fusion_weights').output)
             #self.model.set_param(self.parameters)
