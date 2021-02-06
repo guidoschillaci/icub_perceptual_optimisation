@@ -190,9 +190,9 @@ class MyCallback(Callback):
         else:
             predictions = predictions_all_outputs
 
-        w_v = np.ones(shape=[len(images_t),])*0.8
-        w_j = np.ones(shape=[len(images_t),])*0.1
-        w_m = np.ones(shape=[len(images_t),])*0.1
+        w_v = np.ones(shape=[len(images_t),32,32])*0.8
+        w_j = np.ones(shape=[len(images_t),32,32])*0.1
+        w_m = np.ones(shape=[len(images_t),32,32])*0.1
         pred_pre_fusion = self.model_pre_fusion([images_t, joints, commands])
         pred_custom_fusion_allvision = self.model_custom_fusion([images_t, w_v,
                                                                  joints, w_j,
