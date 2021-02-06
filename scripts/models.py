@@ -265,29 +265,57 @@ class Models:
         # get fusion weights
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
-        weighted_visual = Multiply(name='weighted_visual')([out_visual_main, fusion_weight_visual])
-        weighted_proprio = Multiply(name='weighted_proprio')([out_proprioceptive_main, fusion_weight_proprio])
-        weighted_motor = Multiply(name='weighted_motor')([out_motor_main, fusion_weight_motor])
+        weighted_visual = Multiply(name='weighted_visual')
+        weighted_proprio = Multiply(name='weighted_proprio')
+        weighted_motor = Multiply(name='weighted_motor')
+        addition = Add()
+        final_1 = Dense(256, activation='relu')
+        final_2 = Reshape(target_shape=(16, 16, 1))
+        final_3 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
+                         activation='relu', \
+                         padding='same')
+        final_4 = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))
+        final_5 = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+                                    activation='relu', \
+                                    padding='same', name='main_output')
 
-        #addition = Lambda(self.addition_layer)([weighted_visual, weighted_proprio, weighted_cmd])
-        addition = Add()([weighted_visual, weighted_proprio, weighted_motor])
-        x = Dense(256, activation='relu')(addition)
-        x = Reshape(target_shape=(16, 16, 1))(x)
-        x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
-                   padding='same')(x)
-        x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-        if self.parameters.get('image_size')==64:
-            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
-                       padding='same')(x)
-            x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-        if self.parameters.get('opt_flow_only_magnitude'):
-            out_main_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                               activation='relu', \
-                               padding='same', name='main_output')(x)
-        else:
-            out_main_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                       activation=activation_opt_flow, \
-                       padding='same', name='main_output')(x)
+        # link them
+        out_main_model = final_5(final_4(final_3(final_2(final_1(addition(weighted_visual([out_visual_main, fusion_weight_visual]),
+                                                                          weighted_proprio([out_proprioceptive_main, fusion_weight_proprio]),
+                                                                          weighted_motor([out_motor_main, fusion_weight_motor])
+                                                                          ) ) ) ) ) )
+
+
+        # weighted_visual = Multiply(name='weighted_visual')([out_visual_main, fusion_weight_visual])
+        # weighted_proprio = Multiply(name='weighted_proprio')([out_proprioceptive_main, fusion_weight_proprio])
+        # weighted_motor = Multiply(name='weighted_motor')([out_motor_main, fusion_weight_motor])
+        # addition = Add()([weighted_visual, weighted_proprio, weighted_motor])
+        #final_1 = Dense(256, activation='relu')(addition)
+        #final_2 = Reshape(target_shape=(16, 16, 1))(final_1)
+        #final_3 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+        #           padding='same')(final_2)
+        #final_4 = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(final_3)
+        #if self.parameters.get('image_size')==64:
+        #    final_5 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+        #               padding='same')(final_4)
+        #    final_6 = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(final_5)
+        #    if self.parameters.get('opt_flow_only_magnitude'):
+        #        out_main_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        #                       activation='relu', \
+        #                       padding='same', name='main_output')(final_6)
+        #    else:
+        #        out_main_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        #               activation=activation_opt_flow, \
+        #               padding='same', name='main_output')(final_6)
+        #else:
+        #    if self.parameters.get('opt_flow_only_magnitude'):
+        #        out_main_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        #                       activation='relu', \
+        #                       padding='same', name='main_output')(final_4)
+        #    else:
+        #        out_main_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+        #               activation=activation_opt_flow, \
+        #               padding='same', name='main_output')(final_4)
 
         if self.parameters.get('model_auxiliary'):
 
@@ -416,6 +444,23 @@ class Models:
                                               outputs=self.model.get_layer(name='fusion_weights').output)
             self.model.set_param(self.parameters)
             self.model.link_fusion_model(self.model_fusion_weights)
+
+            #### model allowing manually setting the fusion weights
+            # first: pre_fusion model give pre-fusion outputs for each modality
+            self.model_pre_fusion = Model(inputs=self.model.input,outputs=[out_visual_main,
+                                                                           out_proprioceptive_main,
+                                                                           out_motor_main])
+            # second model takes as inputs these pre-fusion outputs and the custom fusion weights
+            self.custom_weight_visual_inp = Input(shape=(1,))
+            self.custom_weight_proprio_inp = Input(shape=(1,))
+            self.custom_weight_motor_inp = Input(shape=(1,))
+            self.custom_visual_inp = Input(shape=out_visual_main.output_shape)
+            self.custom_proprio_inp = Input(shape=out_proprioceptive_main.output_shape)
+            self.custom_motor_inp = Input(shape=out_motor_main.output_shape)
+
+        #self.model_custom_fusion = Model(inputs=(self.model.input, self.model.get_layer(name='fusion_weights'),
+            #                                  outputs=self.model.get_layer(name='fusion_weights').output)
+            #self.model.set_param(self.parameters)
 
         ##########
         else:

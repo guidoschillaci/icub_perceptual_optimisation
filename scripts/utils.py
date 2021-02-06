@@ -136,7 +136,7 @@ class MyCallback(Callback):
         #print('keras history keys ', history_keys)
 
         # summarize history for loss
-        fig = plt.figure(figsize=(10, 10))
+        fig = plt.figure(figsize=(10, 12))
         plt.title('model history')
         plt.ylabel('value')
         plt.xlabel('epoch')
@@ -194,12 +194,13 @@ class MyCallback(Callback):
                                                             joints, \
                                                             commands])
         bar_label = ['v', 'p', 'm']
-        fig = plt.figure(figsize=(8, 6))
+        fig = plt.figure(figsize=(8, 8))
         for i in range(self.parameters.get('plots_predict_size')):
             # display original
             ax1 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 1)
             plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
             ax1.get_xaxis().set_visible(False)
+            ax1.get_yaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
             if i != 0:
                 ax1.get_yaxis().set_visible(False)
@@ -208,6 +209,7 @@ class MyCallback(Callback):
             plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                        cmap='gray')
             ax2.get_xaxis().set_visible(False)
+            ax2.get_yaxis().set_visible(False)
             ax2.set_ylabel('img(t+1)', rotation=0)
             if i != 0:
                 ax2.get_yaxis().set_visible(False)
@@ -225,6 +227,7 @@ class MyCallback(Callback):
             plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                        cmap='gray')
             ax3.get_xaxis().set_visible(False)
+            ax3.get_yaxis().set_visible(False)
             ax3.set_ylabel('true OF', rotation=0)
             if i != 0:
                 ax3.get_yaxis().set_visible(False)
@@ -244,6 +247,7 @@ class MyCallback(Callback):
             plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                        cmap='gray')
             ax4.get_xaxis().set_visible(False)
+            ax4.get_yaxis().set_visible(False)
             ax4.set_ylabel('pred.OF', rotation=0)
             if i != 0:
                 ax4.get_yaxis().set_visible(False)
@@ -269,6 +273,7 @@ class MyCallback(Callback):
                                 self.datasets.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
+            ax6.get_yaxis().set_visible(False)
             ax6.set_ylabel('att.(t+1)', rotation=0)
             if i != 0:
                 ax6.get_yaxis().set_visible(False)
