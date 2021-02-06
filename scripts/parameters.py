@@ -30,7 +30,7 @@ class Parameters:
             #'model_custom_training_loop': False, # if False, use standard keras fit functions
             'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 10,
+            'model_epochs': 20,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.4,
@@ -43,7 +43,7 @@ class Parameters:
 
             'make_plots': True,
             'plots_predict_size': 5,
-            'verbosity_level': 3
+            'verbosity_level': 1
         }
 
     def get(self, key_name):
