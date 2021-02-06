@@ -113,10 +113,7 @@ class CustomModel(Model):
     def train_step(self, data):
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
-
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
-            print ('weights ', weights_predictions)
-
             with tf.GradientTape() as tape:
                 # forward pass
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
@@ -126,17 +123,13 @@ class CustomModel(Model):
                                                        weights=weights_predictions)
 
                 grads = tape.gradient(loss_value, self.trainable_weights)
-
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-
                 loss_tracker.update_state(loss_value)
                 #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-
                 return {"loss": loss_tracker.result()}
 
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
-
             with tf.GradientTape() as tape:
                 # forward pass
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
@@ -147,10 +140,8 @@ class CustomModel(Model):
                 # Run one step of gradient descent by updating
                 # the value of the variables to minimize the loss.
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-
                 loss_tracker.update_state(loss_value)
                 #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-
                 return {"loss": loss_tracker.result()}
 
     @property
