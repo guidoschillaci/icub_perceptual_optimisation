@@ -191,12 +191,12 @@ class MyCallback(Callback):
             predictions = predictions_all_outputs
 
         w_v = np.ones(shape=[len(images_t),self.parameters.get('image_size'),self.parameters.get('image_size')])*0.8
-        w_j = np.ones(shape=[len(images_t),16])*0.1
-        w_m = np.ones(shape=[len(images_t),16])*0.1
+        w_j = np.ones(shape=[len(images_t),self.parameters.get('image_size'),self.parameters.get('image_size')])*0.1
+        w_m = np.ones(shape=[len(images_t),self.parameters.get('image_size'),self.parameters.get('image_size')])*0.1
         pred_pre_fusion = self.model_pre_fusion([images_t, joints, commands])
-        pred_custom_fusion_allvision = self.model_custom_fusion([images_t, w_v,
-                                                                 joints, w_j,
-                                                                 commands, w_m])
+        pred_custom_fusion_allvision = self.model_custom_fusion([pred_pre_fusion[0], w_v,
+                                                                 pred_pre_fusion[1], w_j,
+                                                                 pred_pre_fusion[2], w_m])
 
         #print ('plotpred shape all ', np.asarray(predictions_all_outputs).shape)
         #print ('plotpred shape ', np.asarray(predictions).shape)
