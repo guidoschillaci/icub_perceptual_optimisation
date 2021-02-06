@@ -20,9 +20,10 @@ def activation_opt_flow(x):
     return tf.stack((x0,x1,x2),axis=-1)
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
+    amplified_pred_optflow = np.tanh(predicted_opt_flow)
     #result = np.zeros((next_image.shape[0], next_image.shape[1], 3), np.uint8)
     unnorm_next = (next_image * 255).astype(np.uint8)
-    result = np.multiply((1.0 - predicted_opt_flow), unnorm_next) + np.multiply(predicted_opt_flow, background_image)
+    result = np.multiply((1.0 - amplified_pred_optflow), unnorm_next) + np.multiply(amplified_pred_optflow, background_image)
 
     return result
     #print('max optflow', np.amax(predicted_opt_flow))
