@@ -194,7 +194,7 @@ class MyCallback(Callback):
                                                             joints, \
                                                             commands])
         bar_label = ['v', 'p', 'm']
-        fig = plt.figure(figsize=(12, 6))
+        fig = plt.figure(figsize=(8, 6))
         for i in range(self.parameters.get('plots_predict_size')):
             # display original
             ax1 = plt.subplot(6, self.parameters.get('plots_predict_size'), i + 1)
