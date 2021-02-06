@@ -194,7 +194,7 @@ class MyCallback(Callback):
         w_j = np.ones(shape=[len(images_t),256])*0.1
         w_m = np.ones(shape=[len(images_t),256])*0.1
         pred_pre_fusion = self.model_pre_fusion([images_t, joints, commands])
-        print(pred_pre_fusion[0].shape)
+        #print(pred_pre_fusion[0].shape)
         pred_custom_fusion_allvision = self.model_custom_fusion.predict([pred_pre_fusion[0], w_v,
                                                                  pred_pre_fusion[1], w_j,
                                                                  pred_pre_fusion[2], w_m])
@@ -206,7 +206,7 @@ class MyCallback(Callback):
                                                             joints, \
                                                             commands])
         bar_label = ['v', 'p', 'm']
-        fig = plt.figure(figsize=(10, 8))
+        fig = plt.figure(figsize=(6, 10))
         for i in range(self.parameters.get('plots_predict_size')):
             # display original
             ax1 = plt.subplot(10, self.parameters.get('plots_predict_size'), i + 1)
@@ -295,7 +295,7 @@ class MyCallback(Callback):
 
             ax7 = plt.subplot(10, self.parameters.get('plots_predict_size'), i + 6 * (self.parameters.get('plots_predict_size')) + 1)
             ax7.set_ylim(0, 1)
-            plt.bar(bar_label, fusion_weights[i])
+            plt.bar(bar_label, [w_v[0,0], w_j[0,0], w_m[0,0]])
             ax7.set_ylabel('custom w', rotation=0)
             if i != 0:
                 ax7.get_yaxis().set_visible(False)
