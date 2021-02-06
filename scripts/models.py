@@ -280,9 +280,9 @@ class Models:
                                     padding='same', name='main_output')
 
         # link them
-        out_main_model = final_5(final_4(final_3(final_2(final_1(addition(weighted_visual([out_visual_main, fusion_weight_visual]),
+        out_main_model = final_5(final_4(final_3(final_2(final_1(addition([weighted_visual([out_visual_main, fusion_weight_visual]),
                                                                           weighted_proprio([out_proprioceptive_main, fusion_weight_proprio]),
-                                                                          weighted_motor([out_motor_main, fusion_weight_motor])
+                                                                          weighted_motor([out_motor_main, fusion_weight_motor])]
                                                                           ) ) ) ) ) )
 
 
