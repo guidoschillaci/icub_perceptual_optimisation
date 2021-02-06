@@ -489,7 +489,7 @@ class Models:
         #else:
         #self.keras_training_loop()
         print('starting training the model with keras fit function')
-        myCallback = MyCallback(self.parameters, self.datasets, self.model)
+        myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion, self.model_custom_fusion)
         if self.parameters.get('model_auxiliary'):
             fusion_weights_train = self.model_fusion_weights.predict( \
                 [self.datasets.train_dataset_images_t, \
