@@ -21,8 +21,12 @@ def activation_opt_flow(x):
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     #result = np.zeros((next_image.shape[0], next_image.shape[1], 3), np.uint8)
-    #result = np.multiply((1.0 - predicted_opt_flow), next_image) + np.multiply(predicted_opt_flow, background_image)
-    result = np.multiply(predicted_opt_flow, background_image).astype(np.uint8)
+    result = np.multiply((1.0 - predicted_opt_flow), next_image) + np.multiply(predicted_opt_flow, background_image)
+
+    print('max optflow', np.amax(predicted_opt_flow))
+    print('min optflow', np.amin(predicted_opt_flow))
+
+    #result = np.multiply(predicted_opt_flow, background_image).astype(np.uint8)
     #result[:, :, 1] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 1]) + np.multiply(predicted_opt_flow, background_image[:, :, 1])
     #result[:, :, 2] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 2]) + np.multiply(predicted_opt_flow, background_image[:, :, 2])
     #return result
