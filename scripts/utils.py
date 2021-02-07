@@ -277,7 +277,7 @@ class MyCallback(Callback):
                    cmap='gray')
         ax8.get_xaxis().set_visible(False)
         ax8.get_yaxis().set_visible(False)
-        ax8.set_ylabel('custom prOF', rotation=0)
+        ax8.set_ylabel('custom pred.', rotation=0)
         if save_gif:
             # Save just the portion _inside_ the second axis's boundaries
             extent_8 = ax8.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -294,7 +294,6 @@ class MyCallback(Callback):
         plt.imshow(attenuated_custom, cmap='gray')
         ax9.get_xaxis().set_visible(False)
         ax9.get_yaxis().set_visible(False)
-        ax9.set_ylabel('att.custom', rotation=0)
         if save_gif:
             # Save just the portion _inside_ the second axis's boundaries
             extent_9 = ax9.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
@@ -311,7 +310,4 @@ class MyCallback(Callback):
                                                self.datasets.test_dataset_joints[0:self.parameters.get('plots_predict_size')], \
                                                self.datasets.test_dataset_cmd[0:self.parameters.get('plots_predict_size')], \
                                                self.datasets.test_dataset_optical_flow[0:self.parameters.get('plots_predict_size')])
-
-        #np.savetxt(self.parameters.get('directory_plots') + "fusion_weights_" + str(epoch) + ".txt", fusion_weights,
-        #           fmt="%s")
 
