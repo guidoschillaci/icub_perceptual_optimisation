@@ -9,6 +9,7 @@ from copy import deepcopy
 import pandas as pd
 from tqdm import tqdm
 import cv2
+from tensorflow import keras as tfk
 
 # the activation function of the output layer of the model
 def activation_opt_flow(x):
@@ -33,7 +34,6 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image):
 
     #print('max background_image', np.amax(background_image))
     #print('min background_image', np.amin(background_image))
-
 
     #result = np.multiply(predicted_opt_flow, background_image).astype(np.uint8)
     #result[:, :, 1] = np.multiply((1. - predicted_opt_flow), next_image[:, :, 1]) + np.multiply(predicted_opt_flow, background_image[:, :, 1])
@@ -64,7 +64,8 @@ class MyCallback(Callback):
         self.model = model
         self.model_pre_fusion = model_pre_fusion
         self.model_custom_fusion = model_custom_fusion
-        self.logs = {}
+        self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
+        #self.logs = {}
 
     def on_train_begin(self, logs={}):
         #print('log key', str(logs.keys()))
@@ -107,6 +108,22 @@ class MyCallback(Callback):
         self.save_plots()
 
     def on_epoch_end(self, epoch, logs=None):
+
+        weights_predictions = self.model_fusion_weights((self.datasets.test_dataset_images_t,
+                                                             self.datasets.test_dataset_joints,
+                                                             self.datasets.test_dataset_cmd))
+        predictions = self.model((self.datasets.test_dataset_images_t,
+                                  self.datasets.test_dataset_joints,
+                                  self.datasets.test_dataset_cmd), training=True)  # predictions for this minibatch
+        # Compute the loss value for this minibatch.
+        val_loss_value = self.model.loss_fn((self.datasets.test_dataset_optical_flow,
+                                                self.datasets.test_dataset_optical_flow,
+                                                self.datasets.test_dataset_optical_flow,
+                                                self.datasets.test_dataset_optical_flow), \
+                                                   predictions, \
+                                                   weights=weights_predictions)
+        self.val_loss_tracker.update_state(val_loss_value)  # Add current batch loss
+
         #print('callback epoch end')
         #print('log key', str(logs.keys()))
         #print('hostiry key', str(self.history.keys()))

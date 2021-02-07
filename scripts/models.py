@@ -125,6 +125,7 @@ class CustomModel(Model):
                 grads = tape.gradient(loss_value, self.trainable_weights)
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
                 loss_tracker.update_state(loss_value)
+
                 #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
                 return {"loss": loss_tracker.result()}
 
