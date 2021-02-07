@@ -26,52 +26,22 @@ import tkinter
 import matplotlib.pyplot as plt
 import pandas as pd
 
-loss_tracker = tfk.metrics.Mean(name="loss")
 #mae_metric = tfk.metrics.MeanSquaredError(name="mae")
 
 class CustomModel(Model):
-
     def set_param(self, param):
         self.parameters=param
+        self.loss_tracker = tfk.metrics.Mean(name="loss")
+        self.val_loss_tracker = tfk.metrics.Mean(name="loss")
 
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
 
     def weight_loss(self, loss_aux_mod, w, fact):
-        #print('shape  loss_aux_mod', str(loss_aux_mod.numpy().shape))
-        #print('shape  weight', str(w.numpy().shape))
-        #is_w_empty = tf.equal(tf.size(w), 0)
-        #if is_w_empty:
-        #    print('loss weighting returns empty!!!!')
-        #    return 0.0
-        ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        # add dimension
-        ##x = tf.expand_dims(w, axis=1)
-        # repeat elements -> shape: [batch_size, image_shape_0]
-        ##x = tf.tile(x, [1,_shape[1]])
-        # add dimension
-        ##x = tf.expand_dims(x, axis=1)
-        # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        ##weight = tf.tile(x, [1, _shape[0], 1])
-        #alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         alpha_weight = tf.math.scalar_mul(fact, tf.identity(w))
         return loss_aux_mod * alpha_weight
 
     def fusion_weights_regulariser(self, loss_modality, w, fact):
-        #is_w_empty = tf.equal(tf.size(w), 0)
-        #if is_w_empty:
-        #    print('weight regulariser returns empty!!!!')
-        #    return 0.0
-        ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        # add dimension
-        ##x = tf.expand_dims(w, axis=1)
-        # repeat elements -> shape: [batch_size, image_shape_0]
-        ##x = tf.tile(x, [1, _shape[1]])
-        # add dimension
-        ##x = tf.expand_dims(x, axis=1)
-        # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        ##weight = tf.tile(x, [1, _shape[0], 1])
-        #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(w))
         #sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
         sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
@@ -79,18 +49,18 @@ class CustomModel(Model):
 
     def loss_fn(self, y_true, y_pred, weights=[]):
         true_main_out = y_true[0]
-        if self.parameters.get('model_auxiliary'):
+        pred_main_out = y_pred[0]
+        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
+        if not self.parameters.get('model_auxiliary'):
+            return loss_main_out
+        else:
             true_aux_visual = y_true[1]
             true_aux_proprio = y_true[2]
             true_aux_motor = y_true[3]
-        pred_main_out = y_pred[0]
-        if self.parameters.get('model_auxiliary'):
             pred_aux_visual = y_pred[1]
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
-        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
-        if self.parameters.get('model_auxiliary'):
             alpha = self.parameters.get('model_sensor_fusion_alpha')  # 0.6 is good
             beta = self.parameters.get('model_sensor_fusion_beta')  # 0.0
             loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
@@ -104,11 +74,7 @@ class CustomModel(Model):
             fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
-
-        if self.parameters.get('model_auxiliary'):
             return loss_main_out + aux_loss_weighting_total + fus_weight_regul_total
-        else:
-            return loss_main_out
 
     def train_step(self, data):
         if self.parameters.get('model_auxiliary'):
@@ -119,18 +85,16 @@ class CustomModel(Model):
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                 # Compute the loss value for this minibatch.
                 loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
-                                                       predictions, \
-                                                       weights=weights_predictions)
+                                          predictions, \
+                                          weights=weights_predictions)
 
                 grads = tape.gradient(loss_value, self.trainable_weights)
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-                loss_tracker.update_state(loss_value)
-
-                #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-                return {"loss": loss_tracker.result()}
-
-        else: # simple model
-            (in_img, in_j, in_cmd), out_of  = data
+                self.loss_tracker.update_state(loss_value)
+                # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+                return {"loss": self.loss_tracker.result()}
+        else:  # simple model
+            (in_img, in_j, in_cmd), out_of = data
             with tf.GradientTape() as tape:
                 # forward pass
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
@@ -141,16 +105,30 @@ class CustomModel(Model):
                 # Run one step of gradient descent by updating
                 # the value of the variables to minimize the loss.
                 self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-                loss_tracker.update_state(loss_value)
-                #self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-                return {"loss": loss_tracker.result()}
+                self.loss_tracker.update_state(loss_value)
+                # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+                return {"loss": self.loss_tracker.result()}
 
+    def test_step(self, data):
+        if self.parameters.get('model_auxiliary'):
+            (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
+            weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
+            predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+            # Compute the loss value for this minibatch.
+            val_loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
+                                                   predictions, \
+                                                   weights=weights_predictions)
+            self.val_loss_tracker.update_state(val_loss_value)
+            return {"val:loss": self.val_loss_tracker.result()}
+        else: # simple model
+            (in_img, in_j, in_cmd), out_of  = data
+            predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+            val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+            self.val_loss_tracker.update_state(val_loss_value)
+            return {"val_loss": self.val_loss_tracker.result()}
     @property
     def metrics(self):
-        # list `Metric` objects  so that `reset_states()` can be
-        # called automatically at the start of each epoch
-        # or at the start of `evaluate()`.
-        return [loss_tracker]
+        return [self.val_loss_tracker]
 
 class Models:
     def __init__(self, param):
