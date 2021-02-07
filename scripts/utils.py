@@ -195,15 +195,17 @@ class MyCallback(Callback):
                                                             commands])
         bar_label = ['v', 'p', 'm']
         num_subplots = 13
-        count_line = 0
+
         fig = plt.figure(figsize=(6, 10))
         for i in range(self.parameters.get('plots_predict_size')):
+            count_line = 0
             # display original
-            ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
+            ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') +1)
             plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
             ax1.get_xaxis().set_visible(False)
             ax1.get_yaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
+            count_line = count_line +1
 
             ax2 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
             plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),cmap='gray')
@@ -214,6 +216,7 @@ class MyCallback(Callback):
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_imgp1_'+str(i)+ '.png', bbox_inches=extent_2)
+            count_line = count_line + 1
 
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             opt_unnorm = deepcopy(opt_flow[i])
@@ -230,7 +233,7 @@ class MyCallback(Callback):
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_3 = ax3.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_trueOF_'+str(i)+ '.png', bbox_inches=extent_3)
-
+            count_line = count_line + 1
 
             ax5 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             ax5.set_ylim(0, 1)
@@ -242,7 +245,7 @@ class MyCallback(Callback):
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_5 = ax5.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_fw_'+str(i)+ '.png', bbox_inches=extent_5)
-
+            count_line = count_line + 1
 
             ax4 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             pred_unnorm = deepcopy(predictions[i])
@@ -260,7 +263,7 @@ class MyCallback(Callback):
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_4 = ax4.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_predOF_'+str(i)+ '.png', bbox_inches=extent_4)
-
+            count_line = count_line + 1
 
             ax6 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
@@ -274,10 +277,11 @@ class MyCallback(Callback):
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_6 = ax6.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_attenuated_'+str(i)+ '.png', bbox_inches=extent_6)
+            count_line = count_line + 1
 
-            self.custom_weight_plots(0.8, 0.1, 0.1, images_t, images_tp1, joints, commands, num_subplots,
+            count_line = self.custom_weight_plots(0.8, 0.1, 0.1, images_t, images_tp1, joints, commands, num_subplots,
                                      i, count_line, bar_label, save_gif, fig, filename)
-            self.custom_weight_plots(0.1, 0.1, 0.8, images_t, images_tp1, joints, commands, num_subplots,
+            count_line = self.custom_weight_plots(0.1, 0.1, 0.8, images_t, images_tp1, joints, commands, num_subplots,
                                      i, count_line, bar_label, save_gif, fig, filename)
 
             count_line = count_line + 1
@@ -307,6 +311,7 @@ class MyCallback(Callback):
             extent_7 = ax7.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
             fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_custom_fw_' + str(iter) + '.png',
                         bbox_inches=extent_7)
+        count_line = count_line + 1
 
         ax8 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
@@ -326,6 +331,7 @@ class MyCallback(Callback):
             extent_8 = ax8.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
             fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_custom_predOF_' + str(iter) + '.png',
                         bbox_inches=extent_8)
+        count_line = count_line + 1
 
         ax9 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
@@ -342,6 +348,8 @@ class MyCallback(Callback):
             extent_9 = ax9.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
             fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_attenuated_custom_' + str(iter) + '.png',
                         bbox_inches=extent_9)
+        count_line = count_line + 1
+        return count_line
 
     def plot_predictions_test_dataset(self, epoch, logs):
         print('Callback: saving predicted images')
