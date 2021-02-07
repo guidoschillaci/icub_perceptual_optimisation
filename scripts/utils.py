@@ -136,7 +136,7 @@ class MyCallback(Callback):
         return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
 
     def threshold_optical_flow(self, optflow):
-        return tf.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 1, 0)
+        return np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 1, 0)
 
     def plot_predictions(self, filename, images_t, images_tp1, joints, commands, opt_flow, save_gif=False):
         predictions_all_outputs = self.model.predict([images_t, joints, commands])
