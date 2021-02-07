@@ -199,23 +199,18 @@ class MyCallback(Callback):
         fig = plt.figure(figsize=(6, 10))
         for i in range(self.parameters.get('plots_predict_size')):
             # display original
-            ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
+            ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size'))
             plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
             ax1.get_xaxis().set_visible(False)
             ax1.get_yaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
-            if i != 0:
-                ax1.get_yaxis().set_visible(False)
             count_line = count_line + 1
 
             ax2 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
-            plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
-                       cmap='gray')
+            plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),cmap='gray')
             ax2.get_xaxis().set_visible(False)
             ax2.get_yaxis().set_visible(False)
             ax2.set_ylabel('img(t+1)', rotation=0)
-            if i != 0:
-                ax2.get_yaxis().set_visible(False)
             if save_gif:
                 # Save just the portion _inside_ the second axis's boundaries
                 extent_2 = ax2.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
