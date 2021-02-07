@@ -119,7 +119,7 @@ class CustomModel(Model):
                                                    predictions, \
                                                    weights=weights_predictions)
             self.val_loss_tracker.update_state(val_loss_value)
-            return {"val:loss": self.val_loss_tracker.result()}
+            return {"val_loss": self.val_loss_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
