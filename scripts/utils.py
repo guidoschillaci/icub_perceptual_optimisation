@@ -83,8 +83,10 @@ class MyCallback(Callback):
         self.save_plots()
 
     def on_epoch_end(self, epoch, logs=None):
+        logs_keys = list(logs.keys())
+        print(logs_keys)
         self.history['loss'].append(logs['loss'])
-        self.history['val_loss'].append(logs['val_loss'])
+        #self.history['val_loss'].append(logs['val_loss'])
 
     def save_plots(self):
         pd.DataFrame.from_dict(self.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
