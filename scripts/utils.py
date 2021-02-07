@@ -21,7 +21,7 @@ def activation_opt_flow(x):
     return tf.stack((x0,x1,x2),axis=-1)
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image):
-    amplified_pred_optflow = tf.math.sigmoid(predicted_opt_flow)
+    #amplified_pred_optflow = tf.math.sigmoid(predicted_opt_flow)
     #result = np.zeros((next_image.shape[0], next_image.shape[1], 3), np.uint8)
     unnorm_next = (next_image * 255.0).astype(np.uint8)
     result = np.multiply((1.0 - amplified_pred_optflow), unnorm_next) + np.multiply(amplified_pred_optflow, background_image)
@@ -135,6 +135,9 @@ class MyCallback(Callback):
     def get_fusion_weights(self):
         return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
 
+    def threshold_optical_flow(self, optflow):
+        return tf.to_int32(optflow > self.parameters.get('opt_flow_binary_threshold'))
+
     def plot_predictions(self, filename, images_t, images_tp1, joints, commands, opt_flow, save_gif=False):
         predictions_all_outputs = self.model.predict([images_t, joints, commands])
         if self.parameters.get('model_auxiliary'):
@@ -173,9 +176,10 @@ class MyCallback(Callback):
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             opt_unnorm = deepcopy(opt_flow[i])
             if self.parameters.get('opt_flow_only_magnitude'):
-                opt_unnorm = opt_unnorm * self.parameters.get('opt_flow_max_value')
+                opt_unnorm = self.threshold_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
             else:
-                opt_unnorm = opt_unnorm[...,0] * self.parameters.get('opt_flow_max_value')
+                opt_unnorm = self.threshold_optical_flow(opt_unnorm[...,0])# * self.parameters.get('opt_flow_max_value'))
+
             plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                        cmap='gray')
             ax3.get_xaxis().set_visible(False)
@@ -203,9 +207,9 @@ class MyCallback(Callback):
             pred_unnorm = deepcopy(predictions[i])
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
-                pred_unnorm = pred_unnorm * self.parameters.get('opt_flow_max_value')
+                pred_unnorm = self.threshold_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
             else:
-                pred_unnorm = pred_unnorm[...,0] * self.parameters.get('opt_flow_max_value')
+                pred_unnorm = self.threshold_optical_flow(pred_unnorm[...,0] )# * self.parameters.get('opt_flow_max_value'))
             plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                        cmap='gray')
             ax4.get_xaxis().set_visible(False)
@@ -270,9 +274,9 @@ class MyCallback(Callback):
         predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter])
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
         if self.parameters.get('opt_flow_only_magnitude'):
-            predcustom_unnorm = predcustom_unnorm * self.parameters.get('opt_flow_max_value')
+            predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm)
         else:
-            predcustom_unnorm = predcustom_unnorm[..., 0] * self.parameters.get('opt_flow_max_value')
+            predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm[..., 0])
         plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
                    cmap='gray')
         ax8.get_xaxis().set_visible(False)

@@ -40,6 +40,7 @@ class Parameters:
             'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
+            'opt_flow_binary_treshold': 0.3, # below this, is set to 0, higher than this, it is set to 1
 
             'make_plots': True,
             'plots_predict_size': 5,
