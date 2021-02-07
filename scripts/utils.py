@@ -290,9 +290,9 @@ class MyCallback(Callback):
         return fusion_weights
 
     def custom_weight_plots(self, _wv,_wj,_wm, images_t, images_tp1, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
-        w_v = np.ones(shape=[len(images_t),256])*_wv
-        w_j = np.ones(shape=[len(images_t),256])*_wj
-        w_m = np.ones(shape=[len(images_t),256])*_wm
+        w_v = np.ones(shape=[len(images_t),])*_wv
+        w_j = np.ones(shape=[len(images_t),])*_wj
+        w_m = np.ones(shape=[len(images_t),])*_wm
         pred_pre_fusion = self.model_pre_fusion([images_t, joints, commands])
         #print(pred_pre_fusion[0].shape)
         pred_custom_fusion_allvision = self.model_custom_fusion.predict([pred_pre_fusion[0], w_v,
