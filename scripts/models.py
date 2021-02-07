@@ -445,9 +445,9 @@ class Models:
             self.custom_weight_visual_inp = Input(shape=(1,))
             self.custom_weight_proprio_inp = Input(shape=(1,))
             self.custom_weight_motor_inp = Input(shape=(1,))
-            self.custom_visual_inp = Input(shape=out_visual_main.shape)
-            self.custom_proprio_inp = Input(shape=out_proprioceptive_main.shape)
-            self.custom_motor_inp = Input(shape=out_motor_main.shape)
+            self.custom_visual_inp = Input(shape=(256,))
+            self.custom_proprio_inp = Input(shape=(256,))
+            self.custom_motor_inp = Input(shape=(256,))
 
             # link them
             self.out_custom_weight_model = final_5(

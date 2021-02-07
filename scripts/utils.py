@@ -111,8 +111,10 @@ class MyCallback(Callback):
         #print('log key', str(logs.keys()))
         #print('hostiry key', str(self.history.keys()))
         #if not self.parameters.get('model_auxiliary'):
-        self.history['loss'].append(self.logs.get('loss'))
-        self.history['val_loss'].append(self.logs.get('val_loss'))
+        #self.history['loss'].append(self.logs.get('loss'))
+        #self.history['val_loss'].append(self.logs.get('val_loss'))
+        self.history['loss'].append(logs['loss'])
+        self.history['val_loss'].append(logs['val_loss'])
         #else:
         #    self.history['loss'].append(self.logs.get('loss'))
         #    self.history['main_output_loss'].append(self.logs.get('main_output_loss'))
@@ -302,7 +304,7 @@ class MyCallback(Callback):
         ax7 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
         ax7.set_ylim(0, 1)
-        plt.bar(bar_label, [w_v[0, 0], w_j[0, 0], w_m[0, 0]])
+        plt.bar(bar_label, [w_v[0], w_j[0], w_m[0]])
         ax7.set_ylabel('custom w', rotation=0)
         if iter != 0:
             ax7.get_yaxis().set_visible(False)
