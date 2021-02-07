@@ -64,97 +64,31 @@ class MyCallback(Callback):
         self.model = model
         self.model_pre_fusion = model_pre_fusion
         self.model_custom_fusion = model_custom_fusion
-        self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
         #self.logs = {}
 
     def on_train_begin(self, logs={}):
-        #print('log key', str(logs.keys()))
-
-        #if not self.parameters.get('model_auxiliary'):
         self.history = {'loss': [], 'val_loss': []}
-        #else:
-        #    self.history = {'loss': [], \
-        #                    'main_output_loss': [], \
-        #                    'aux_visual_output_loss': [], \
-        #                    'aux_proprio_output_loss': [], \
-        #                    'aux_motor_output_loss': [], \
-        #                    'val_loss': [], \
-        #                    'val_main_output_loss': [], \
-        #                    'val_aux_visual_output_loss': [], \
-        #                    'val_aux_proprio_output_loss': [], \
-        #                    'val_aux_motor_output_loss': []}
-
-        #print('callback train begin')
-        #print('train size ', str(len(self.datasets.dataset_images_t[[self.datasets.train_indexes]])))
-        #print('teest size ', str(len(self.datasets.dataset_images_t[[self.datasets.test_indexes]])))
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
-
         if self.parameters.get('make_plots'):
             self.plot_predictions_test_dataset(-1, logs)
             # plot also sequences of predictions
             self.plot_train_sequences()
 
-    def on_batch_end (self, batch, logs={}):
-        pass
-
     def on_train_end(self, logs=None):
-        #print('callback train end')
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
             self.plot_train_sequences(save_gif=True)
-
         self.save_plots()
 
     def on_epoch_end(self, epoch, logs=None):
-
-        weights_predictions = self.model_fusion_weights((self.datasets.test_dataset_images_t,
-                                                             self.datasets.test_dataset_joints,
-                                                             self.datasets.test_dataset_cmd))
-        predictions = self.model((self.datasets.test_dataset_images_t,
-                                  self.datasets.test_dataset_joints,
-                                  self.datasets.test_dataset_cmd), training=True)  # predictions for this minibatch
-        # Compute the loss value for this minibatch.
-        val_loss_value = self.model.loss_fn((self.datasets.test_dataset_optical_flow,
-                                                self.datasets.test_dataset_optical_flow,
-                                                self.datasets.test_dataset_optical_flow,
-                                                self.datasets.test_dataset_optical_flow), \
-                                                   predictions, \
-                                                   weights=weights_predictions)
-        self.val_loss_tracker.update_state(val_loss_value)  # Add current batch loss
-
-        #print('callback epoch end')
-        #print('log key', str(logs.keys()))
-        #print('hostiry key', str(self.history.keys()))
-        #if not self.parameters.get('model_auxiliary'):
-        #self.history['loss'].append(self.logs.get('loss'))
-        #self.history['val_loss'].append(self.logs.get('val_loss'))
         self.history['loss'].append(logs['loss'])
         self.history['val_loss'].append(logs['val_loss'])
-        #else:
-        #    self.history['loss'].append(self.logs.get('loss'))
-        #    self.history['main_output_loss'].append(self.logs.get('main_output_loss'))
-        #    self.history['aux_visual_output_loss'].append(self.logs.get('aux_visual_output_loss'))
-        #    self.history['aux_proprio_output_loss'].append(self.logs.get('aux_proprio_output_loss'))
-        #    self.history['aux_motor_output_loss'].append(self.logs.get('aux_motor_output_loss'))
-
-        #    self.history['val_loss'].append(self.logs.get('val_loss'))
-        #    self.history['val_main_output_loss'].append(self.logs.get('val_main_output_loss'))
-        #    self.history['val_aux_visual_output_loss'].append(self.logs.get('val_aux_visual_output_loss'))
-        #    self.history['val_aux_proprio_output_loss'].append(self.logs.get('val_aux_proprio_output_loss'))
-        #    self.history['val_aux_motor_output_loss'].append(self.logs.get('val_aux_motor_output_loss'))
-
-        #if self.parameters.get('make_plots'):
-        #    # plot also sequences of predictions
-        #    self.plot_train_sequences(save_gif=True)
-        #    self.plot_predictions_test_dataset(epoch, logs, predict_size=self.parameters.get('plots_predict_size'))
 
     def save_plots(self):
         pd.DataFrame.from_dict(self.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
-        # history dictioary
         history_keys = list(self.history.keys())
-        #print('keras history keys ', history_keys)
 
         # summarize history for loss
         fig = plt.figure(figsize=(10, 12))
@@ -199,7 +133,6 @@ class MyCallback(Callback):
                                                    save_gif=save_gif)
 
     def get_fusion_weights(self):
-        #return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
         return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
 
     def plot_predictions(self, filename, images_t, images_tp1, joints, commands, opt_flow, save_gif=False):
@@ -215,7 +148,7 @@ class MyCallback(Callback):
         bar_label = ['v', 'p', 'm']
         num_subplots = 13
 
-        fig = plt.figure(figsize=(6, 10))
+        fig = plt.figure(figsize=(8, 12))
         for i in range(self.parameters.get('plots_predict_size')):
             count_line = 0
             # display original
