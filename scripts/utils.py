@@ -27,10 +27,10 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     result = np.multiply((1.0 - predicted_opt_flow/255), unnorm_next) + np.multiply(predicted_opt_flow/255, background_image)
 
     return result
-    #print('max optflow', np.amax(predicted_opt_flow))
-    #print('min optflow', np.amin(predicted_opt_flow))
-    #print('max next_image', np.amax(next_image))
-    #print('min next_image', np.amin(next_image))
+    print('max optflow', np.amax(predicted_opt_flow))
+    print('min optflow', np.amin(predicted_opt_flow))
+    print('max next_image', np.amax(next_image))
+    print('min next_image', np.amin(next_image))
 
     #print('max background_image', np.amax(background_image))
     #print('min background_image', np.amin(background_image))
