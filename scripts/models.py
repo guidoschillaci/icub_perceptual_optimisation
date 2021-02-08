@@ -537,9 +537,9 @@ class Models:
         print('model saved')
 
     def save_plots(self):
-        #pd.DataFrame.from_dict(eval(self.history)).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
+        pd.DataFrame.from_dict(self.history.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
 
-        history_keys = list(self.history.keys())
+        history_keys = list(self.history.history.keys())
 
         # summarize history for loss
         fig = plt.figure(figsize=(10, 12))
