@@ -49,6 +49,7 @@ class CustomModel(Model):
 
     @tf.function
     def loss_fn(self, y_true, y_pred, weights=[]):
+
         print('size y_true', str(y_true.numpy().shape))
         print('size y_pred', str(y_pred.numpy().shape))
         true_main_out = y_true[0]
