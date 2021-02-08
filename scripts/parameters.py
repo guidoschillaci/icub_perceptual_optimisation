@@ -30,7 +30,7 @@ class Parameters:
             #'model_custom_training_loop': False, # if False, use standard keras fit functions
             'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 1,
+            'model_epochs': 10,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.4,
@@ -40,7 +40,7 @@ class Parameters:
             'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
-            'opt_flow_binary_threshold': 0.01, # below this, is set to 0, higher than this, it is set to 1
+            'opt_flow_binary_threshold': 0.005, # below this, is set to 0, higher than this, it is set to 1
 
             'make_plots': True,
             'plots_predict_size': 5,
