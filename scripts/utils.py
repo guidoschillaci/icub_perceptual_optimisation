@@ -80,7 +80,7 @@ class MyCallback(Callback):
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
             self.plot_train_sequences(save_gif=True)
-        self.save_plots()
+        #self.save_plots()
 
     def on_epoch_end(self, epoch, logs=None):
         logs_keys = list(logs.keys())
