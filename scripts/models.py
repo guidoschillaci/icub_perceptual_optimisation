@@ -70,6 +70,11 @@ class CustomModel(Model):
             loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
             loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
 
+            print('size loss_aux_visual', str(loss_aux_visual.numpy().shape))
+            print('size loss_aux_proprio', str(loss_aux_proprio.numpy().shape))
+            print('size loss_aux_motor', str(loss_aux_motor.numpy().shape))
+            print('size weights', str(weights.numpy().shape))
+
             aux_loss_weighting_total = self.weight_loss(loss_aux_visual, weights[0], alpha) + \
                                        self.weight_loss(loss_aux_proprio, weights[1], alpha) + \
                                        self.weight_loss(loss_aux_motor, weights[2], alpha)
