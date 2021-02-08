@@ -32,7 +32,7 @@ class CustomModel(Model):
     def set_param(self, param):
         self.parameters=param
         self.loss_tracker = tfk.metrics.Mean(name="loss")
-        self.val_loss_tracker = tfk.metrics.Mean(name="loss")
+        self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
 
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
@@ -63,17 +63,24 @@ class CustomModel(Model):
 
             alpha = self.parameters.get('model_sensor_fusion_alpha')  # 0.6 is good
             beta = self.parameters.get('model_sensor_fusion_beta')  # 0.0
-            loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
-            loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
-            loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
+            #loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
+            #loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
+            #loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
+            loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual)
+            loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
+            loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
 
-            aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual, weights[:, 0], alpha)) + \
-                                       tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
-                                       tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
+            aux_loss_weighting_total = self.weight_loss(loss_aux_visual, weights[0], alpha) + \
+                                       self.weight_loss(loss_aux_proprio, weights[1], alpha) + \
+                                       self.weight_loss(loss_aux_motor, weights[2], alpha)
+            #aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual, weights[:, 0], alpha)) + \
+            #                           tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
+            #                           tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
 
             fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
+
             return loss_main_out + aux_loss_weighting_total + fus_weight_regul_total
 
     def train_step(self, data):
@@ -88,11 +95,11 @@ class CustomModel(Model):
                                           predictions, \
                                           weights=weights_predictions)
 
-                grads = tape.gradient(loss_value, self.trainable_weights)
-                self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-                self.loss_tracker.update_state(loss_value)
+            grads = tape.gradient(loss_value, self.trainable_weights)
+            self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
+            self.loss_tracker.update_state(loss_value)
                 # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-                return {"loss": self.loss_tracker.result()}
+            return {"loss": self.loss_tracker.result()}
         else:  # simple model
             (in_img, in_j, in_cmd), out_of = data
             with tf.GradientTape() as tape:
@@ -100,14 +107,14 @@ class CustomModel(Model):
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                 # Compute the loss value for this minibatch.
                 loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
-                # compute gradients
-                grads = tape.gradient(loss_value, self.trainable_weights)
-                # Run one step of gradient descent by updating
-                # the value of the variables to minimize the loss.
-                self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-                self.loss_tracker.update_state(loss_value)
-                # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-                return {"loss": self.loss_tracker.result()}
+            # compute gradients
+            grads = tape.gradient(loss_value, self.trainable_weights)
+            # Run one step of gradient descent by updating
+            # the value of the variables to minimize the loss.
+            self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
+            self.loss_tracker.update_state(loss_value)
+            # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
+            return {"loss": self.loss_tracker.result()}
 
     def test_step(self, data):
         if self.parameters.get('model_auxiliary'):
@@ -128,7 +135,7 @@ class CustomModel(Model):
             return {"val_loss": self.val_loss_tracker.result()}
     @property
     def metrics(self):
-        return [self.val_loss_tracker]
+        return [self.loss_tracker, self.val_loss_tracker]
 
 class Models:
     def __init__(self, param):
