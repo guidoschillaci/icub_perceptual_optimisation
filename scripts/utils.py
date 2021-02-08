@@ -26,11 +26,11 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image):
     unnorm_next = (next_image * 255.0).astype(np.uint8)
     result = np.multiply((1.0 - predicted_opt_flow/255), unnorm_next) + np.multiply(predicted_opt_flow/255, background_image)
 
+    #print('max optflow', np.amax(predicted_opt_flow))
+    #print('min optflow', np.amin(predicted_opt_flow))
+    #print('max next_image', np.amax(next_image))
+    #print('min next_image', np.amin(next_image))
     return result
-    print('max optflow', np.amax(predicted_opt_flow))
-    print('min optflow', np.amin(predicted_opt_flow))
-    print('max next_image', np.amax(next_image))
-    print('min next_image', np.amin(next_image))
 
     #print('max background_image', np.amax(background_image))
     #print('min background_image', np.amin(background_image))
@@ -206,9 +206,9 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_attenuated_'+str(i)+ '.png', bbox_inches=extent_6)
             count_line = count_line + 1
 
-            count_line = self.custom_weight_plots(0.6, 0.4, 0.0, images_t, images_tp1, joints, commands, num_subplots,
+            count_line = self.custom_weight_plots(0.6, 0.4, 0.0, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
                                      i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.0, 0.4, 0.6, images_t, images_tp1, joints, commands, num_subplots,
+            count_line = self.custom_weight_plots(0.0, 0.0, 1.0, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
                                      i, count_line, bar_label, save_gif, fig, filename)
 
             count_line = count_line + 1
@@ -220,7 +220,7 @@ class MyCallback(Callback):
         w_v = np.ones(shape=[len(images_t),])*_wv
         w_j = np.ones(shape=[len(images_t),])*_wj
         w_m = np.ones(shape=[len(images_t),])*_wm
-        pred_pre_fusion = self.model_pre_fusion([images_t, joints, commands])
+        pred_pre_fusion = self.model_pre_fusion.predict([images_t, joints, commands])
         #print(pred_pre_fusion[0].shape)
         pred_custom_fusion_allvision = self.model_custom_fusion.predict([pred_pre_fusion[0], w_v,
                                                                  pred_pre_fusion[1], w_j,

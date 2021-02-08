@@ -398,23 +398,15 @@ class Models:
             # define the model
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
-
-            #if not self.parameters.get('model_custom_training_loop'):
-                # adam_opt = Adam(lr=0.001)
-                #self.model.compile(optimizer='adam', loss=losses, loss_weights=_loss_weights, experimental_run_tf_function=False)
             self.model.compile(optimizer='adam')
-
-                # end auxiliary shared layers
-            #else:
-            #    self.optimiser = Adam()
-            #    self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
-            #    self.logs={}
-
-            self.model_fusion_weights = Model(inputs=self.model.input,
-                                              outputs=self.model.get_layer(name='fusion_weights').output)
             self.model.set_param(self.parameters)
-            self.model.link_fusion_model(self.model_fusion_weights)
+            # create a new model sharing the parameters of the main one, to be used only for predicting modality weights
+            self.fusion_weights_model = Model(inputs=self.model.input,
+                                              outputs=self.model.get_layer(name='fusion_weights').output)
+            # link this model
+            self.model.link_fusion_model(self.fusion_weights_model)
 
+            # we need an additional model (sharing the parameters) for manually setting the fusion weights
             #### model allowing manually setting the fusion weights
             # first: pre_fusion model give pre-fusion outputs for each modality
             self.model_pre_fusion = Model(inputs=self.model.input,outputs=[out_visual_main,
@@ -470,12 +462,12 @@ class Models:
         print('starting training the model with keras fit function')
         myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion, self.model_custom_fusion)
         if self.parameters.get('model_auxiliary'):
-            fusion_weights_train = self.model_fusion_weights.predict( \
+            fusion_weights_train = self.fusion_weights_model.predict( \
                 [self.datasets.train_dataset_images_t, \
                  self.datasets.train_dataset_joints, \
                  self.datasets.train_dataset_cmd])
 
-            fusion_weights_test = self.model_fusion_weights.predict( \
+            fusion_weights_test = self.fusion_weights_model.predict( \
                 [self.datasets.test_dataset_images_t, \
                  self.datasets.test_dataset_joints, \
                  self.datasets.test_dataset_cmd])
