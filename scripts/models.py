@@ -54,7 +54,7 @@ class CustomModel(Model):
         print('size y_pred', str(np.asarray(y_pred).shape))
         true_main_out = y_true[0]
         pred_main_out = y_pred[0]
-        loss_main_out = tf.nn.compute_average_loss(tf.keras.losses.mean_squared_error(pred_main_out, true_main_out))
+        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
         if not self.parameters.get('model_auxiliary'):
             return loss_main_out
         else:
@@ -77,10 +77,11 @@ class CustomModel(Model):
             #loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
             #loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
             #loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
-            loss_aux_visual = tf.nn.compute_average_loss(tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual))
-            loss_aux_proprio = tf.nn.compute_average_loss(tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio))
-            loss_aux_motor = tf.nn.compute_average_loss(tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor))
+            loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual)
+            loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
+            loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
 
+            print('size loss_main_out', str(loss_main_out.numpy().shape))
             print('size loss_aux_visual', str(loss_aux_visual.numpy().shape))
             print('size loss_aux_proprio', str(loss_aux_proprio.numpy().shape))
             print('size loss_aux_motor', str(loss_aux_motor.numpy().shape))
