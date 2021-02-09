@@ -87,9 +87,9 @@ class CustomModel(Model):
             print('size loss_aux_motor', str(loss_aux_motor.numpy().shape))
             print('size weights', str(weights.numpy().shape))
 
-            aux_loss_weighting_total = self.weight_loss(loss_aux_visual, weights[0], alpha) + \
-                                       self.weight_loss(loss_aux_proprio, weights[1], alpha) + \
-                                       self.weight_loss(loss_aux_motor, weights[2], alpha)
+            aux_loss_weighting_total = self.weight_loss(loss_aux_visual, weights[:,0], alpha) + \
+                                       self.weight_loss(loss_aux_proprio, weights[:,1], alpha) + \
+                                       self.weight_loss(loss_aux_motor, weights[:,2], alpha)
             #aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual, weights[:, 0], alpha)) + \
             #                           tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
             #                           tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
