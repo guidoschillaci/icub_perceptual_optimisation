@@ -50,8 +50,8 @@ class CustomModel(Model):
     @tf.function
     def loss_fn(self, y_true, y_pred, weights=[]):
 
-        print('size y_true', str(y_true.numpy().shape))
-        print('size y_pred', str(y_pred.numpy().shape))
+        print('size y_true', str(y_true.shape))
+        print('size y_pred', str(y_pred.shape))
         true_main_out = y_true[0]
         pred_main_out = y_pred[0]
         loss_main_out = tf.nn.compute_average_loss(tf.keras.losses.mean_squared_error(pred_main_out, true_main_out))
@@ -65,12 +65,12 @@ class CustomModel(Model):
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
-            print('size y_true[1]', str(y_true[1].numpy().shape))
-            print('size y_pred[1]', str(y_pred[1].numpy().shape))
-            print('size y_true[2]', str(y_true[2].numpy().shape))
-            print('size y_pred[2]', str(y_pred[2].numpy().shape))
-            print('size y_true[3]', str(y_true[3].numpy().shape))
-            print('size y_pred[3]', str(y_pred[3].numpy().shape))
+            print('size y_true[1]', str(y_true[1].shape))
+            print('size y_pred[1]', str(y_pred[1].shape))
+            print('size y_true[2]', str(y_true[2].shape))
+            print('size y_pred[2]', str(y_pred[2].shape))
+            print('size y_true[3]', str(y_true[3].shape))
+            print('size y_pred[3]', str(y_pred[3].shape))
 
             alpha = self.parameters.get('model_sensor_fusion_alpha')  # 0.6 is good
             beta = self.parameters.get('model_sensor_fusion_beta')  # 0.0
