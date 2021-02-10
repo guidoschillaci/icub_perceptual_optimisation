@@ -507,7 +507,7 @@ class Models:
         #else:
         #self.keras_training_loop()
         print('starting training the model with keras fit function')
-        myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion, self.model_custom_fusion)
+        self.myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion, self.model_custom_fusion)
         if self.parameters.get('model_auxiliary'):
             fusion_weights_train = self.fusion_weights_model.predict( \
                 [self.datasets.train_dataset_images_t, \
@@ -536,7 +536,7 @@ class Models:
                                                             self.datasets.test_dataset_optical_flow, \
                                                             self.datasets.test_dataset_optical_flow]), \
                                           shuffle=True, \
-                                          callbacks=[myCallback], \
+                                          callbacks=[self.myCallback], \
                                           verbose=1)
         else:
             self.history = self.model.fit([self.datasets.train_dataset_images_t, \
@@ -550,7 +550,7 @@ class Models:
                                                             self.datasets.test_dataset_cmd], \
                                                            self.datasets.test_dataset_optical_flow), \
                                           shuffle=True, \
-                                          callbacks=[myCallback], \
+                                          callbacks=[self.myCallback], \
                                           verbose=1)
         print('training done')
 
@@ -576,9 +576,9 @@ class Models:
         print('model saved')
 
     def save_plots(self):
-        pd.DataFrame.from_dict(self.history.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
+        pd.DataFrame.from_dict(self.myCallback.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
 
-        history_keys = list(self.history.history.keys())
+        history_keys = list(self.myCallback.history.keys())
         print ('hisotry keys ', history_keys)
 
         # summarize history for loss
@@ -588,8 +588,8 @@ class Models:
         plt.xlabel('epoch')
         for i in range(len(history_keys)):
             #if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
-            plt.plot(self.history[history_keys[i]], label=history_keys[i])
-            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.history[history_keys[i]],fmt="%s")
+            plt.plot(self.myCallback.history[history_keys[i]], label=history_keys[i])
+            np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.myCallback.history[history_keys[i]],fmt="%s")
         plt.legend(history_keys, loc='upper left')
         plt.savefig(self.parameters.get('directory_plots') + 'history.png')
 
@@ -602,9 +602,9 @@ class Models:
                 if (history_keys[i] == 'loss') or (history_keys[i] == 'val_loss'):
                     pass
                 else:
-                    plt.plot(self.history[history_keys[i]], label=history_keys[i])
+                    plt.plot(self.myCallback.history[history_keys[i]], label=history_keys[i])
                     np.savetxt(self.parameters.get('directory_plots') + history_keys[i] + '.txt',
-                               self.history[history_keys[i]], fmt="%s")
+                               self.myCallback.history[history_keys[i]], fmt="%s")
             plt.legend(history_keys, loc='upper left')
             plt.savefig(self.parameters.get('directory_plots') + 'history_sub_losses.png')
         #plt.show()

@@ -53,7 +53,7 @@ class MyCallback(Callback):
         #self.logs = {}
 
     def on_train_begin(self, logs={}):
-        self.history = {'loss': [], 'val_loss': []}
+        #self.history = {'loss': [], 'val_loss': []}
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
@@ -69,10 +69,11 @@ class MyCallback(Callback):
         #self.save_plots()
 
     def on_epoch_end(self, epoch, logs=None):
-        logs_keys = list(logs.keys())
-        print(logs_keys)
+        #logs_keys = list(logs.keys())
+        #print(logs_keys)
         self.history['loss'].append(logs['loss'])
         self.history['val_loss'].append(logs['val_loss'])
+        #logs['loss'] =
 
 
     def plot_train_sequences(self, save_gif=False):
