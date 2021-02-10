@@ -72,7 +72,7 @@ class MyCallback(Callback):
         logs_keys = list(logs.keys())
         print(logs_keys)
         self.history['loss'].append(logs['loss'])
-        #self.history['val_loss'].append(logs['val_loss'])
+        self.history['val_loss'].append(logs['val_loss'])
 
 
     def plot_train_sequences(self, save_gif=False):
