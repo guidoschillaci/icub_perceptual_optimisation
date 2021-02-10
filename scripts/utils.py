@@ -53,7 +53,7 @@ class MyCallback(Callback):
         #self.logs = {}
 
     def on_train_begin(self, logs={}):
-        #self.history = {'loss': [], 'val_loss': []}
+        self.history = {'loss': [], 'val_loss': []}
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
