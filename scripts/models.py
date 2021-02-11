@@ -325,7 +325,8 @@ class Models:
         x = Dense(3, activation='sigmoid')(x)
         #x = Dense(3, activation='relu')(x)
         #x = ActivityRegularization(l1=0.01, name='act_regularizer')(x) #
-        x = FusionActivityRegularizationLayer(param=self.parameters, name='fusion_activity_regularizer_layer')(x)  #
+        if self.parameters.get('model_use_activity_regularization_layer'):
+            x = FusionActivityRegularizationLayer(param=self.parameters, name='fusion_activity_regularizer_layer')(x)  #
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
