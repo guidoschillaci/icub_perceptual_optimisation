@@ -192,17 +192,18 @@ class FusionActivityRegularizationLayer(Layer):
     def fusion_weights_regulariser(self, input, w, fact):
         #_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
-        x = tf.expand_dims(w, axis=1)
+        #x = tf.expand_dims(w, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
         #x = tf.tile(x, [1, _shape[1]])
         # add dimension
         #x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, self.parameters.get('model_num_modalities')])
-        fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
+        #weight = tf.tile(x, [1, self.parameters.get('model_num_modalities')])
+        #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
-        return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
+        #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
+        return  tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
         #print('reg fact ', self.reg_fact)
