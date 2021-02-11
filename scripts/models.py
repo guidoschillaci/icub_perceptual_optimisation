@@ -164,7 +164,7 @@ class CustomModel(Model):
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
             self.val_loss_tracker.update_state(val_loss_value)
-            return {"val_loss": self.val_loss_tracker.result()}
+            return {"loss": self.val_loss_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
@@ -172,7 +172,7 @@ class CustomModel(Model):
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
             self.val_loss_tracker.update_state(val_loss_value)
-            return {"val_loss": self.val_loss_tracker.result()}
+            return {"loss": self.val_loss_tracker.result()}
     @property
     def metrics(self):
         return [self.loss_tracker, self.val_loss_tracker]
@@ -203,7 +203,7 @@ class FusionActivityRegularizationLayer(Layer):
         sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
-        return  tf.math.pow((w - sig_soft_loss_aux), 2)
+        return fact * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
         #print('reg fact ', self.reg_fact)
