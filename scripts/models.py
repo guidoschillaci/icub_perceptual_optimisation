@@ -207,12 +207,13 @@ class FusionActivityRegularizationLayer(Layer):
 
     def call(self, inputs):
         #print('reg fact ', self.reg_fact)
+        Z = 0
         for i in range(len(self.reg_fact)):
-            Z = tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 0], self.beta)) + \
+            Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 0], self.beta)) + \
                 tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 1], self.beta)) + \
                 tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 2], self.beta))
             #Z = inputs[0]*self.reg_fact[0] + inputs[1]*self.reg_fact[1] + inputs[2]*self.reg_fact[2]
-            self.add_loss(Z)
+        self.add_loss(Z/len(self.reg_fact))
         return inputs  # Pass-through layer.
 
 class Models:
