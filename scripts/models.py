@@ -182,7 +182,8 @@ class FusionActivityRegularizationLayer(Layer):
         super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), 3], 0.33)
+        self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
+                                 self.parameters.get('model_num_modalities')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     def set_regularization_factors(self, reg_fact):
@@ -197,7 +198,7 @@ class FusionActivityRegularizationLayer(Layer):
         # add dimension
         #x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, 3, 1])
+        weight = tf.tile(x, [1, self.parameters.get('model_num_modalities')])
         fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2)))
