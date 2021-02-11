@@ -3,7 +3,7 @@ import tensorflow as tf
 #tf.compat.v1.experimental.output_all_intermediates(True)
 tf.config.run_functions_eagerly(True)
 
-from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax
+from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax, ActivityRegularization
 from tensorflow.keras import Model
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
@@ -278,6 +278,7 @@ class Models:
         concatenated = Concatenate()([out_visual_main, out_proprioceptive_main, out_motor_main])
         x = Dense(16)(concatenated)
         x = Dense(3, activation='sigmoid')(x)
+        x = ActivityRegularization(l1=0.01, name='act_regularizer')(x)
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
