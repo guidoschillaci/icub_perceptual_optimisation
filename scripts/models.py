@@ -180,10 +180,9 @@ class CustomModel(Model):
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, **kwargs):
         super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
-                                 self.parameters.get('model_image_size'), \
-                                 self.parameters.get('model_image_size')], 0.33)
         self.parameters = param
+        # self.reg_fact = [0.33, 0.33, 0.33]
+        self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), 3], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     def set_regularization_factors(self, reg_fact):
