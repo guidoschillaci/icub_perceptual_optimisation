@@ -278,7 +278,7 @@ class Models:
         concatenated = Concatenate()([out_visual_main, out_proprioceptive_main, out_motor_main])
         x = Dense(16)(concatenated)
         x = Dense(3, activation='sigmoid')(x)
-        x = ActivityRegularization(l1=0.01, name='act_regularizer')(x)
+        x = ActivityRegularization(l1=0.1, name='act_regularizer')(x)
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
