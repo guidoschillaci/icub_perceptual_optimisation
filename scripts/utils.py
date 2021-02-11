@@ -193,9 +193,9 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_attenuated_'+str(i)+ '.png', bbox_inches=extent_6)
             count_line = count_line + 1
 
-            count_line = self.custom_weight_plots(0.6, 0.4, 0.0, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
+            count_line = self.custom_weight_plots(0.6, 0.3, 0.1, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
                                      i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.0, 0.4, 0.6, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
+            count_line = self.custom_weight_plots(0.1, 0.3, 0.6, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
                                      i, count_line, bar_label, save_gif, fig, filename)
 
             count_line = count_line + 1
