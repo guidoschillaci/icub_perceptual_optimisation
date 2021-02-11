@@ -186,6 +186,12 @@ class FusionActivityRegularizationLayer(Layer):
                                  self.parameters.get('model_num_modalities')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
+    def get_config(self):
+        return {
+            'beta': self.beta,
+            'name': self.__class__.__name__
+        }
+
     def set_regularization_factors(self, reg_fact):
         self.reg_fact = reg_fact
 

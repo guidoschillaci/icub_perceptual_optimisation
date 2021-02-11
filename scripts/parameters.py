@@ -34,7 +34,7 @@ class Parameters:
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.4,
-            'model_sensor_fusion_beta': 0.01, # was 0.01
+            'model_sensor_fusion_beta': 0.001, # was 0.01
             'model_num_modalities': 3, # visual, proprioceptive, motor
 
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
