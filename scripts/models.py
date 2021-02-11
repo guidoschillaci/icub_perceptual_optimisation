@@ -3,7 +3,7 @@ import tensorflow as tf
 #tf.compat.v1.experimental.output_all_intermediates(True)
 tf.config.run_functions_eagerly(True)
 
-from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax, ActivityRegularization
+from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax, ActivityRegularization, Layer
 from tensorflow.keras import Model
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
@@ -120,8 +120,15 @@ class CustomModel(Model):
             fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
                                      tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
+            print('shape fus_weight_regul_total', str(fus_weight_regul_total.numpy().shape))
 
-            return loss_main_out + aux_loss_weighting_total + fus_weight_regul_total
+            reg_fact = [tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)), \
+                        tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)), \
+                        tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
+            print('shape reg_fact', str(reg_fact.numpy().shape))
+            self.get_layer('fusion_activity_regularizer_layer').set_regularization_factors(reg_fact)
+
+            return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
     def train_step(self, data):
         if self.parameters.get('model_auxiliary'):
@@ -134,6 +141,8 @@ class CustomModel(Model):
                 loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
                                           weights=weights_predictions)
+                # Add any extra losses created during the forward pass.
+                loss_value += sum(self.losses)
 
             grads = tape.gradient(loss_value, self.trainable_weights)
             self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
@@ -147,6 +156,8 @@ class CustomModel(Model):
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                 # Compute the loss value for this minibatch.
                 loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+                # Add any extra losses created during the forward pass.
+                loss_value += sum(self.losses)
             # compute gradients
             grads = tape.gradient(loss_value, self.trainable_weights)
             # Run one step of gradient descent by updating
@@ -165,17 +176,35 @@ class CustomModel(Model):
             val_loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                                    predictions, \
                                                    weights=weights_predictions)
+            # Add any extra losses created during the forward pass.
+            val_loss_value += sum(self.losses)
             self.val_loss_tracker.update_state(val_loss_value)
-            return {"loss": self.val_loss_tracker.result()}
+            return {"val_loss": self.val_loss_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
             val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+            # Add any extra losses created during the forward pass.
+            val_loss_value += sum(self.losses)
             self.val_loss_tracker.update_state(val_loss_value)
-            return {"loss": self.val_loss_tracker.result()}
+            return {"val_loss": self.val_loss_tracker.result()}
     @property
     def metrics(self):
         return [self.loss_tracker, self.val_loss_tracker]
+
+class FusionActivityRegularizationLayer(Layer):
+    def __init__(self, initializer="he_normal", **kwargs):
+        super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
+        self.reg_fact = [0.33, 0.33, 0.33]
+
+    def set_regularization_factors(self, reg_fact):
+        self.reg_fact = reg_fact
+
+    def call(self, inputs):
+        print('reg fact ', self.reg_fact)
+        Z = inputs[0]*self.reg_fact[0] + inputs[1]*self.reg_fact[1] + inputs[2]*self.reg_fact[2]
+        self.add_loss(Z)
+        return inputs  # Pass-through layer.
 
 class Models:
     def __init__(self, param):
@@ -277,9 +306,10 @@ class Models:
 
         concatenated = Concatenate()([out_visual_main, out_proprioceptive_main, out_motor_main])
         x = Dense(16)(concatenated)
-        #x = Dense(3, activation='sigmoid')(x)
-        x = Dense(3, activation='relu')(x)
-        x = ActivityRegularization(l1=0.01, name='act_regularizer')(x) #
+        x = Dense(3, activation='sigmoid')(x)
+        #x = Dense(3, activation='relu')(x)
+        #x = ActivityRegularization(l1=0.01, name='act_regularizer')(x) #
+        x = FusionActivityRegularizationLayer(name='fusion_activity_regularizer_layer')(x)  #
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
         fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
