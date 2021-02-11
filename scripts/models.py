@@ -112,7 +112,7 @@ class CustomModel(Model):
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
             self.get_layer('fusion_activity_regularizer_layer').set_regularization_factors(fusion_weights)
-            print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
+            #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
     def train_step(self, data):
