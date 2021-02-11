@@ -56,7 +56,7 @@ class CustomModel(Model):
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     @tf.function
-    def loss_fn(self, y_true, y_pred, weights=[]):
+    def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
         #print('size y_true', str(np.asarray(y_true).shape))
         #print('size y_pred', str(np.asarray(y_pred).shape))
@@ -95,9 +95,9 @@ class CustomModel(Model):
             #print('size loss_aux_motor', str(loss_aux_motor.numpy().shape))
             #print('size weights', str(weights.numpy().shape))
 
-            aux_loss_weighting_total = self.weight_loss(loss_aux_visual, weights[:,0], alpha) + \
-                                       self.weight_loss(loss_aux_proprio, weights[:,1], alpha) + \
-                                       self.weight_loss(loss_aux_motor, weights[:,2], alpha)
+            aux_loss_weighting_total = self.weight_loss(loss_aux_visual, fusion_weights[:,0], alpha) + \
+                                       self.weight_loss(loss_aux_proprio, fusion_weights[:,1], alpha) + \
+                                       self.weight_loss(loss_aux_motor, fusion_weights[:,2], alpha)
             #aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual, weights[:, 0], alpha)) + \
             #                           tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
             #                           tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
@@ -111,7 +111,7 @@ class CustomModel(Model):
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)), \
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
-            self.get_layer('fusion_activity_regularizer_layer').set_regularization_factors(weights)
+            self.get_layer('fusion_activity_regularizer_layer').set_regularization_factors(fusion_weights)
             print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
@@ -206,11 +206,12 @@ class FusionActivityRegularizationLayer(Layer):
 
     def call(self, inputs):
         #print('reg fact ', self.reg_fact)
-        Z = tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[:, 0], self.beta)) + \
-            tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[:, 1], self.beta)) + \
-            tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[:, 2], self.beta))
-        #Z = inputs[0]*self.reg_fact[0] + inputs[1]*self.reg_fact[1] + inputs[2]*self.reg_fact[2]
-        self.add_loss(Z)
+        for i in range(len(self.reg_fact)):
+            Z = tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 0], self.beta)) + \
+                tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 1], self.beta)) + \
+                tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 2], self.beta))
+            #Z = inputs[0]*self.reg_fact[0] + inputs[1]*self.reg_fact[1] + inputs[2]*self.reg_fact[2]
+            self.add_loss(Z)
         return inputs  # Pass-through layer.
 
 class Models:
