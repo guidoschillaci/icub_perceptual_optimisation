@@ -125,7 +125,7 @@ class CustomModel(Model):
                 # Compute the loss value for this minibatch.
                 loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
-                                          weights=weights_predictions)
+                                          fusion_weights=weights_predictions)
                 # Add any extra losses created during the forward pass.
                 loss_value += sum(self.losses)
 
@@ -160,7 +160,7 @@ class CustomModel(Model):
             # Compute the loss value for this minibatch.
             val_loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                                    predictions, \
-                                                   weights=weights_predictions)
+                                                   fusion_weights=weights_predictions)
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
             self.val_loss_tracker.update_state(val_loss_value)
