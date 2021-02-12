@@ -109,7 +109,7 @@ class MyCallback(Callback):
         bar_label = ['v', 'p', 'm']
         num_subplots = 25
 
-        fig = plt.figure(figsize=(8, 14))
+        fig = plt.figure(figsize=(8, 16))
         for i in range(self.parameters.get('plots_predict_size')):
             count_line = 0
             # display original
