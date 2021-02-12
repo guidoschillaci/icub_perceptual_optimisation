@@ -150,8 +150,7 @@ class MyCallback(Callback):
             count_line = count_line + 1
 
             ax5 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), \
-                              i + count_line * (self.parameters.get('plots_predict_size')) + 1, \
-                              figsize=(self.parameters.get('image_size'),self.parameters.get('image_size')))
+                              i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             ax5.set_ylim(0, 1)
             plt.bar(bar_label, fusion_weights[i], width=0.3)
             ax5.set_ylabel('fus. w.', rotation=0)
@@ -228,8 +227,7 @@ class MyCallback(Callback):
                                                                  pred_pre_fusion[2], w_m])
 
         ax7 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), \
-                          iter + count_line * (self.parameters.get('plots_predict_size')) + 1, \
-                          figsize=(self.parameters.get('image_size'), self.parameters.get('image_size')))
+                          iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
         ax7.set_ylim(0, 1)
         plt.bar(bar_label, [w_v[0], w_j[0], w_m[0]], width=0.3)
         ax7.set_ylabel('fus. w', rotation=0)
