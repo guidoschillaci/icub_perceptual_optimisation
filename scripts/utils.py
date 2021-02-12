@@ -4,7 +4,6 @@ from tensorflow.keras import Model
 from tensorflow.keras.callbacks import Callback
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
 import numpy as np
 from copy import deepcopy
 import pandas as pd
