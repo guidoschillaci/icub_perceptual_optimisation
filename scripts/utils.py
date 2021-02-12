@@ -107,7 +107,7 @@ class MyCallback(Callback):
                                                             joints, \
                                                             commands])
         bar_label = ['v', 'p', 'm']
-        num_subplots = 13
+        num_subplots = 25
 
         fig = plt.figure(figsize=(8, 14))
         for i in range(self.parameters.get('plots_predict_size')):
