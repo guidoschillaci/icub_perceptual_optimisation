@@ -149,7 +149,9 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_trueOF_'+str(i)+ '.png', bbox_inches=extent_3)
             count_line = count_line + 1
 
-            ax5 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
+            ax5 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), \
+                              i + count_line * (self.parameters.get('plots_predict_size')) + 1, \
+                              gridspec_kw={'width_ratios': [1, 1]})
             ax5.set_ylim(0, 1)
             plt.bar(bar_label, fusion_weights[i], width=0.3)
             ax5.set_ylabel('fus. w.', rotation=0)
@@ -226,10 +228,10 @@ class MyCallback(Callback):
                                                                  pred_pre_fusion[2], w_m])
 
         ax7 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
-                          iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
+                          iter + count_line * (self.parameters.get('plots_predict_size')) + 1, gridspec_kw={'width_ratios': [1, 1]})
         ax7.set_ylim(0, 1)
-        plt.bar(bar_label, [w_v[0], w_j[0], w_m[0]])
-        ax7.set_ylabel('custom w', rotation=0)
+        plt.bar(bar_label, [w_v[0], w_j[0], w_m[0]], width=0.3)
+        ax7.set_ylabel('fus. w', rotation=0)
         if iter != 0:
             ax7.get_yaxis().set_visible(False)
         if save_gif:
