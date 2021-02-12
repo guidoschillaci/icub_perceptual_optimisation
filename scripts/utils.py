@@ -109,7 +109,7 @@ class MyCallback(Callback):
         bar_label = ['v', 'p', 'm']
         num_subplots = 25
 
-        fig = plt.figure(figsize=(8, 16))
+        fig = plt.figure(figsize=(6, 20))
         for i in range(self.parameters.get('plots_predict_size')):
             count_line = 0
             # display original
@@ -151,7 +151,7 @@ class MyCallback(Callback):
 
             ax5 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             ax5.set_ylim(0, 1)
-            plt.bar(bar_label, fusion_weights[i])
+            plt.bar(bar_label, fusion_weights[i], width=0.3)
             ax5.set_ylabel('fus. w.', rotation=0)
             if i != 0:
                 ax5.get_yaxis().set_visible(False)
