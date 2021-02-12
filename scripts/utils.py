@@ -202,7 +202,7 @@ class MyCallback(Callback):
             count_line = self.custom_weight_plots(0.3, 0.4, 0.3, images_t, deepcopy(images_tp1), joints, commands,
                                                   num_subplots,
                                                   i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.2, 0.3, 0.5, images_t, deepcopy(images_tp1), joints, commands,
+            count_line = self.custom_weight_plots(0.45, 0.1, 0.45, images_t, deepcopy(images_tp1), joints, commands,
                                                   num_subplots,
                                                   i, count_line, bar_label, save_gif, fig, filename)
             count_line = self.custom_weight_plots(0.2, 0.3, 0.5, images_t, deepcopy(images_tp1), joints, commands,
