@@ -183,7 +183,6 @@ class CustomModel(Model):
     def metrics(self):
         return [self.loss_tracker, self.val_loss_tracker]
 
-@tf.function
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, **kwargs):
         super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
@@ -218,20 +217,20 @@ class FusionActivityRegularizationLayer(Layer):
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
         #weight = tf.tile(x, [1, self.parameters.get('model_num_modalities')])
         #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
-        #sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2))))
-        sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
+        sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2))))
+        #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
         return fact * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
-        print('shape inputs', str(inputs.numpy().shape))
+        #print('shape inputs', str(inputs.numpy().shape))
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
             Z = 0
             for i in range(len(self.reg_fact)):
                 Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss, self.reg_fact[i], self.beta))
             self.add_loss(Z/len(self.reg_fact))
-        return inputs  # Pass-through layer.
+        return Z/len(self.reg_fact)#inputs  # Pass-through layer.
 
 class Models:
     def __init__(self, param):
