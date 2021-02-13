@@ -112,7 +112,9 @@ class CustomModel(Model):
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
             if self.parameters.get('model_use_activity_regularization_layer'):
-                self.get_layer('fusion_activity_regularizer_layer').set_regularization_factors(fusion_weights)
+                self.get_layer('visual_activity_regularizer_layer').set_regularization_factors(fusion_weights[:,0])
+                self.get_layer('proprio_activity_regularizer_layer').set_regularization_factors(fusion_weights[:,1])
+                self.get_layer('motor_activity_regularizer_layer').set_regularization_factors(fusion_weights[:,2])
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
@@ -183,8 +185,9 @@ class FusionActivityRegularizationLayer(Layer):
         super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
-                                 self.parameters.get('model_num_modalities')], 0.33)
+        #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
+        #                         self.parameters.get('model_num_modalities')], 0.33)
+        self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     def get_config(self):
@@ -216,10 +219,7 @@ class FusionActivityRegularizationLayer(Layer):
         #print('reg fact ', self.reg_fact)
         Z = 0
         for i in range(len(self.reg_fact)):
-            Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 0], self.beta)) + \
-                tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 1], self.beta)) + \
-                tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i, 2], self.beta))
-            #Z = inputs[0]*self.reg_fact[0] + inputs[1]*self.reg_fact[1] + inputs[2]*self.reg_fact[2]
+            Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i], self.beta))
         self.add_loss(Z/len(self.reg_fact))
         return inputs  # Pass-through layer.
 
@@ -326,11 +326,21 @@ class Models:
         x = Dense(3, activation='sigmoid')(x)
         #x = Dense(3, activation='relu')(x)
         #x = ActivityRegularization(l1=0.01, name='act_regularizer')(x) #
-        if self.parameters.get('model_use_activity_regularization_layer'):
-            x = FusionActivityRegularizationLayer(param=self.parameters, name='fusion_activity_regularizer_layer')(x)  #
+        #if self.parameters.get('model_use_activity_regularization_layer'):
+        #    x = FusionActivityRegularizationLayer(param=self.parameters, name='fusion_activity_regularizer_layer')(x)  #
         fusion_weight_layer = Softmax(axis=-1, name='fusion_weights')(x) # makes weights sum up to 1
         # get fusion weights
-        fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
+
+        if self.parameters.get('model_use_activity_regularization_layer'):
+            pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor = Split()(fusion_weight_layer)
+            fusion_weight_visual = FusionActivityRegularizationLayer(param=self.parameters, \
+                                                  name='visual_activity_regularizer_layer')(pre_fusion_weight_visual)
+            fusion_weight_proprio = FusionActivityRegularizationLayer(param=self.parameters, \
+                                                  name='proprio_activity_regularizer_layer')(pre_fusion_weight_proprio)
+            fusion_weight_motor = FusionActivityRegularizationLayer(param=self.parameters, \
+                                                  name='motor_activity_regularizer_layer')(pre_fusion_weight_motor)
+        else:
+            fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
         weighted_visual = Multiply(name='weighted_visual')
         weighted_proprio = Multiply(name='weighted_proprio')

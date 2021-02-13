@@ -77,7 +77,7 @@ class MyCallback(Callback):
 
 
     def plot_train_sequences(self, save_gif=False):
-        start = [700, 1300, 3600, 3780, 4570, 5100, 7500, 13900]
+        start = [700, 1300, 3000, 3780, 4570, 5100, 7497, 11900]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
         print('saving sequence plots...')
         for i in tqdm(range(len(start))):
