@@ -223,6 +223,7 @@ class FusionActivityRegularizationLayer(Layer):
         return fact * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
+        print('shape inputs', str(inputs.numpy().shape))
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
             Z = 0
