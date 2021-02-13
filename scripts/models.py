@@ -113,8 +113,11 @@ class CustomModel(Model):
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
             if self.parameters.get('model_use_activity_regularization_layer'):
                 self.get_layer('visual_activity_regularizer_layer').set_regularization_factors(fusion_weights[:,0])
+                self.get_layer('visual_activity_regularizer_layer').set_loss(loss_aux_visual)
                 self.get_layer('proprio_activity_regularizer_layer').set_regularization_factors(fusion_weights[:,1])
+                self.get_layer('proprio_activity_regularizer_layer').set_loss(loss_aux_proprio)
                 self.get_layer('motor_activity_regularizer_layer').set_regularization_factors(fusion_weights[:,2])
+                self.get_layer('motor_activity_regularizer_layer').set_loss(loss_aux_motor)
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
@@ -196,6 +199,9 @@ class FusionActivityRegularizationLayer(Layer):
             'name': self.__class__.__name__
         }
 
+    def set_loss(self, loss):
+        self.loss = loss
+
     def set_regularization_factors(self, reg_fact):
         self.reg_fact = reg_fact
 
@@ -219,7 +225,7 @@ class FusionActivityRegularizationLayer(Layer):
         #print('reg fact ', self.reg_fact)
         Z = 0
         for i in range(len(self.reg_fact)):
-            Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(inputs, self.reg_fact[i], self.beta))
+            Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss, self.reg_fact[i], self.beta))
         self.add_loss(Z/len(self.reg_fact))
         return inputs  # Pass-through layer.
 
