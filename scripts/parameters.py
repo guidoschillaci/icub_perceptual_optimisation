@@ -30,13 +30,13 @@ class Parameters:
             #'model_custom_training_loop': False, # if False, use standard keras fit functions
             'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 2,
+            'model_epochs': 20,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.5,
             'model_sensor_fusion_beta': 0.01, # was 0.01
             'model_num_modalities': 3, # visual, proprioceptive, motor
-            'model_use_activity_regularization_layer': True,
+            'model_use_activity_regularization_layer': False,
 
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
             'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
