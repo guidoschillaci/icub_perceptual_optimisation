@@ -224,8 +224,10 @@ class FusionActivityRegularizationLayer(Layer):
             Z = 0
             for i in range(len(self.reg_fact)):
                 Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
+                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
             self.add_loss(Z/len(self.reg_fact))
-            return Z/len(self.reg_fact)#inputs  # Pass-through layer.
+            return inputs - Z/len(self.reg_fact)#inputs  # Pass-through layer.
         return input
 
 class Models:
