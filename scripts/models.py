@@ -186,6 +186,7 @@ class CustomModel(Model):
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, **kwargs):
         super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
+        self.loss = None
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
@@ -222,11 +223,12 @@ class FusionActivityRegularizationLayer(Layer):
         return fact * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
-        #print('reg fact ', self.reg_fact)
-        Z = 0
-        for i in range(len(self.reg_fact)):
-            Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss, self.reg_fact[i], self.beta))
-        self.add_loss(Z/len(self.reg_fact))
+        if self.loss is not None:
+            #print('reg fact ', self.reg_fact)
+            Z = 0
+            for i in range(len(self.reg_fact)):
+                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss, self.reg_fact[i], self.beta))
+            self.add_loss(Z/len(self.reg_fact))
         return inputs  # Pass-through layer.
 
 class Models:
