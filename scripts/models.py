@@ -222,12 +222,18 @@ class FusionActivityRegularizationLayer(Layer):
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
             Z = 0
+            outputs = inputs
             for i in range(len(self.reg_fact)):
                 Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                outputs[0] = inputs[0] - tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
                 Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
+                outputs[1] = inputs[1] - tf.reduce_mean(
+                    self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
                 Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
+                outputs[2] = inputs[2] - tf.reduce_mean(
+                    self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
             self.add_loss(Z/len(self.reg_fact))
-            return inputs - Z/len(self.reg_fact)#inputs  # Pass-through layer.
+            return outputs
         return input
 
 class Models:
@@ -341,7 +347,7 @@ class Models:
         if self.parameters.get('model_use_activity_regularization_layer'):
             pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor = Split()(fusion_weight_layer)
             fusion_weight_visual = FusionActivityRegularizationLayer(param=self.parameters, \
-                                                  name='visual_activity_regularizer_layer') \
+                                                  name='fusion_activity_regularizer_layer') \
                 ([pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor])
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
