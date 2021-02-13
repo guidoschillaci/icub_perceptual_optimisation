@@ -222,6 +222,7 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
         return fact * tf.math.pow((w - sig_soft_loss_aux), 2)
 
+    @tf.function
     def call(self, inputs):
         print('shape inputs', str(inputs.numpy().shape))
         if self.loss is not None:
