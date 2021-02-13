@@ -195,10 +195,9 @@ class FusionActivityRegularizationLayer(Layer):
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     def get_config(self):
-        return {
-            'beta': self.beta,
-            'name': self.__class__.__name__
-        }
+        base_config = super(FusionActivityRegularizationLayer, self).get_config()
+        config= {'beta': self.beta}
+        return dict(list(base_config.items()) + list(config.items()))
 
     def set_loss(self, loss):
         self.loss = loss
