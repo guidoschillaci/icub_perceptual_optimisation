@@ -183,6 +183,7 @@ class CustomModel(Model):
     def metrics(self):
         return [self.loss_tracker, self.val_loss_tracker]
 
+@tf.function
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, **kwargs):
         super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
