@@ -181,13 +181,13 @@ class CustomModel(Model):
 
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, name='layer_name', **kwargs):
-        super(FusionActivityRegularizationLayer, self).__init__()
+        super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
         self.loss = None
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
+        self.reg_fact = K.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     #def get_config(self):
@@ -212,10 +212,10 @@ class FusionActivityRegularizationLayer(Layer):
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
         #weight = tf.tile(x, [1, self.parameters.get('model_num_modalities')])
         #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
-        sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
+        sig_soft_loss_aux = K.nn.softmax(K.math.sigmoid(K.math.exp(-K.math.pow(loss, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
-        return fact * tf.math.pow((inputs - sig_soft_loss_aux), 2)
+        return fact * K.math.pow((inputs - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
         #print('shape inputs', str(inputs.numpy().shape))
@@ -224,13 +224,13 @@ class FusionActivityRegularizationLayer(Layer):
             Z = 0
             outputs = inputs
             for i in range(len(self.reg_fact)):
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
-                outputs[0] = inputs[0] - tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
-                outputs[1] = inputs[1] - tf.reduce_mean(
+                Z = Z + K.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                outputs[0] = inputs[0] - K.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                Z = Z + K.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
+                outputs[1] = inputs[1] - K.reduce_mean(
                     self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
-                outputs[2] = inputs[2] - tf.reduce_mean(
+                Z = Z + K.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
+                outputs[2] = inputs[2] - K.reduce_mean(
                     self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
             self.add_loss(Z/len(self.reg_fact))
             return outputs
