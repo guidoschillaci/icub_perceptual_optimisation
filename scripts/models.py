@@ -187,7 +187,8 @@ class FusionActivityRegularizationLayer(Layer):
         # self.reg_fact = [0.33, 0.33, 0.33]
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
+        #self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
+        self.reg_fact = K.ones(shape=[self.parameters.get('model_batch_size')]) * 0.33
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     #def get_config(self):
