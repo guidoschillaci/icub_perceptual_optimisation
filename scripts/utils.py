@@ -91,8 +91,8 @@ class MyCallback(Callback):
                                                    self.datasets.dataset_optical_flow[start[i]:end[i]],\
                                                    save_gif=save_gif)
 
-    def get_fusion_weights(self):
-        return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
+    #def get_fusion_weights(self):
+    #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
 
     def threshold_optical_flow(self, optflow):
         return np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 255, 0)
