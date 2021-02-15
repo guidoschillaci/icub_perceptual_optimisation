@@ -33,6 +33,7 @@ class CustomModel(Model):
         self.parameters=param
         self.loss_tracker = tfk.metrics.Mean(name="loss")
         self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
+        self.iou_tracker = tfk.metrics.Mean(name="IoU") # intersection over union
 
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
@@ -178,6 +179,9 @@ class CustomModel(Model):
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
             self.val_loss_tracker.update_state(val_loss_value)
+
+            iou = self.intersection_over_union(out_of, predictions[0])
+
             return {"loss": self.val_loss_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
