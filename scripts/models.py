@@ -239,7 +239,7 @@ class FusionActivityRegularizationLayer(Layer):
                     self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
             self.add_loss(Z/float(len(self.parameters.get('model_num_modalities'))))
             return outputs
-        return input
+        return inputs
 
 class Models:
     def __init__(self, param):
