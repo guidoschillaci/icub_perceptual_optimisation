@@ -229,14 +229,15 @@ class FusionActivityRegularizationLayer(Layer):
             Z = 0
             outputs = inputs
             for i in range(self.parameters.get('model_num_modalities')):
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[:,0], inputs[0], self.beta))
-                outputs[0] = inputs[0] - tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[:,1], inputs[1], self.beta))
-                outputs[1] = inputs[1] - tf.reduce_mean(
-                    self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[:,2], inputs[2], self.beta))
-                outputs[2] = inputs[2] - tf.reduce_mean(
-                    self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
+                p0 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                p1 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
+                p2 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
+                Z = Z + p0
+                outputs[0] = inputs[0] - p0
+                Z = Z + p1
+                outputs[1] = p1
+                Z = Z + p2
+                outputs[2] = p2
             self.add_loss(Z/float(len(self.parameters.get('model_num_modalities'))))
             return outputs
         return inputs
