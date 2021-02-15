@@ -187,7 +187,7 @@ class FusionActivityRegularizationLayer(Layer):
         # self.reg_fact = [0.33, 0.33, 0.33]
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
-        self.reg_fact = K.fill([self.parameters.get('model_batch_size')], 0.33)
+        self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     #def get_config(self):
@@ -198,8 +198,8 @@ class FusionActivityRegularizationLayer(Layer):
     def set_loss(self, loss):
         self.loss = loss
 
-    #def set_regularization_factors(self, reg_fact):
-    #    self.reg_fact = reg_fact
+    def set_regularization_factors(self, reg_fact):
+        self.reg_fact = reg_fact
 
     def fusion_weights_regulariser(self, loss, inputs, fact):
         #_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
