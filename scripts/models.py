@@ -241,7 +241,7 @@ class FusionActivityRegularizationLayer(Layer):
                 out1 = inp1 - p1
                 Z = Z + p2
                 out2 = inp2 - p2
-            self.add_loss(Z/float(len(self.parameters.get('model_num_modalities'))))
+            self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             return out0, out1, out2
         return inputs
 
