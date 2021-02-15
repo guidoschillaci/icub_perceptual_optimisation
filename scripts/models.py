@@ -181,7 +181,7 @@ class CustomModel(Model):
 
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, name='layer_name', **kwargs):
-        super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
+        #super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
         self.loss = None
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
