@@ -40,7 +40,7 @@ class Split(tf.keras.layers.Layer):
         pass
 
     def call(self, input, **kwargs):
-        return tf.split(input, 3, axis=1)
+        return K.split(input, 3, axis=1)
 
 class MyCallback(Callback):
     def __init__(self, param, datasets, model, model_pre_fusion, model_custom_fusion):
