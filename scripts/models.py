@@ -55,7 +55,7 @@ class CustomModel(Model):
         #sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
 
-    @tf.function
+    #@tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
         #print('size y_true', str(np.asarray(y_true).shape))
