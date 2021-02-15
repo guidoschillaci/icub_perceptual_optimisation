@@ -40,14 +40,16 @@ class CustomModel(Model):
     def weight_loss(self, loss_aux_mod, w, fact):
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
-        x = tf.expand_dims(w, axis=1)
+        #x = tf.expand_dims(w, axis=1)
+        x = K.expand_dims(w, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
-        x = tf.tile(x, [1,_shape[1]])
+        #x = tf.tile(x, [1,_shape[1]])
+        x = K.tile(x, [1, _shape[1]])
         # add dimension
-        x = tf.expand_dims(x, axis=1)
+        x = K.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, _shape[0], 1])
-        alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
+        weight = K.tile(x, [1, _shape[0], 1])
+        alpha_weight = K.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
         #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(w))
@@ -62,7 +64,8 @@ class CustomModel(Model):
         #print('size y_pred', str(np.asarray(y_pred).shape))
         true_main_out = y_true[0]
         pred_main_out = y_pred[0]
-        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
+        #loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
+        loss_main_out = K.mean(K.square(pred_main_out, true_main_out), axis=-1)
         if not self.parameters.get('model_auxiliary'):
             return loss_main_out
         else:
@@ -85,10 +88,12 @@ class CustomModel(Model):
             #loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
             #loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
             #loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
-            loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual)
-            loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
-            loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
-
+            ##loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual)
+            ##loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
+            ##loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
+            loss_aux_visual = K.mean(K.square(true_aux_visual, pred_aux_visual), axis=-1)
+            loss_aux_proprio =  K.mean(K.square(true_aux_proprio, pred_aux_proprio), axis=-1)
+            loss_aux_motor =  K.mean(K.square(true_aux_motor, pred_aux_motor), axis=-1)
             #print('size loss_main_out', str(loss_main_out.numpy().shape))
             #print('size loss_aux_visual', str(loss_aux_visual.numpy().shape))
             #print('size loss_aux_proprio', str(loss_aux_proprio.numpy().shape))
@@ -187,7 +192,7 @@ class FusionActivityRegularizationLayer(Layer):
         # self.reg_fact = [0.33, 0.33, 0.33]
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
+        #self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
 
     def get_config(self):
@@ -198,8 +203,8 @@ class FusionActivityRegularizationLayer(Layer):
     def set_loss(self, loss):
         self.loss = loss
 
-    def set_regularization_factors(self, reg_fact):
-        self.reg_fact = reg_fact
+    #def set_regularization_factors(self, reg_fact):
+    #    self.reg_fact = reg_fact
 
     def fusion_weights_regulariser(self, loss, inputs, fact):
         #_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
@@ -212,10 +217,10 @@ class FusionActivityRegularizationLayer(Layer):
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
         #weight = tf.tile(x, [1, self.parameters.get('model_num_modalities')])
         #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
-        sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
+        sig_soft_loss_aux = K.nn.softmax(K.math.sigmoid(K.math.exp(-K.math.pow(loss, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
-        return fact * tf.math.pow((inputs - sig_soft_loss_aux), 2)
+        return fact * K.math.pow((inputs - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
         #print('shape inputs', str(inputs.numpy().shape))
@@ -223,16 +228,16 @@ class FusionActivityRegularizationLayer(Layer):
             #print('reg fact ', self.reg_fact)
             Z = 0
             outputs = inputs
-            for i in range(len(self.reg_fact)):
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
-                outputs[0] = inputs[0] - tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
-                outputs[1] = inputs[1] - tf.reduce_mean(
+            for i in range(self.parameters.get('model_num_modalities')):
+                Z = Z + K.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                outputs[0] = inputs[0] - K.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
+                Z = Z + K.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
+                outputs[1] = inputs[1] - K.reduce_mean(
                     self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
-                Z = Z + tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
-                outputs[2] = inputs[2] - tf.reduce_mean(
+                Z = Z + K.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
+                outputs[2] = inputs[2] - K.reduce_mean(
                     self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
-            self.add_loss(Z/len(self.reg_fact))
+            self.add_loss(Z/float(len(self.parameters.get('model_num_modalities'))))
             return outputs
         return input
 
