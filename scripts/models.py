@@ -223,23 +223,26 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
+        inp0,inp1,inp2 = inputs
         #print('shape inputs', str(inputs.numpy().shape))
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
             Z = 0
-            outputs = inputs
+            out0 = inp0
+            out1 = inp1
+            out2 = inp2
             for i in range(self.parameters.get('model_num_modalities')):
-                p0 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inputs[0], self.beta))
-                p1 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inputs[1], self.beta))
-                p2 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inputs[2], self.beta))
+                p0 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inp0, self.beta))
+                p1 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inp1, self.beta))
+                p2 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inp2, self.beta))
                 Z = Z + p0
-                outputs[0] = inputs[0] - p0
+                out0 = inp0 - p0
                 Z = Z + p1
-                outputs[1] = p1
+                out1 = inp1 - p1
                 Z = Z + p2
-                outputs[2] = p2
+                out2 = inp2 - p2
             self.add_loss(Z/float(len(self.parameters.get('model_num_modalities'))))
-            return outputs
+            return out0, out1, out2
         return inputs
 
 class Models:
@@ -355,7 +358,7 @@ class Models:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = \
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
-                ( (pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor))
+                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor])
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
