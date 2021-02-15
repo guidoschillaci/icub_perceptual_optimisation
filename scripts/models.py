@@ -180,8 +180,8 @@ class CustomModel(Model):
         return [self.loss_tracker, self.val_loss_tracker]
 
 class FusionActivityRegularizationLayer(Layer):
-    def __init__(self, param, **kwargs):
-        super(FusionActivityRegularizationLayer, self).__init__(**kwargs)
+    def __init__(self, param, name='layer_name', **kwargs):
+        super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
         self.loss = None
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
@@ -349,7 +349,7 @@ class Models:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = \
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
-                ( pre_fusion_weight_motor)
+                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor])
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
