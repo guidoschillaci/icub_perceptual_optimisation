@@ -41,15 +41,15 @@ class CustomModel(Model):
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
         #x = tf.expand_dims(w, axis=1)
-        x = K.expand_dims(w, axis=1)
-        # repeat elements -> shape: [batch_size, image_shape_0]
+        x = tf.expand_dims(w, axis=1)
+        # repat elements -> shape: [batch_size, image_shape_0]
         #x = tf.tile(x, [1,_shape[1]])
-        x = K.tile(x, [1, _shape[1]])
+        x = tf.tile(x, [1, _shape[1]])
         # add dimension
-        x = K.expand_dims(x, axis=1)
+        x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = K.tile(x, [1, _shape[0], 1])
-        alpha_weight = K.math.scalar_mul(fact, tf.identity(weight))
+        weight = tf.tile(x, [1, _shape[0], 1])
+        alpha_weight = tf.math.scalar_mul(fact, tf.identity(weight))
         return loss_aux_mod * alpha_weight
 
         #fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(w))
