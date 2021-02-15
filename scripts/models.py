@@ -57,6 +57,13 @@ class CustomModel(Model):
         #sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
 
+    def intersection_over_union(self, y_true, y_pred):
+        intersection = tf.math.multiply(y_true, y_pred)
+        union = y_true + y_pred - intersection
+        count_intersection = tf.math.count_nonzero(intersection)
+        count_union = tf.math.count_nonzero(union)
+        return count_intersection / count_union
+
     #@tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
@@ -231,16 +238,16 @@ class FusionActivityRegularizationLayer(Layer):
             out0 = inp0
             out1 = inp1
             out2 = inp2
-            for i in range(self.parameters.get('model_num_modalities')):
-                p0 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inp0, self.beta))
-                p1 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inp1, self.beta))
-                p2 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inp2, self.beta))
-                Z = Z + p0
-                out0 = inp0 - p0
-                Z = Z + p1
-                out1 = inp1 - p1
-                Z = Z + p2
-                out2 = inp2 - p2
+            #for i in range(self.parameters.get('model_num_modalities')):
+            p0 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inp0, self.beta))
+            p1 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inp1, self.beta))
+            p2 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inp2, self.beta))
+            Z = Z + p0
+            out0 = inp0 - p0
+            Z = Z + p1
+            out1 = inp1 - p1
+            Z = Z + p2
+            out2 = inp2 - p2
             self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             return out0, out1, out2
         return inputs
