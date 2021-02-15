@@ -181,8 +181,9 @@ class CustomModel(Model):
             self.val_loss_tracker.update_state(val_loss_value)
 
             iou = self.intersection_over_union(out_of, predictions[0])
+            self.iou_tracker.update_state(iou)
 
-            return {"loss": self.val_loss_tracker.result()}
+            return {"loss": self.val_loss_tracker.result(), 'IoU': self.iou_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
@@ -193,7 +194,7 @@ class CustomModel(Model):
             return {"loss": self.val_loss_tracker.result()}
     @property
     def metrics(self):
-        return [self.loss_tracker, self.val_loss_tracker]
+        return [self.loss_tracker, self.val_loss_tracker, self.iou_tracker]
 
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, name='layer_name', **kwargs):
