@@ -348,7 +348,7 @@ class Models:
             pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor = Split()(fusion_weight_layer)
             fusion_weight_visual = FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
-                ([pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor])
+                ((pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor))
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
