@@ -36,12 +36,12 @@ class Split(tf.keras.layers.Layer):
     def __init__(self):
         super(Split, self).__init__()
 
-    def build(self, input_shape):
-        pass
+#    def build(self, input_shape):
+#        pass
 
     def call(self, input, **kwargs):
-        #return tf.split(input, 3, axis=1)
-        return input[0],input[1],input[2]
+        return tf.split(input, 3, axis=1)
+        #return input[0],input[1],input[2]
 
 class MyCallback(Callback):
     def __init__(self, param, datasets, model, model_pre_fusion, model_custom_fusion):
