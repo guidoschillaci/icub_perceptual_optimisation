@@ -67,7 +67,7 @@ class CustomModel(Model):
         count_union = tf.math.count_nonzero(union)
         return count_intersection / count_union
 
-    #@tf.function
+    @tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
         #print('size y_true', str(np.asarray(y_true).shape))
