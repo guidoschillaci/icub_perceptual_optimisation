@@ -248,7 +248,7 @@ class FusionActivityRegularizationLayer(Layer):
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
             for i in range(self.parameters.get('model_num_modalities')):
-                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.inputs[i], self.beta))
+                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.inputs[:,i], self.beta))
                 Z = Z + tmp
                 self.outputs[i] = self.inputs[i] - tmp
             self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
