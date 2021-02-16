@@ -225,19 +225,20 @@ class FusionActivityRegularizationLayer(Layer):
         self.reg_fact = reg_fact
 
     def fusion_weights_regulariser(self, loss, inputs, fact):
-        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
-        x = tf.expand_dims(inputs, axis=1)
+        ##x = tf.expand_dims(inputs, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
-        x = tf.tile(x, [1, _shape[1]])
+        ##x = tf.tile(x, [1, _shape[1]])
         # add dimension
-        x = tf.expand_dims(x, axis=1)
+        ##x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, _shape[0], 1])
-        fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
+        ##weight = tf.tile(x, [1, _shape[0], 1])
+        ##fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
-        return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
+        return fact_matrix * tf.math.pow((inputs - sig_soft_loss_aux), 2)
+        #return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
