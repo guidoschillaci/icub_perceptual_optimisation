@@ -209,9 +209,9 @@ class FusionActivityRegularizationLayer(Layer):
 
         self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
-        self.loss = None
-        self.inputs = None
-        self.outputs = None
+        #self.loss = None
+        #self.inputs = None
+        #self.outputs = None
 
     def get_config(self):
         base_config = super(FusionActivityRegularizationLayer, self).get_config()
