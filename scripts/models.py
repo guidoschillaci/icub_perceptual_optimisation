@@ -127,7 +127,7 @@ class CustomModel(Model):
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
             if self.parameters.get('model_use_activity_regularization_layer'):
-                self.get_layer('fusion_activity_regularizer_layer').set_regularization_factors(fusion_weights)
+                #self.get_layer('fusion_activity_regularizer_layer').set_fusion_weights(fusion_weights)
                 self.get_layer('fusion_activity_regularizer_layer').set_loss([loss_aux_visual,loss_aux_proprio, loss_aux_motor])
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
@@ -207,7 +207,7 @@ class FusionActivityRegularizationLayer(Layer):
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
 
-        self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
+        self.fusion_weights = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
         self.loss = None
         #self.inputs = None
@@ -221,10 +221,10 @@ class FusionActivityRegularizationLayer(Layer):
     def set_loss(self, loss):
         self.loss = loss
 
-    def set_regularization_factors(self, reg_fact):
-        self.reg_fact = reg_fact
+    #def set_fusion_weights(self, fusion_w):
+    #    self.fusion_weights = fusion_w
 
-    def fusion_weights_regulariser(self, loss, inputs, fact):
+    def fusion_weights_regulariser(self, loss, fusion_w, fact):
         ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         # add dimension
         ##x = tf.expand_dims(inputs, axis=1)
@@ -237,24 +237,24 @@ class FusionActivityRegularizationLayer(Layer):
         ##fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
-        return fact * tf.math.pow((inputs - sig_soft_loss_aux), 2)
+        return fact * tf.math.pow((fusion_w - sig_soft_loss_aux), 2)
         #return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
-    def call(self, inputs):
-        self.inputs = inputs
-        self.outputs = inputs
+    def call(self, fusion_w):
+        self.fusion_weights = fusion_w
+        self.outputs = fusion_w
         #print('shape inputs', str(inputs.numpy().shape))
         Z = 0
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
             for i in range(self.parameters.get('model_num_modalities')):
-                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.inputs[i], self.beta))
+                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.fusion_weights[i], self.beta))
                 Z = Z + tmp
-                self.outputs[i] = self.inputs[i] - tmp
+                self.outputs[i] = self.fusion_weights[i] - tmp
             self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             return self.outputs[0], self.outputs[1], self.outputs[2]
-        return inputs
+        return fusion_w
 
 class Models:
     def __init__(self, param):
