@@ -32,6 +32,9 @@ class CustomModel(Model):
 
     def __init__(self, **kwargs):
         super(CustomModel, self).__init__(**kwargs)
+
+    def build(self, **kwargs):
+        super(CustomModel, self).build(**kwargs)
         self.loss_tracker = tfk.metrics.Mean(name="loss")
         self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
         self.iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
