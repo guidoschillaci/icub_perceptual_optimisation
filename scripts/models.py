@@ -537,7 +537,7 @@ class Models:
             # define the model
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
-            self.model.compile(optimizer='adam')
+            self.model.compile(optimizer='adam', experimental_run_tf_function=False)
             self.model.set_param(self.parameters)
             # create a new model sharing the parameters of the main one, to be used only for predicting modality weights
             self.fusion_weights_model = Model(inputs=self.model.input,
@@ -583,7 +583,7 @@ class Models:
                                      outputs=out_main_model)
             self.model.set_param(self.parameters)
             #if not self.parameters.get('model_custom_training_loop'):
-            self.model.compile(optimizer='adam',loss='mean_squared_error')
+            self.model.compile(optimizer='adam',loss='mean_squared_error', experimental_run_tf_function=False)
             #else:
             #    self.optimiser = Adam()
             #    self.train_callback = MyCallback(self.parameters, self.datasets, self.model)
