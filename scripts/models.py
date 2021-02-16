@@ -207,10 +207,6 @@ class FusionActivityRegularizationLayer(Layer):
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
 
-
-    def build(self, **kwargs):
-        super(FusionActivityRegularizationLayer, self).build(**kwargs)
-
         self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
         self.loss = None
