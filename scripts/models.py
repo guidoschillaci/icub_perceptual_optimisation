@@ -199,13 +199,17 @@ class CustomModel(Model):
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, name='layer_name', **kwargs):
         super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
-        self.loss = None
+
         self.parameters = param
         # self.reg_fact = [0.33, 0.33, 0.33]
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
         #                         self.parameters.get('model_num_modalities')], 0.33)
         #self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
+
+    def build(self):
+        self.loss = None
+
 
     def get_config(self):
         base_config = super(FusionActivityRegularizationLayer, self).get_config()
