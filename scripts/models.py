@@ -29,11 +29,16 @@ import pandas as pd
 #mae_metric = tfk.metrics.MeanSquaredError(name="mae")
 
 class CustomModel(Model):
-    def set_param(self, param):
-        self.parameters=param
+
+    def __init__(self):
+        super(CustomModel, self).__init__()
         self.loss_tracker = tfk.metrics.Mean(name="loss")
         self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
-        self.iou_tracker = tfk.metrics.Mean(name="IoU") # intersection over union
+        self.iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
+
+    def set_param(self, param):
+        self.parameters=param
+
 
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
