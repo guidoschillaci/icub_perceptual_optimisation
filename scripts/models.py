@@ -28,6 +28,10 @@ import pandas as pd
 
 #mae_metric = tfk.metrics.MeanSquaredError(name="mae")
 
+loss_tracker = tfk.metrics.Mean(name="loss")
+val_loss_tracker = tfk.metrics.Mean(name="val_loss")
+iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
+
 class CustomModel(Model):
 
     def __init__(self, **kwargs):
@@ -35,9 +39,7 @@ class CustomModel(Model):
 
     def build(self, **kwargs):
         super(CustomModel, self).build(**kwargs)
-        self.loss_tracker = tfk.metrics.Mean(name="loss")
-        self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
-        self.iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
+        
 
     def set_param(self, param):
         self.parameters=param
@@ -153,9 +155,9 @@ class CustomModel(Model):
 
             grads = tape.gradient(loss_value, self.trainable_weights)
             self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-            self.loss_tracker.update_state(loss_value)
+            loss_tracker.update_state(loss_value)
                 # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-            return {"loss": self.loss_tracker.result()}
+            return {"loss": loss_tracker.result()}
         else:  # simple model
             (in_img, in_j, in_cmd), out_of = data
             with tf.GradientTape() as tape:
@@ -170,9 +172,9 @@ class CustomModel(Model):
             # Run one step of gradient descent by updating
             # the value of the variables to minimize the loss.
             self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
-            self.loss_tracker.update_state(loss_value)
+            loss_tracker.update_state(loss_value)
             # self.train_callback.on_batch_end(batch=-1, logs=self.logs)
-            return {"loss": self.loss_tracker.result()}
+            return {"loss": loss_tracker.result()}
 
     def test_step(self, data):
         if self.parameters.get('model_auxiliary'):
@@ -185,23 +187,23 @@ class CustomModel(Model):
                                                    fusion_weights=weights_predictions)
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
-            self.val_loss_tracker.update_state(val_loss_value)
+            val_loss_tracker.update_state(val_loss_value)
 
             iou = self.intersection_over_union(out_of, predictions[0])
-            self.iou_tracker.update_state(iou)
+            iou_tracker.update_state(iou)
 
-            return {"loss": self.val_loss_tracker.result(), 'IoU': self.iou_tracker.result()}
+            return {"loss": val_loss_tracker.result(), 'IoU': iou_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
             val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
-            self.val_loss_tracker.update_state(val_loss_value)
-            return {"loss": self.val_loss_tracker.result()}
+            val_loss_tracker.update_state(val_loss_value)
+            return {"loss": val_loss_tracker.result()}
     @property
     def metrics(self):
-        return [self.loss_tracker, self.val_loss_tracker, self.iou_tracker]
+        return [loss_tracker, val_loss_tracker, iou_tracker]
 
 class FusionActivityRegularizationLayer(Layer):
     def __init__(self, param, name='layer_name', **kwargs):
