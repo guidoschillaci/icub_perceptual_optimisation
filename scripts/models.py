@@ -207,6 +207,8 @@ class FusionActivityRegularizationLayer(Layer):
         self.reg_fact = tf.fill([self.parameters.get('model_batch_size')], 0.33)
         self.beta = self.parameters.get('model_sensor_fusion_beta')
         self.loss = None
+        self.inputs = None
+        self.outputs = None
 
     def get_config(self):
         base_config = super(FusionActivityRegularizationLayer, self).get_config()
@@ -236,26 +238,19 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
-        inp0,inp1,inp2 = inputs
+        self.inputs = inputs
+        self.outputs = inputs
         #print('shape inputs', str(inputs.numpy().shape))
+        Z = 0
         if self.loss is not None:
             #print('reg fact ', self.reg_fact)
-            Z = 0
-            out0 = inp0
-            out1 = inp1
-            out2 = inp2
-            #for i in range(self.parameters.get('model_num_modalities')):
-            p0 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[0], inp0, self.beta))
-            p1 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[1], inp1, self.beta))
-            p2 = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[2], inp2, self.beta))
-            Z = Z + p0
-            out0 = inp0 - p0
-            Z = Z + p1
-            out1 = inp1 - p1
-            Z = Z + p2
-            out2 = inp2 - p2
+            for i in range(self.parameters.get('model_num_modalities')):
+
+                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.inputs[i], self.beta))
+                Z = Z + tmp
+                self.outputs[i] = self.inputs[i] - tmp
             self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
-            return out0, out1, out2
+            return self.outputs[0], self.outputs[1], self.outputs[2]
         return inputs
 
 class Models:
@@ -371,7 +366,7 @@ class Models:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = \
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
-                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor])
+                ( (pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor))
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
