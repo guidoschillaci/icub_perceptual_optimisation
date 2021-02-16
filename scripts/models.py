@@ -30,15 +30,14 @@ import pandas as pd
 
 class CustomModel(Model):
 
-    def __init__(self):
-        super(CustomModel, self).__init__()
+    def __init__(self, **kwargs):
+        super(CustomModel, self).__init__(**kwargs)
         self.loss_tracker = tfk.metrics.Mean(name="loss")
         self.val_loss_tracker = tfk.metrics.Mean(name="val_loss")
         self.iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
 
     def set_param(self, param):
         self.parameters=param
-
 
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
