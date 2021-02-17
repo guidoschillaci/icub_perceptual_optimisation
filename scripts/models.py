@@ -219,7 +219,7 @@ class FusionActivityRegularizationLayer(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
     def set_loss(self, loss):
-        print('loss shape 0 ', str(loss.numpy().shape))
+        print('loss shape 0 ', str(np.asarray(loss).shape))
         self.loss = loss
 
     #def set_fusion_weights(self, fusion_w):
