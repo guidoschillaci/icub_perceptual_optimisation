@@ -226,6 +226,7 @@ class FusionActivityRegularizationLayer(Layer):
 
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        print('shape fusion ', str(fusion_w.numpy().shape))
         # add dimension
         x = tf.expand_dims(fusion_w, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0]
