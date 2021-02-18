@@ -128,11 +128,12 @@ class CustomModel(Model):
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
             if self.parameters.get('model_use_activity_regularization_layer'):
                 #self.get_layer('fusion_activity_regularizer_layer').set_fusion_weights(fusion_weights)
-                self.get_layer('fusion_activity_regularizer_layer').set_loss([loss_aux_visual,loss_aux_proprio, loss_aux_motor])
+                self.get_layer('fusion_activity_regularizer_layer').set_regularizer_loss([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
     def train_step(self, data):
+        print('data shape ', str(data.numpy().shape))
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
@@ -218,7 +219,7 @@ class FusionActivityRegularizationLayer(Layer):
         config= {'beta': self.beta}
         return dict(list(base_config.items()) + list(config.items()))
 
-    def set_loss(self, loss):
+    def set_regularizer_loss(self, loss):
         print('loss shape 0 ', str(np.asarray(loss).shape))
         self.loss = loss
 
@@ -228,7 +229,7 @@ class FusionActivityRegularizationLayer(Layer):
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
         #print('loss ',str(np.asarray(loss)) )
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        print('shape 0 ', str(fusion_w.numpy().shape))
+        #print('shape 0 ', str(fusion_w.numpy().shape))
         # add dimension
         x = tf.tile(fusion_w, [1, _shape[1]])
         #print('shape 1 ', str(x.numpy().shape))
