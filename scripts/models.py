@@ -133,7 +133,7 @@ class CustomModel(Model):
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
     def train_step(self, data):
-        print('data shape ', str(data.numpy().shape))
+        print('data shape ', str(np.asarray(data).shape))
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
