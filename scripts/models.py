@@ -133,11 +133,11 @@ class CustomModel(Model):
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
     def train_step(self, data):
-        print('data shape ', str(np.asarray(data).shape))
+        #print('data shape ', str(np.asarray(data).shape))
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
-            print('in_img shape ', str(np.asarray(in_img).shape))
-            weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
+            #print('in_img shape ', str(np.asarray(in_img).shape))
+            weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
             with tf.GradientTape() as tape:
                 # forward pass
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
@@ -221,7 +221,7 @@ class FusionActivityRegularizationLayer(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
     def set_regularizer_loss(self, loss):
-        print('loss shape 0 ', str(np.asarray(loss).shape))
+        #print('loss shape 0 ', str(np.asarray(loss).shape))
         self.loss = loss
 
     #def set_fusion_weights(self, fusion_w):
