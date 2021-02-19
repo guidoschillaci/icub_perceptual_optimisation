@@ -221,14 +221,14 @@ class FusionActivityRegularizationLayer(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
     def set_regularizer_loss(self, loss):
-        print('loss shape 0 ', str(np.asarray(loss).shape))
+        #print('loss shape 0 ', str(np.asarray(loss).shape))
         self.loss = loss
 
     #def set_fusion_weights(self, fusion_w):
     #    self.fusion_weights = fusion_w
 
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
-        #print('loss ',str(np.asarray(loss)) )
+        print('loss ',str(np.asarray(loss)) )
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         print('shape weight_origin ', str(fusion_w.numpy().shape))
         # add dimension
