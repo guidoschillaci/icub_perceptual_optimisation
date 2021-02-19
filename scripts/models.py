@@ -136,6 +136,7 @@ class CustomModel(Model):
         print('data shape ', str(np.asarray(data).shape))
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
+            print('in_img shape ', str(np.asarray(in_img).shape))
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
             with tf.GradientTape() as tape:
                 # forward pass
