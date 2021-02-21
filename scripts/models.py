@@ -174,6 +174,8 @@ class CustomModel(Model):
                 print('loss_aux_visual ',str(loss_aux_visual))
                 print('loss_aux_proprio ', str(loss_aux_proprio))
                 print('loss_aux_motor ', str(loss_aux_motor))
+                print('wei_pred shape ', str(weights_predictions.numpy().shape))
+                print('predicted_pre_fusion_features shape ', str(predicted_pre_fusion_features.numpy().shape))
                 print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
                     [predicted_pre_fusion_features[:,0], weights_predictions[:,0], loss_aux_visual, \
