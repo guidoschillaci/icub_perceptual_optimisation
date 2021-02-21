@@ -180,6 +180,8 @@ class CustomModel(Model):
                      predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio, \
                      predicted_pre_fusion_features[2], weights_predictions[2], loss_aux_motor], \
                     training=True)
+                print("prediction_regulariz ", str(prediction_regulariz))
+                print('after model custom')
                 loss_regul = self.loss_fn_regul((out_of, out_aof1, out_aof2, out_aof3), prediction_regulariz)
                 loss_value += loss_regul
                 # Add any extra losses created during the forward pass.
