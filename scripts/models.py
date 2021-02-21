@@ -298,27 +298,28 @@ class FusionActivityRegularizationLayer(Layer):
         #if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
         #    loss = loss[0:len(np.asarray(fusion_w)), :, :]
         #    print('loss_reshaped shape ', str(np.asarray(loss).shape))
-        _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        print('shape weight_origin ', str(fusion_w.numpy().shape))
+        ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
+        ##print('shape weight_origin ', str(fusion_w.numpy().shape))
         # add dimension
-        x = tf.tile(fusion_w, [1, _shape[1]])
+        ##x = tf.tile(fusion_w, [1, _shape[1]])
         #print('shape 1 ', str(x.numpy().shape))
-        x = tf.expand_dims(x, axis=1)
+        ##x = tf.expand_dims(x, axis=1)
         #print('shape 2 ', str(x.numpy().shape))
         # repeat elements -> shape: [batch_size, image_shape_0]
         #x = tf.tile(x, [1, _shape[1]])
         # add dimension
         #x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
-        weight = tf.tile(x, [1, _shape[0], 1])
+        ##weight = tf.tile(x, [1, _shape[0], 1])
         #print('shape 3 ', str(weight.numpy().shape))
         ##fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         #sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
         sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
-        print('shape weight  ', str(weight.numpy().shape))
+        ##print('shape weight  ', str(weight.numpy().shape))
         print('shape sig_soft_loss_aux  ', str(sig_soft_loss_aux.numpy().shape))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
-        return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
+        ##return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
+        return fact * tf.math.pow((fusion_w - sig_soft_loss_aux), 2)
         #return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
@@ -340,8 +341,8 @@ class FusionActivityRegularizationLayer(Layer):
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             #return self.outputs[0], self.outputs[1], self.outputs[2]
             print('output shape ', str(np.asarray(outputs).shape))
-            #return tf.split(outputs, 3, axis=1)
-            return outputs[0:self.parameters.get('model_num_modalities')]
+            return tf.split(outputs, 3, axis=1)
+            #return outputs[0:self.parameters.get('model_num_modalities')]
         else:
             print('layer NOT trainable')
             return inputs[0:self.parameters.get('model_num_modalities')]
