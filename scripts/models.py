@@ -158,15 +158,20 @@ class CustomModel(Model):
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
             #print('in_img shape ', str(np.asarray(in_img).shape))
+            print('before fusion model')
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
+            print('before maind model')
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             with tf.GradientTape() as tape:
+                print('before model_pre_fusion_features')
                 predicted_pre_fusion_features = self.model_pre_fusion_features((in_img, in_j, in_cmd), training=True)
+                print('before loss')
                 # Compute the loss value for this minibatch.
                 loss_value, loss_aux_visual, loss_aux_proprio, loss_aux_motor = \
                     self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
                                           fusion_weights=weights_predictions)
+                print('before model custom')
                 prediction_regulariz = self.model_custom_fusion(
                     [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual[0], \
                      predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio[1], \
@@ -312,9 +317,9 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
-    def call(self, inputs):
-        if self.trainable:
-            print('layer trainable')
+    def call(self, inputs, training = None):
+        if training:
+            print('training is true in layer')
             print('inout shape ',str(np.asarray(inputs).shape) )
 
             #self.fusion_weights = fusion_w
