@@ -37,8 +37,15 @@ class CustomModel(Model):
     def set_param(self, param):
         self.parameters=param
 
+    # passes a reference to the model predicting only fusion weights
     def link_fusion_model(self, fusion_model):
         self.fusion_model = fusion_model
+
+    # passes a reference to the auxiliary models (used for reglaritation of fusion weights
+    def link_aux_models(self, aux_visual, aux_proprio, aux_motor):
+        self.aux_visual_model = aux_visual
+        self.aux_proprio_model = aux_proprio
+        self.aux_motor_model = aux_motor
 
     def weight_loss(self, loss_aux_mod, w, fact):
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
@@ -128,7 +135,7 @@ class CustomModel(Model):
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
             if self.parameters.get('model_use_activity_regularization_layer'):
                 #self.get_layer('fusion_activity_regularizer_layer').set_fusion_weights(fusion_weights)
-                self.get_layer('fusion_activity_regularizer_layer').set_regularizer_loss([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
+                self.get_layer('fusion_activity_regularizer_layer').pass_auxiliary_losses([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
 
@@ -201,28 +208,55 @@ class CustomModel(Model):
         return [loss_tracker, val_loss_tracker, iou_tracker]
 
 class FusionActivityRegularizationLayer(Layer):
+    """
+    A custom layer implementing the fusion weights regularization process.
+    ...
+
+    Attributes
+    ----------
+    parameters : parameters
+        the parameters of the experiment
+    aux_loss
+        the auxiliary losses passed at each batch
+
+    Methods
+    -------
+    fusion_weights_regulariser()
+        the regularization function
+    """
+
     def __init__(self, param, name='layer_name', **kwargs):
+        """
+        Parameters
+        ----------
+        param : parameters object
+            The parameters of the current experiment
+        name : str
+            The name of the layer
+        """
+
         super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
-
         self.parameters = param
-        # self.reg_fact = [0.33, 0.33, 0.33]
-        #self.reg_fact = tf.fill([self.parameters.get('model_batch_size'), \
-        #                         self.parameters.get('model_num_modalities')], 0.33)
 
-        self.fusion_weights = tf.fill([self.parameters.get('model_batch_size')], 0.33)
-        self.beta = self.parameters.get('model_sensor_fusion_beta')
-        self.loss = None
+        ##self.fusion_weights = tf.fill([self.parameters.get('model_batch_size')], 0.33)
+
+        # the auxiliary losses, which are used to regularize the fusion weights
+        # these should be updated at each batch
+        self.aux_loss = tf.Variable(initial_value=tf.ones((3,))*0.33,
+                                    trainable=False)
+        #self.loss = None
         #self.inputs = None
         #self.outputs = None
 
     def get_config(self):
         base_config = super(FusionActivityRegularizationLayer, self).get_config()
-        config= {'beta': self.beta}
+        config= {'beta': self.parameters.get('model_sensor_fusion_beta')}
         return dict(list(base_config.items()) + list(config.items()))
 
-    def set_regularizer_loss(self, loss):
-        #print('loss shape 0 ', str(np.asarray(loss).shape))
-        self.loss = loss
+    ## the method to pass the calculated auxiliary losses to this layer, for regularizing the fusion weights
+    def pass_auxiliary_losses(self, aux_loss):
+        print('loss shape 0 ', str(np.asarray(aux_loss).shape))
+        self.aux_loss.assign(aux_loss)
 
     #def set_fusion_weights(self, fusion_w):
     #    self.fusion_weights = fusion_w
@@ -255,20 +289,24 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
-    def call(self, fusion_w):
-        self.fusion_weights = fusion_w
-        self.outputs = fusion_w
-        #print('shape inputs', str(inputs.numpy().shape))
-        Z = 0
-        if self.loss is not None:
-            #print('reg fact ', self.reg_fact)
-            for i in range(self.parameters.get('model_num_modalities')):
-                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.fusion_weights[i], self.beta))
-                Z = Z + tmp
-                self.outputs[i] = self.fusion_weights[i] - tmp
-            self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
-            return self.outputs[0], self.outputs[1], self.outputs[2]
-        return fusion_w
+    def call(self, fusion_w, training = False):
+        if training:
+            self.fusion_weights = fusion_w
+            self.outputs = fusion_w
+            #print('shape inputs', str(inputs.numpy().shape))
+            Z = 0
+            if self.loss is not None:
+                #print('reg fact ', self.reg_fact)
+                for i in range(self.parameters.get('model_num_modalities')):
+                    tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.fusion_weights[i],
+                                                                         self.parameters.get('model_sensor_fusion_beta')))
+                    Z = Z + tmp
+                    self.outputs[i] = self.fusion_weights[i] - tmp
+                self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
+                return self.outputs[0], self.outputs[1], self.outputs[2]
+            return fusion_w
+        else:
+            return fusion_w
 
 class Models:
     def __init__(self, param):
@@ -555,8 +593,15 @@ class Models:
             # create a new model sharing the parameters of the main one, to be used only for predicting modality weights
             self.fusion_weights_model = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
-            # link this model
+            # link this model to the main one
             self.model.link_fusion_model(self.fusion_weights_model)
+            # create additional auxiliary models sharing the weights of the main one.
+            # these will be used only for inference and for computing the auxiliary losses for
+            # regularizing the fusion weights of the main model
+            self.aux_visual_model = Model(inputs=self.model.input, outputs=out_visual_aux_model)
+            self.aux_proprio_model = Model(inputs=self.model.input, outputs=out_proprio_aux_model)
+            self.aux_motor_model = Model(inputs=self.model.input, outputs=out_motor_aux_model)
+            self.model.link_aux_models(self.aux_visual_model, self.aux_proprio_model, self.aux_motor_model)
 
             # we need an additional model (sharing the parameters) for manually setting the fusion weights
             #### model allowing manually setting the fusion weights
