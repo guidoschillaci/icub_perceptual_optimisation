@@ -692,12 +692,13 @@ class Models:
                                           weighted_motor([self.custom_fusion_motor_inp, fusion_weight_motor])]
                                                          ))))))
             # create the model with the defined inputs and outputs
-            self.model_custom_fusion = Model(inputs=[self.custom_fusion_visual_inp, self.custom_fusion_weight_visual_inp, self.custom_fusion_regul_loss_visual,
-                                              self.custom_fusion_proprio_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_regul_loss_proprio,
-                                              self.custom_fusion_motor_inp, self.custom_fusion_weight_motor_inp, self.custom_fusion_regul_loss_motor],
+            self.model_custom_fusion = Model(inputs=[self.custom_fusion_weight_visual_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_weight_motor_inp,
+                                              self.custom_fusion_regul_loss_visual, self.custom_fusion_regul_loss_proprio, self.custom_fusion_regul_loss_motor,
+                                              self.custom_fusion_visual_inp, self.custom_fusion_proprio_inp, self.custom_fusion_motor_inp],
                                              outputs=self.out_model_custom_fusion, \
                                              name='custom_fusion_model')
             self.model.link_model_custom_fusion(self.model_custom_fusion)
+            self.model_custom_fusion.summary()
 
         #self.model_custom_fusion = Model(inputs=(self.model.input, self.model.get_layer(name='fusion_weights'),
             #                                  outputs=self.model.get_layer(name='fusion_weights').output)
