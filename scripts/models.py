@@ -219,7 +219,7 @@ class CustomModel(Model):
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
-            predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+            predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             # Compute the loss value for this minibatch.
             val_loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                                    predictions, \
@@ -234,7 +234,7 @@ class CustomModel(Model):
             return {"loss": val_loss_tracker.result(), 'IoU': iou_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
-            predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+            predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
             # Add any extra losses created during the forward pass.
             val_loss_value += sum(self.losses)
@@ -469,8 +469,8 @@ class Models:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = \
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
-                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ])
-                  #pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ]) # repeat elements, but not using them
+                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor, \
+                  pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ]) # repeat elements, but not using them
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
