@@ -164,7 +164,7 @@ class CustomModel(Model):
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             with tf.GradientTape() as tape:
                 print('before model_pre_fusion_features')
-                predicted_pre_fusion_features = self.model_pre_fusion_features((in_img, in_j, in_cmd), training=True)
+                predicted_pre_fusion_features = self.pre_fusion_features_model((in_img, in_j, in_cmd), training=True)
                 print('before loss')
                 # Compute the loss value for this minibatch.
                 loss_value, loss_aux_visual, loss_aux_proprio, loss_aux_motor = \
