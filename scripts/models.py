@@ -158,34 +158,34 @@ class CustomModel(Model):
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
             #print('in_img shape ', str(np.asarray(in_img).shape))
-            print('before fusion model')
+            #print('before fusion model')
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
-            print('before maind model')
+            #print('before maind model')
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             with tf.GradientTape() as tape:
-                print('before model_pre_fusion_features')
+                #print('before model_pre_fusion_features')
                 predicted_pre_fusion_features = self.pre_fusion_features_model((in_img, in_j, in_cmd), training=True)
-                print('before loss')
+                #print('before loss')
                 # Compute the loss value for this minibatch.
                 loss_value, loss_aux_visual, loss_aux_proprio, loss_aux_motor = \
                     self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
                                           fusion_weights=weights_predictions)
-                print('loss_aux_visual ',str(loss_aux_visual))
-                print('loss_aux_proprio ', str(loss_aux_proprio))
-                print('loss_aux_motor ', str(loss_aux_motor))
+                #print('loss_aux_visual ',str(loss_aux_visual))
+                #print('loss_aux_proprio ', str(loss_aux_proprio))
+                #print('loss_aux_motor ', str(loss_aux_motor))
                 np_weights_pred = np.asarray(weights_predictions)
                 np_pred_fusion_features = np.asarray(predicted_pre_fusion_features)
-                print('wei_pred shape ', str(np_weights_pred.shape))
-                print('predicted_pre_fusion_features shape ', str(np_pred_fusion_features.shape))
-                print('before model custom')
+                #print('wei_pred shape ', str(np_weights_pred.shape))
+                #print('predicted_pre_fusion_features shape ', str(np_pred_fusion_features.shape))
+                #print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
                     [np_pred_fusion_features[0], np_weights_pred[:,0], loss_aux_visual, \
                      np_pred_fusion_features[1], np_weights_pred[:,1], loss_aux_proprio, \
                      np_pred_fusion_features[2], np_weights_pred[:,2], loss_aux_motor], \
                     training=True)
-                print("prediction_regulariz ", str(prediction_regulariz))
-                print('after model custom')
+                #print("prediction_regulariz ", str(prediction_regulariz))
+                #print('after model custom')
                 loss_regul = self.loss_fn_regul((out_of, out_aof1, out_aof2, out_aof3), prediction_regulariz)
                 loss_value += loss_regul
                 # Add any extra losses created during the forward pass.
@@ -299,7 +299,7 @@ class FusionActivityRegularizationLayer(Layer):
     @tf.function
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
         #print('shape loss ',str(loss.numpy().shape) )
-        print('shape w ', str(np.asarray(fusion_w).shape))
+        #print('shape w ', str(np.asarray(fusion_w).shape))
         #if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
         #    loss = loss[0:len(np.asarray(fusion_w)), :, :]
         #    print('loss_reshaped shape ', str(np.asarray(loss).shape))
@@ -321,7 +321,7 @@ class FusionActivityRegularizationLayer(Layer):
         #sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
         sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
         ##print('shape weight  ', str(weight.numpy().shape))
-        print('shape sig_soft_loss_aux  ', str(sig_soft_loss_aux.numpy().shape))
+        #print('shape sig_soft_loss_aux  ', str(sig_soft_loss_aux.numpy().shape))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
         ##return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
         return fact * tf.math.pow((fusion_w - sig_soft_loss_aux), 2)
@@ -330,13 +330,13 @@ class FusionActivityRegularizationLayer(Layer):
 
     def call(self, inputs, training = None):
         if training:
-            print('training is true in layer')
-            print('inout shape ',str(np.asarray(inputs).shape) )
-            print('inout 0 shape ', str(np.asarray(inputs[0]).shape))
+            #print('training is true in layer')
+            #print('inout shape ',str(np.asarray(inputs).shape) )
+            #print('inout 0 shape ', str(np.asarray(inputs[0]).shape))
 
             #self.fusion_weights = fusion_w
             outputs = inputs[0:self.parameters.get('model_num_modalities')]
-            print('output shape before ', str(np.asarray(outputs).shape))
+            #print('output shape before ', str(np.asarray(outputs).shape))
             #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
@@ -348,11 +348,11 @@ class FusionActivityRegularizationLayer(Layer):
                 outputs[i] = inputs[i] - tmp
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             #return self.outputs[0], self.outputs[1], self.outputs[2]
-            print('output shape after ', str(np.asarray(outputs).shape))
+            #print('output shape after ', str(np.asarray(outputs).shape))
             #return tf.split(outputs, 3, axis=1)
             return outputs[0:self.parameters.get('model_num_modalities')]
         else:
-            print('layer NOT trainable')
+            #print('layer NOT trainable')
             return inputs[0:self.parameters.get('model_num_modalities')]
 
 class Models:
