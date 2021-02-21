@@ -284,7 +284,7 @@ class FusionActivityRegularizationLayer(Layer):
     #    self.fusion_weights = fusion_w
 
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
-        #print('loss ',str(np.asarray(loss)) )
+        print('shape loss ',str(np.asarray(loss).shape) )
         if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
             loss = loss[0:len(np.asarray(fusion_w)), :, :]
             print('loss_reshaped shape ', str(np.asarray(loss).shape))
@@ -311,24 +311,23 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact_matrix * tf.math.pow((weight - sig_soft_loss_aux), 2)
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
-    def call(self, fusion_w, training = False):
-        if training:
-            self.fusion_weights = fusion_w
-            self.outputs = fusion_w
+    def call(self, inputs):
+        if self.training:
+            #self.fusion_weights = fusion_w
+            self.outputs = inputs[0:2]
             #print('shape inputs', str(inputs.numpy().shape))
-            Z = 0
-            if self.loss is not None:
-                #print('reg fact ', self.reg_fact)
-                for i in range(self.parameters.get('model_num_modalities')):
-                    tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.loss[i], self.fusion_weights[i],
-                                                                         self.parameters.get('model_sensor_fusion_beta')))
-                    Z = Z + tmp
-                    self.outputs[i] = self.fusion_weights[i] - tmp
-                self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
-                return self.outputs[0], self.outputs[1], self.outputs[2]
-            return fusion_w
+            #Z = 0
+            for i in range(self.parameters.get('model_num_modalities')):
+                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.inputs[i+self.parameters.get('model_num_modalities')], \
+                                                                     self.inputs[i], \
+                                                                     self.parameters.get('model_sensor_fusion_beta')))
+                #Z = Z + tmp
+                self.outputs[i] = self.inputs[i] - tmp
+            #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
+            return self.outputs[0], self.outputs[1], self.outputs[2]
+
         else:
-            return fusion_w
+            return inputs[0:2]
 
 class Models:
     def __init__(self, param):
