@@ -312,7 +312,8 @@ class FusionActivityRegularizationLayer(Layer):
         #return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
 
     def call(self, inputs):
-        if self.training:
+        if self.trainable:
+            print('layer trainable')
             #self.fusion_weights = fusion_w
             self.outputs = inputs[0:2]
             #print('shape inputs', str(inputs.numpy().shape))
@@ -327,6 +328,7 @@ class FusionActivityRegularizationLayer(Layer):
             return self.outputs[0], self.outputs[1], self.outputs[2]
 
         else:
+            print('layer NOT trainable')
             return inputs[0:2]
 
 class Models:
