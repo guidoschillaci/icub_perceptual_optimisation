@@ -314,7 +314,7 @@ class FusionActivityRegularizationLayer(Layer):
     def call(self, inputs):
         if self.trainable:
             print('layer trainable')
-            print('inout shape ',str(inputs.numpy().shape) )
+            print('inout shape ',str(np.asarray(inputs).shape) )
 
             #self.fusion_weights = fusion_w
             self.outputs = inputs[0:2]
