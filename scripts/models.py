@@ -173,9 +173,9 @@ class CustomModel(Model):
                                           fusion_weights=weights_predictions)
                 print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
-                    [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual[0], \
-                     predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio[1], \
-                     predicted_pre_fusion_features[2], weights_predictions[2], loss_aux_motor[2]], \
+                    [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual, \
+                     predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio, \
+                     predicted_pre_fusion_features[2], weights_predictions[2], loss_aux_motor], \
                     training=True)
                 loss_regul = self.loss_fn_regul((out_of, out_aof1, out_aof2, out_aof3), prediction_regulariz)
                 loss_value += loss_regul
