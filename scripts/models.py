@@ -180,9 +180,9 @@ class CustomModel(Model):
                 print('predicted_pre_fusion_features shape ', str(np_pred_fusion_features.shape))
                 print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
-                    [np_pred_fusion_features[:,0], np_weights_pred[:,0], loss_aux_visual, \
-                     np_pred_fusion_features[:,1], np_weights_pred[:,1], loss_aux_proprio, \
-                     np_pred_fusion_features[:,2], np_weights_pred[:,2], loss_aux_motor], \
+                    [np_pred_fusion_features[0], np_weights_pred[:,0], loss_aux_visual, \
+                     np_pred_fusion_features[1], np_weights_pred[:,1], loss_aux_proprio, \
+                     np_pred_fusion_features[2], np_weights_pred[:,2], loss_aux_motor], \
                     training=True)
                 print("prediction_regulariz ", str(prediction_regulariz))
                 print('after model custom')
