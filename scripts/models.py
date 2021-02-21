@@ -672,13 +672,13 @@ class Models:
             self.custom_fusion_motor_inp = Input(shape=(256,))
 
 
-            fusion_weight_output = \
+            fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor  = \
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
                     ([self.custom_fusion_weight_visual_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_weight_motor_inp, \
                       self.custom_fusion_regul_loss_visual, self.custom_fusion_regul_loss_proprio, self.custom_fusion_regul_loss_motor ])
 
-            fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_output)
+            #fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_output)
             # adjust the final part of the branch of the main model, to get also fusion weights as inputs.
             # link the following layers until the opt_flow output
             self.out_model_custom_fusion = final_5(
