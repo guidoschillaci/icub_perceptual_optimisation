@@ -290,9 +290,9 @@ class FusionActivityRegularizationLayer(Layer):
     @tf.function
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
         print('shape loss ',str(loss.numpy().shape) )
-        if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
-            loss = loss[0:len(np.asarray(fusion_w)), :, :]
-            print('loss_reshaped shape ', str(np.asarray(loss).shape))
+        #if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
+        #    loss = loss[0:len(np.asarray(fusion_w)), :, :]
+        #    print('loss_reshaped shape ', str(np.asarray(loss).shape))
         _shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
         print('shape weight_origin ', str(fusion_w.numpy().shape))
         # add dimension
