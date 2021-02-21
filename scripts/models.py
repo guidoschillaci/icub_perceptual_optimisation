@@ -319,8 +319,8 @@ class FusionActivityRegularizationLayer(Layer):
             #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
-                tmp = tf.reduce_mean(self.fusion_weights_regulariser(self.inputs[i+self.parameters.get('model_num_modalities')], \
-                                                                     self.inputs[i], \
+                tmp = tf.reduce_mean(self.fusion_weights_regulariser(inputs[i+self.parameters.get('model_num_modalities')], \
+                                                                     inputs[i], \
                                                                      self.parameters.get('model_sensor_fusion_beta')))
                 #Z = Z + tmp
                 self.outputs[i] = self.inputs[i] - tmp
