@@ -284,7 +284,7 @@ class FusionActivityRegularizationLayer(Layer):
     #    self.fusion_weights = fusion_w
 
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
-        print('shape loss ',str(np.asarray(loss).shape) )
+        print('shape loss ',str(loss.numpy().shape) )
         if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
             loss = loss[0:len(np.asarray(fusion_w)), :, :]
             print('loss_reshaped shape ', str(np.asarray(loss).shape))
@@ -447,7 +447,7 @@ class Models:
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
                 ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ,
-                   pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ]) # repeat elements, but not use them
+                   pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ]) # repeat elements, but not using them
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
