@@ -338,8 +338,8 @@ class FusionActivityRegularizationLayer(Layer):
                 #Z = Z + tmp
                 self.outputs[i] = inputs[i] - tmp
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
-            return self.outputs[0], self.outputs[1], self.outputs[2]
-
+            #return self.outputs[0], self.outputs[1], self.outputs[2]
+            return tf.split(self.outputs, 3, axis=1)
         else:
             print('layer NOT trainable')
             return inputs[0:self.parameters.get('model_num_modalities')]
