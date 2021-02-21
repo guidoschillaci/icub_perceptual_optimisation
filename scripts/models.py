@@ -172,7 +172,7 @@ class CustomModel(Model):
                                           predictions, \
                                           fusion_weights=weights_predictions)
                 print('before model custom')
-                prediction_regulariz = self.model_custom_fusion(
+                prediction_regulariz = self.custom_fusion_model(
                     [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual[0], \
                      predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio[1], \
                      predicted_pre_fusion_features[2], weights_predictions[2], loss_aux_motor[2]], \
