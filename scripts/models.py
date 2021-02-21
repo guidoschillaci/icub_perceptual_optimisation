@@ -328,7 +328,7 @@ class FusionActivityRegularizationLayer(Layer):
             print('inout shape ',str(np.asarray(inputs).shape) )
 
             #self.fusion_weights = fusion_w
-            self.outputs = inputs[0:self.parameters.get('model_num_modalities')]
+            outputs = inputs[0:self.parameters.get('model_num_modalities')]
             #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
@@ -336,10 +336,11 @@ class FusionActivityRegularizationLayer(Layer):
                                                                      inputs[i], \
                                                                      self.parameters.get('model_sensor_fusion_beta')))
                 #Z = Z + tmp
-                self.outputs[i] = inputs[i] - tmp
+                outputs[i] = inputs[i] - tmp
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             #return self.outputs[0], self.outputs[1], self.outputs[2]
-            return tf.split(self.outputs, 3, axis=1)
+            print('output shape ', str(outputs.numpy().shape))
+            return tf.split(outputs, 3, axis=1)
         else:
             print('layer NOT trainable')
             return inputs[0:self.parameters.get('model_num_modalities')]
