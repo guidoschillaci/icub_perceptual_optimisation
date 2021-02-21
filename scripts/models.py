@@ -328,6 +328,7 @@ class FusionActivityRegularizationLayer(Layer):
         if training:
             print('training is true in layer')
             print('inout shape ',str(np.asarray(inputs).shape) )
+            print('inout 0 shape ', str(np.asarray(inputs[0]).shape))
 
             #self.fusion_weights = fusion_w
             outputs = inputs[0:self.parameters.get('model_num_modalities')]
