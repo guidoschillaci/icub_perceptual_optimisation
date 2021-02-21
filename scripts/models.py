@@ -261,7 +261,6 @@ class FusionActivityRegularizationLayer(Layer):
         name : str
             The name of the layer
         """
-
         super(FusionActivityRegularizationLayer, self).__init__(name=name, **kwargs)
         self.parameters = param
 
@@ -269,8 +268,8 @@ class FusionActivityRegularizationLayer(Layer):
 
         # the auxiliary losses, which are used to regularize the fusion weights
         # these should be updated at each batch
-        self.aux_loss = tf.Variable(initial_value=tf.ones((3,))*0.33,
-                                    trainable=False)
+        #self.aux_loss = tf.Variable(initial_value=tf.ones((3,))*0.33,
+        #                            trainable=False)
         #self.loss = None
         #self.inputs = None
         #self.outputs = None
@@ -323,7 +322,7 @@ class FusionActivityRegularizationLayer(Layer):
             print('inout shape ',str(np.asarray(inputs).shape) )
 
             #self.fusion_weights = fusion_w
-            self.outputs = inputs[0:2]
+            self.outputs = inputs[0:3]
             #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
@@ -337,7 +336,7 @@ class FusionActivityRegularizationLayer(Layer):
 
         else:
             print('layer NOT trainable')
-            return inputs[0:2]
+            return inputs[0:3]
 
 class Models:
     def __init__(self, param):
