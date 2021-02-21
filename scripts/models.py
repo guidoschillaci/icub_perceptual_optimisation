@@ -334,7 +334,7 @@ class FusionActivityRegularizationLayer(Layer):
                                                                      inputs[i], \
                                                                      self.parameters.get('model_sensor_fusion_beta')))
                 #Z = Z + tmp
-                self.outputs[i] = self.inputs[i] - tmp
+                self.outputs[i] = inputs[i] - tmp
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             return self.outputs[0], self.outputs[1], self.outputs[2]
 
