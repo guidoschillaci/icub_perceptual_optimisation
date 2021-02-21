@@ -283,6 +283,7 @@ class FusionActivityRegularizationLayer(Layer):
     #def set_fusion_weights(self, fusion_w):
     #    self.fusion_weights = fusion_w
 
+    @tf.function
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
         print('shape loss ',str(loss.numpy().shape) )
         if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
