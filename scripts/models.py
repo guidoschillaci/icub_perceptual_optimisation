@@ -171,6 +171,9 @@ class CustomModel(Model):
                     self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
                                           fusion_weights=weights_predictions)
+                print('loss_aux_visual ',str(loss_aux_visual))
+                print('loss_aux_proprio ', str(loss_aux_proprio))
+                print('loss_aux_motor ', str(loss_aux_motor))
                 print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
                     [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual, \
@@ -451,8 +454,8 @@ class Models:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = \
                 FusionActivityRegularizationLayer(param=self.parameters, \
                                                   name='fusion_activity_regularizer_layer') \
-                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor , \
-                  pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ]) # repeat elements, but not using them
+                ( [pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ])
+                  #pre_fusion_weight_visual, pre_fusion_weight_proprio, pre_fusion_weight_motor ]) # repeat elements, but not using them
         else:
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_layer)
 
