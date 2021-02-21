@@ -681,7 +681,8 @@ class Models:
             self.model_custom_fusion = Model(inputs=[self.custom_fusion_visual_inp, self.custom_fusion_weight_visual_inp, self.custom_fusion_regul_loss_visual,
                                               self.custom_fusion_proprio_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_regul_loss_proprio,
                                               self.custom_fusion_motor_inp, self.custom_fusion_weight_motor_inp, self.custom_fusion_regul_loss_motor],
-                                             outputs=self.out_model_custom_fusion)
+                                             outputs=self.out_model_custom_fusion, \
+                                             name='custom_fusion_model')
             self.model.link_model_custom_fusion(self.model_custom_fusion)
 
         #self.model_custom_fusion = Model(inputs=(self.model.input, self.model.get_layer(name='fusion_weights'),
@@ -693,7 +694,7 @@ class Models:
             # without auxiliary model
             # define the model
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
-                                     outputs=out_main_model)
+                                     outputs=out_main_model, name='main_model')
             self.model.set_param(self.parameters)
             #if not self.parameters.get('model_custom_training_loop'):
             self.model.compile(optimizer='adam',loss='mean_squared_error', experimental_run_tf_function=False)
