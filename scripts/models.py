@@ -294,7 +294,8 @@ class FusionActivityRegularizationLayer(Layer):
 
     @tf.function
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
-        print('shape loss ',str(loss.numpy().shape) )
+        #print('shape loss ',str(loss.numpy().shape) )
+        print('shape w ', str(np.asarray(fusion_w).shape))
         #if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
         #    loss = loss[0:len(np.asarray(fusion_w)), :, :]
         #    print('loss_reshaped shape ', str(np.asarray(loss).shape))
@@ -330,17 +331,19 @@ class FusionActivityRegularizationLayer(Layer):
 
             #self.fusion_weights = fusion_w
             outputs = inputs[0:self.parameters.get('model_num_modalities')]
+            print('output shape before ', str(np.asarray(outputs).shape))
             #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
                 tmp = tf.reduce_mean(tf.reduce_mean(self.fusion_weights_regulariser(inputs[i+self.parameters.get('model_num_modalities')], \
                                                                      inputs[i], \
                                                                      self.parameters.get('model_sensor_fusion_beta'))))
+
                 #Z = Z + tmp
                 outputs[i] = inputs[i] - tmp
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             #return self.outputs[0], self.outputs[1], self.outputs[2]
-            print('output shape ', str(np.asarray(outputs).shape))
+            print('output shape after ', str(np.asarray(outputs).shape))
             #return tf.split(outputs, 3, axis=1)
             return outputs[0:self.parameters.get('model_num_modalities')]
         else:
