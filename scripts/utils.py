@@ -49,7 +49,7 @@ class MyCallback(Callback):
         self.datasets = datasets
         #if self.parameters.get('model_custom_training_loop'):
         self.model = model
-        self.model_pre_fusion = model_pre_fusion
+        self.model_pre_fusion_features = model_pre_fusion
         self.model_custom_fusion = model_custom_fusion
         #self.logs = {}
 
@@ -221,11 +221,11 @@ class MyCallback(Callback):
         w_v = np.ones(shape=[len(images_t),])*_wv
         w_j = np.ones(shape=[len(images_t),])*_wj
         w_m = np.ones(shape=[len(images_t),])*_wm
-        pred_pre_fusion = self.model_pre_fusion.predict([images_t, joints, commands])
+        pred_pre_fusion_features = self.model_pre_fusion_features.predict([images_t, joints, commands])
         #print(pred_pre_fusion[0].shape)
-        pred_custom_fusion_allvision = self.model_custom_fusion.predict([pred_pre_fusion[0], w_v,
-                                                                 pred_pre_fusion[1], w_j,
-                                                                 pred_pre_fusion[2], w_m])
+        pred_custom_fusion_allvision = self.model_custom_fusion([pred_pre_fusion_features[0], w_v, w_v,
+                                                                 pred_pre_fusion_features[1], w_j, w_j,
+                                                                 pred_pre_fusion_features[2], w_m, w_m], training=False)
 
         ax7 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), \
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)

@@ -38,11 +38,17 @@ class CustomModel(Model):
         self.parameters=param
 
     # passes a reference to the model predicting only fusion weights
-    def link_fusion_model(self, fusion_model):
+    def link_model_fusion_weights(self, fusion_model):
         self.fusion_model = fusion_model
 
+    def link_model_pre_fusion_features(self, model_pre_fusion_features):
+        self.pre_fusion_features_model = model_pre_fusion_features
+
+    def link_model_custom_fusion(self, model_custom_fusion):
+        self.custom_fusion_model = model_custom_fusion
+
     # passes a reference to the auxiliary models (used for reglaritation of fusion weights
-    def link_aux_models(self, aux_visual, aux_proprio, aux_motor):
+    def link_models_auxiliaries(self, aux_visual, aux_proprio, aux_motor):
         self.aux_visual_model = aux_visual
         self.aux_proprio_model = aux_proprio
         self.aux_motor_model = aux_motor
@@ -73,6 +79,11 @@ class CustomModel(Model):
         count_intersection = tf.math.count_nonzero(intersection)
         count_union = tf.math.count_nonzero(union)
         return count_intersection / count_union
+
+    @tf.function
+    def loss_fn_regul(self, y_true, y_pred):
+        true_main_out = y_true[0]
+        return tf.keras.losses.mean_squared_error(y_pred, true_main_out)
 
     @tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
@@ -133,11 +144,14 @@ class CustomModel(Model):
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)), \
             #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
             #print('shape reg_fact', str(np.asarray(reg_fact).shape))
-            if self.parameters.get('model_use_activity_regularization_layer'):
-                #self.get_layer('fusion_activity_regularizer_layer').set_fusion_weights(fusion_weights)
-                self.get_layer('fusion_activity_regularizer_layer').pass_auxiliary_losses([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
+            #if self.parameters.get('model_use_activity_regularization_layer'):
+            #    #self.get_layer('fusion_activity_regularizer_layer').set_fusion_weights(fusion_weights)
+            #    self.get_layer('fusion_activity_regularizer_layer').pass_auxiliary_losses([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
-            return loss_main_out + aux_loss_weighting_total# + fus_weight_regul_total
+            return loss_main_out + aux_loss_weighting_total  , \
+                   tf.reduce_mean(loss_aux_visual), \
+                   tf.reduce_mean(loss_aux_proprio), \
+                   tf.reduce_mean(loss_aux_motor)
 
     def train_step(self, data):
         #print('data shape ', str(np.asarray(data).shape))
@@ -145,15 +159,23 @@ class CustomModel(Model):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
             #print('in_img shape ', str(np.asarray(in_img).shape))
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
+            predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             with tf.GradientTape() as tape:
-                # forward pass
-                predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
+                predicted_pre_fusion_features = self.model_pre_fusion_features((in_img, in_j, in_cmd), training=True)
                 # Compute the loss value for this minibatch.
-                loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
+                loss_value, loss_aux_visual, loss_aux_proprio, loss_aux_motor = \
+                    self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
                                           fusion_weights=weights_predictions)
+                prediction_regulariz = self.model_custom_fusion(
+                    [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual[0], \
+                     predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio[1], \
+                     predicted_pre_fusion_features[2], weights_predictions[2], loss_aux_motor[2]], \
+                    training=True)
+                loss_regul = self.loss_fn_regul((out_of, out_aof1, out_aof2, out_aof3), prediction_regulariz)
+                loss_value += loss_regul
                 # Add any extra losses created during the forward pass.
-                loss_value += sum(self.losses)
+                #loss_value += sum(self.losses)
 
             grads = tape.gradient(loss_value, self.trainable_weights)
             self.optimizer.apply_gradients(zip(grads, self.trainable_weights))
@@ -181,7 +203,7 @@ class CustomModel(Model):
     def test_step(self, data):
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
-            weights_predictions = self.fusion_model((in_img, in_j, in_cmd))
+            weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
             predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
             # Compute the loss value for this minibatch.
             val_loss_value = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
@@ -254,9 +276,9 @@ class FusionActivityRegularizationLayer(Layer):
         return dict(list(base_config.items()) + list(config.items()))
 
     ## the method to pass the calculated auxiliary losses to this layer, for regularizing the fusion weights
-    def pass_auxiliary_losses(self, aux_loss):
-        print('loss shape 0 ', str(np.asarray(aux_loss).shape))
-        self.aux_loss.assign(aux_loss)
+    #def pass_auxiliary_losses(self, aux_loss):
+    #    print('loss shape 0 ', str(np.asarray(aux_loss).shape))
+    #    self.aux_loss.assign(aux_loss)
 
     #def set_fusion_weights(self, fusion_w):
     #    self.fusion_weights = fusion_w
@@ -349,7 +371,7 @@ class Models:
         visual_layer_16 = Flatten()
         visual_layer_17 = Dense(256, activation='relu')
         ## link layers of the visual branch of the main model
-        out_visual_main = visual_layer_17 ( \
+        out_visual_features_main = visual_layer_17 ( \
             visual_layer_16 ( \
             visual_layer_15( \
             visual_layer_14( \
@@ -378,7 +400,7 @@ class Models:
         proprioceptive_layer_6 = Dropout(0.4)
         proprioceptive_layer_7 = Dense(256, activation='relu')
         ## link layers of the proprioceptive branch of the main model
-        out_proprioceptive_main = proprioceptive_layer_7 ( \
+        out_proprioceptive_features_main = proprioceptive_layer_7 ( \
             proprioceptive_layer_6( \
             proprioceptive_layer_5( \
             proprioceptive_layer_4( \
@@ -397,7 +419,7 @@ class Models:
         motor_layer_6 = Dropout(0.4)
         motor_layer_7 = Dense(256, activation='relu')
         ## link layers of the motor branch of the main model
-        out_motor_main = motor_layer_7 ( \
+        out_motor_features_main = motor_layer_7 ( \
             motor_layer_6 ( \
             motor_layer_5 ( \
             motor_layer_4 ( \
@@ -406,7 +428,7 @@ class Models:
             motor_layer_1 ( \
             input_motor) ) ) ) ) ) )
 
-        concatenated = Concatenate()([out_visual_main, out_proprioceptive_main, out_motor_main])
+        concatenated = Concatenate()([out_visual_features_main, out_proprioceptive_features_main, out_motor_features_main])
         x = Dense(16)(concatenated)
         x = Dense(3, activation='sigmoid')(x)
         #x = Dense(3, activation='relu')(x)
@@ -440,9 +462,9 @@ class Models:
                                     padding='same', name='main_output')
 
         # link them
-        out_main_model = final_5(final_4(final_3(final_2(final_1(addition([weighted_visual([out_visual_main, fusion_weight_visual]),
-                                                                          weighted_proprio([out_proprioceptive_main, fusion_weight_proprio]),
-                                                                          weighted_motor([out_motor_main, fusion_weight_motor])]
+        out_main_model = final_5(final_4(final_3(final_2(final_1(addition([weighted_visual([out_visual_features_main, fusion_weight_visual]),
+                                                                          weighted_proprio([out_proprioceptive_features_main, fusion_weight_proprio]),
+                                                                          weighted_motor([out_motor_features_main, fusion_weight_motor])]
                                                                           ) ) ) ) ) )
 
 
@@ -585,49 +607,73 @@ class Models:
                                                padding='same',\
                                                name='aux_motor_output')(x)
 
-            # define the model
+            # define the MAIN model
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
                                      outputs=[out_main_model, out_visual_aux_model, out_proprio_aux_model, out_motor_aux_model] )
             self.model.compile(optimizer='adam', experimental_run_tf_function=False)
             self.model.set_param(self.parameters)
-            # create a new model sharing the parameters of the main one, to be used only for predicting modality weights
-            self.fusion_weights_model = Model(inputs=self.model.input,
+            # create a new model sharing the parameters of the main one, to be used only for predicting fusion weights for each modaility
+            self.model_fusion_weights = Model(inputs=self.model.input,
                                               outputs=self.model.get_layer(name='fusion_weights').output)
             # link this model to the main one
-            self.model.link_fusion_model(self.fusion_weights_model)
+            self.model.link_model_fusion_weights(self.model_fusion_weights)
             # create additional auxiliary models sharing the weights of the main one.
             # these will be used only for inference and for computing the auxiliary losses for
             # regularizing the fusion weights of the main model
-            self.aux_visual_model = Model(inputs=self.model.input, outputs=out_visual_aux_model)
-            self.aux_proprio_model = Model(inputs=self.model.input, outputs=out_proprio_aux_model)
-            self.aux_motor_model = Model(inputs=self.model.input, outputs=out_motor_aux_model)
-            self.model.link_aux_models(self.aux_visual_model, self.aux_proprio_model, self.aux_motor_model)
+            self.model_aux_visual = Model(inputs=self.model.input, outputs=out_visual_aux_model)
+            self.model_aux_proprio = Model(inputs=self.model.input, outputs=out_proprio_aux_model)
+            self.model_aux_motor = Model(inputs=self.model.input, outputs=out_motor_aux_model)
+            self.model.link_models_auxiliaries(self.model_aux_visual, self.model_aux_proprio, self.model_aux_motor)
 
-            # we need an additional model (sharing the parameters) for manually setting the fusion weights
+            # we need an additional models (sharing the parameters of the main one)
+            # for regularizing the fusion weights
             #### model allowing manually setting the fusion weights
-            # first: pre_fusion model give pre-fusion outputs for each modality
-            self.model_pre_fusion = Model(inputs=self.model.input,outputs=[out_visual_main,
-                                                                           out_proprioceptive_main,
-                                                                           out_motor_main])
-            # second model takes as inputs these pre-fusion outputs and the custom fusion weights
-            self.custom_weight_visual_inp = Input(shape=(1,))
-            self.custom_weight_proprio_inp = Input(shape=(1,))
-            self.custom_weight_motor_inp = Input(shape=(1,))
-            self.custom_visual_inp = Input(shape=(256,))
-            self.custom_proprio_inp = Input(shape=(256,))
-            self.custom_motor_inp = Input(shape=(256,))
+            # first: a pre_fusion model, which outputs the features extracted from each modalities, previous to fusion
+            self.model_pre_fusion_features = Model(inputs=self.model.input, outputs=[out_visual_features_main,
+                                                                                     out_proprioceptive_features_main,
+                                                                                     out_motor_features_main])
+            self.model.link_model_pre_fusion_features(self.model_pre_fusion_features)
 
-            # link them
-            self.out_custom_weight_model = final_5(
+            # second: a model for fusion weight regularization, that has the same inputs and outputs as the main one
+            # and additional inputs representing the aux losses (fusion weights targets) for normalisation
+            #self.
+
+            # third: a model that fuses modalities using weights that are manually set
+            # This can be used for manipulating precision and relevance
+            # of each modalitiy.
+            # The model takes as inputs the pre-fusion features and the custom fusion weights, and outputs
+            # the optical flow of the main model
+            self.custom_fusion_weight_visual_inp = Input(shape=(1,))
+            self.custom_fusion_weight_proprio_inp = Input(shape=(1,))
+            self.custom_fusion_weight_motor_inp = Input(shape=(1,))
+            self.custom_fusion_regul_loss_visual = Input(shape=(1,))
+            self.custom_fusion_regul_loss_proprio = Input(shape=(1,))
+            self.custom_fusion_regul_loss_motor = Input(shape=(1,))
+            self.custom_fusion_visual_inp = Input(shape=(256,))
+            self.custom_fusion_proprio_inp = Input(shape=(256,))
+            self.custom_fusion_motor_inp = Input(shape=(256,))
+
+
+            fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = \
+                FusionActivityRegularizationLayer(param=self.parameters, \
+                                                  name='fusion_activity_regularizer_layer') \
+                    ([self.custom_fusion_weight_visual_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_weight_motor_inp, \
+                      self.custom_fusion_regul_loss_visual, self.custom_fusion_regul_loss_proprio, self.custom_fusion_regul_loss_motor ])
+
+            # adjust the final part of the branch of the main model, to get also fusion weights as inputs.
+            # link the following layers until the opt_flow output
+            self.out_model_custom_fusion = final_5(
                 final_4(final_3(
-                final_2(final_1(addition([weighted_visual([self.custom_visual_inp, self.custom_weight_visual_inp]),
-                                          weighted_proprio([self.custom_proprio_inp, self.custom_weight_proprio_inp]),
-                                          weighted_motor([self.custom_motor_inp, self.custom_weight_motor_inp])]
+                final_2(final_1(addition([weighted_visual([self.custom_fusion_visual_inp, fusion_weight_visual]),
+                                          weighted_proprio([self.custom_fusion_proprio_inp, fusion_weight_proprio]),
+                                          weighted_motor([self.custom_fusion_motor_inp, fusion_weight_motor])]
                                                          ))))))
-            self.model_custom_fusion = Model(inputs=[self.custom_visual_inp, self.custom_weight_visual_inp,
-                                              self.custom_proprio_inp, self.custom_weight_proprio_inp,
-                                              self.custom_motor_inp, self.custom_weight_motor_inp],
-                                            outputs=self.out_custom_weight_model)
+            # create the model with the defined inputs and outputs
+            self.model_custom_fusion = Model(inputs=[self.custom_fusion_visual_inp, self.custom_fusion_weight_visual_inp, self.custom_fusion_regul_loss_visual,
+                                              self.custom_fusion_proprio_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_regul_loss_proprio,
+                                              self.custom_fusion_motor_inp, self.custom_fusion_weight_motor_inp, self.custom_fusion_regul_loss_motor],
+                                             outputs=self.out_model_custom_fusion)
+            self.model.link_model_custom_fusion(self.model_custom_fusion)
 
         #self.model_custom_fusion = Model(inputs=(self.model.input, self.model.get_layer(name='fusion_weights'),
             #                                  outputs=self.model.get_layer(name='fusion_weights').output)
@@ -657,14 +703,14 @@ class Models:
         #else:
         #self.keras_training_loop()
         print('starting training the model with keras fit function')
-        self.myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion, self.model_custom_fusion)
+        self.myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion_features, self.model_custom_fusion)
         if self.parameters.get('model_auxiliary'):
-            fusion_weights_train = self.fusion_weights_model.predict( \
+            fusion_weights_train = self.model_fusion_weights.predict( \
                 [self.datasets.train_dataset_images_t, \
                  self.datasets.train_dataset_joints, \
                  self.datasets.train_dataset_cmd])
 
-            fusion_weights_test = self.fusion_weights_model.predict( \
+            fusion_weights_test = self.model_fusion_weights.predict( \
                 [self.datasets.test_dataset_images_t, \
                  self.datasets.test_dataset_joints, \
                  self.datasets.test_dataset_cmd])
