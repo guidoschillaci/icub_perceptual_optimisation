@@ -161,10 +161,11 @@ class CustomModel(Model):
             #print('before fusion model')
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
             #print('before maind model')
-            predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
+
             with tf.GradientTape() as tape:
+                predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                 #print('before model_pre_fusion_features')
-                predicted_pre_fusion_features = self.pre_fusion_features_model((in_img, in_j, in_cmd), training=True)
+                predicted_pre_fusion_features = self.pre_fusion_features_model((in_img, in_j, in_cmd), training=False)
                 #print('before loss')
                 # Compute the loss value for this minibatch.
                 loss_value, loss_aux_visual, loss_aux_proprio, loss_aux_motor = \
