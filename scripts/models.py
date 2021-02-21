@@ -174,13 +174,15 @@ class CustomModel(Model):
                 print('loss_aux_visual ',str(loss_aux_visual))
                 print('loss_aux_proprio ', str(loss_aux_proprio))
                 print('loss_aux_motor ', str(loss_aux_motor))
-                print('wei_pred shape ', str(weights_predictions.numpy().shape))
-                print('predicted_pre_fusion_features shape ', str(predicted_pre_fusion_features.numpy().shape))
+                np_weights_pred = np.asarray(weights_predictions)
+                np_pred_fusion_features = np.asarray(predicted_pre_fusion_features)
+                print('wei_pred shape ', str(np_weights_pred.shape))
+                print('predicted_pre_fusion_features shape ', str(np_pred_fusion_features.shape))
                 print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
-                    [predicted_pre_fusion_features[:,0], weights_predictions[:,0], loss_aux_visual, \
-                     predicted_pre_fusion_features[:,1], weights_predictions[:,1], loss_aux_proprio, \
-                     predicted_pre_fusion_features[:,2], weights_predictions[:,2], loss_aux_motor], \
+                    [np_pred_fusion_features[:,0], np_weights_pred[:,0], loss_aux_visual, \
+                     np_pred_fusion_features[:,1], np_weights_pred[:,1], loss_aux_proprio, \
+                     np_pred_fusion_features[:,2], np_weights_pred[:,2], loss_aux_motor], \
                     training=True)
                 print("prediction_regulariz ", str(prediction_regulariz))
                 print('after model custom')
