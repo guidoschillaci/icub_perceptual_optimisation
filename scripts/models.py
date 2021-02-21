@@ -176,9 +176,9 @@ class CustomModel(Model):
                 print('loss_aux_motor ', str(loss_aux_motor))
                 print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
-                    [predicted_pre_fusion_features[0], weights_predictions[0], loss_aux_visual, \
-                     predicted_pre_fusion_features[1], weights_predictions[1], loss_aux_proprio, \
-                     predicted_pre_fusion_features[2], weights_predictions[2], loss_aux_motor], \
+                    [predicted_pre_fusion_features[:,0], weights_predictions[:,0], loss_aux_visual, \
+                     predicted_pre_fusion_features[:,1], weights_predictions[:,1], loss_aux_proprio, \
+                     predicted_pre_fusion_features[:,2], weights_predictions[:,2], loss_aux_motor], \
                     training=True)
                 print("prediction_regulariz ", str(prediction_regulariz))
                 print('after model custom')
@@ -692,13 +692,12 @@ class Models:
                                           weighted_motor([self.custom_fusion_motor_inp, fusion_weight_motor])]
                                                          ))))))
             # create the model with the defined inputs and outputs
-            self.model_custom_fusion = Model(inputs=[self.custom_fusion_weight_visual_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_weight_motor_inp,
-                                              self.custom_fusion_regul_loss_visual, self.custom_fusion_regul_loss_proprio, self.custom_fusion_regul_loss_motor,
-                                              self.custom_fusion_visual_inp, self.custom_fusion_proprio_inp, self.custom_fusion_motor_inp],
+            self.model_custom_fusion = Model(inputs=[self.custom_fusion_visual_inp, self.custom_fusion_weight_visual_inp, self.custom_fusion_regul_loss_visual,
+                                              self.custom_fusion_proprio_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_regul_loss_proprio,
+                                              self.custom_fusion_motor_inp, self.custom_fusion_weight_motor_inp, self.custom_fusion_regul_loss_motor],
                                              outputs=self.out_model_custom_fusion, \
                                              name='custom_fusion_model')
             self.model.link_model_custom_fusion(self.model_custom_fusion)
-            self.model_custom_fusion.summary()
 
         #self.model_custom_fusion = Model(inputs=(self.model.input, self.model.get_layer(name='fusion_weights'),
             #                                  outputs=self.model.get_layer(name='fusion_weights').output)
