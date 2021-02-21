@@ -322,7 +322,7 @@ class FusionActivityRegularizationLayer(Layer):
             print('inout shape ',str(np.asarray(inputs).shape) )
 
             #self.fusion_weights = fusion_w
-            self.outputs = inputs[0:3]
+            self.outputs = inputs[0:self.parameters.get('model_num_modalities')]
             #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
@@ -336,7 +336,7 @@ class FusionActivityRegularizationLayer(Layer):
 
         else:
             print('layer NOT trainable')
-            return inputs[0:3]
+            return inputs[0:self.parameters.get('model_num_modalities')]
 
 class Models:
     def __init__(self, param):
