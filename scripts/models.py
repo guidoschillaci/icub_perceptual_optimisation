@@ -205,7 +205,7 @@ class CustomModel(Model):
                 # Compute the loss value for this minibatch.
                 loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
                 # Add any extra losses created during the forward pass.
-                loss_value += sum(self.losses)
+                #loss_value += sum(self.losses)
             # compute gradients
             grads = tape.gradient(loss_value, self.trainable_weights)
             # Run one step of gradient descent by updating
@@ -225,7 +225,7 @@ class CustomModel(Model):
                                                    predictions, \
                                                    fusion_weights=weights_predictions)
             # Add any extra losses created during the forward pass.
-            val_loss_value += sum(self.losses)
+            #val_loss_value += sum(self.losses)
             val_loss_tracker.update_state(val_loss_value)
 
             iou = self.intersection_over_union(out_of, predictions[0])
@@ -237,7 +237,7 @@ class CustomModel(Model):
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
             # Add any extra losses created during the forward pass.
-            val_loss_value += sum(self.losses)
+            #val_loss_value += sum(self.losses)
             val_loss_tracker.update_state(val_loss_value)
             return {"loss": val_loss_tracker.result()}
     @property
@@ -332,8 +332,8 @@ class FusionActivityRegularizationLayer(Layer):
     def call(self, inputs, training = None):
         if training:
             #print('training is true in layer')
-            print('inout shape ',str(np.asarray(inputs).shape) )
-            print('inout 0 shape ', str(np.asarray(inputs[0]).shape))
+            #print('inout shape ',str(np.asarray(inputs).shape) )
+            #print('inout 0 shape ', str(np.asarray(inputs[0]).shape))
 
             #self.fusion_weights = fusion_w
             outputs = inputs[0:self.parameters.get('model_num_modalities')]
