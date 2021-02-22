@@ -173,6 +173,10 @@ class CustomModel(Model):
                     self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
                                           fusion_weights=weights_predictions)
+
+                tf_loss_aux_visual = tf.ones_like(weights_predictions[:,0])*weights_predictions[:,0]
+                tf_loss_aux_proprio = tf.ones_like(weights_predictions[:,1])*weights_predictions[:,1]
+                tf_loss_aux_motor = tf.ones_like(weights_predictions[:,2])*weights_predictions[:,2]
                 #print('loss_aux_visual ',str(loss_aux_visual))
                 #print('loss_aux_proprio ', str(loss_aux_proprio))
                 #print('loss_aux_motor ', str(loss_aux_motor))
@@ -182,9 +186,9 @@ class CustomModel(Model):
                 #print('predicted_pre_fusion_features shape ', str(np_pred_fusion_features.shape))
                 #print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
-                    [predicted_pre_fusion_features[0], weights_predictions[:,0], loss_aux_visual, \
-                     predicted_pre_fusion_features[1], weights_predictions[:,1], loss_aux_proprio, \
-                     predicted_pre_fusion_features[2], weights_predictions[:,2], loss_aux_motor], \
+                    [predicted_pre_fusion_features[0], weights_predictions[:,0], tf_loss_aux_visual, \
+                     predicted_pre_fusion_features[1], weights_predictions[:,1], tf_loss_aux_proprio, \
+                     predicted_pre_fusion_features[2], weights_predictions[:,2], tf_loss_aux_motor], \
                     training=True)
                 #print("prediction_regulariz ", str(prediction_regulariz))
                 #print('after model custom')
@@ -671,15 +675,15 @@ class Models:
             # of each modalitiy.
             # The model takes as inputs the pre-fusion features and the custom fusion weights, and outputs
             # the optical flow of the main model
-            self.custom_fusion_weight_visual_inp = Input(shape=(1,))
-            self.custom_fusion_weight_proprio_inp = Input(shape=(1,))
-            self.custom_fusion_weight_motor_inp = Input(shape=(1,))
-            self.custom_fusion_regul_loss_visual = Input(shape=(1,))
-            self.custom_fusion_regul_loss_proprio = Input(shape=(1,))
-            self.custom_fusion_regul_loss_motor = Input(shape=(1,))
-            self.custom_fusion_visual_inp = Input(shape=(256,))
-            self.custom_fusion_proprio_inp = Input(shape=(256,))
-            self.custom_fusion_motor_inp = Input(shape=(256,))
+            self.custom_fusion_weight_visual_inp = Input(shape=(1,), name='w_vis_inp')
+            self.custom_fusion_weight_proprio_inp = Input(shape=(1,), name='w_pro_inp')
+            self.custom_fusion_weight_motor_inp = Input(shape=(1,), name='w_mot_inp')
+            self.custom_fusion_regul_loss_visual = Input(shape=(1,), name='reg_los_vis_inp')
+            self.custom_fusion_regul_loss_proprio = Input(shape=(1,), name='reg_los_pro_inp')
+            self.custom_fusion_regul_loss_motor = Input(shape=(1,), name='reg_los_mot_inp')
+            self.custom_fusion_visual_inp = Input(shape=(256,), name='feat_vis_inp')
+            self.custom_fusion_proprio_inp = Input(shape=(256,), name='feat_pro_inp')
+            self.custom_fusion_motor_inp = Input(shape=(256,), name='feat_mot_inp')
 
 
             fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor  = \
