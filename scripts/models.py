@@ -153,6 +153,7 @@ class CustomModel(Model):
                    tf.reduce_mean(loss_aux_proprio), \
                    tf.reduce_mean(loss_aux_motor)
 
+    @tf.function
     def train_step(self, data):
         #print('data shape ', str(np.asarray(data).shape))
         if self.parameters.get('model_auxiliary'):
