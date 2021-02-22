@@ -237,7 +237,7 @@ class CustomModel(Model):
             iou = self.intersection_over_union(out_of, predictions[0])
             iou_tracker.update_state(iou)
 
-            return {"loss": val_loss_tracker.result(), 'IoU': iou_tracker.result()}
+            return {"loss": val_loss_tracker.result(), "IoU": iou_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
