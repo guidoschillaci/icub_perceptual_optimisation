@@ -817,12 +817,25 @@ class Models:
         plt.title('model history')
         plt.ylabel('value')
         plt.xlabel('epoch')
-        for i in range(len(history_keys)):
+        for i in range(2):
             #if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
             plt.plot(self.myCallback.history[history_keys[i]], label=history_keys[i])
             np.savetxt(self.parameters.get('directory_plots') + history_keys[i]+ '.txt', self.myCallback.history[history_keys[i]],fmt="%s")
         plt.legend(history_keys, loc='upper left')
         plt.savefig(self.parameters.get('directory_plots') + 'history.png')
+
+        # summarize history for loss
+        fig = plt.figure(figsize=(10, 12))
+        plt.title('Intersection over Unit')
+        plt.ylabel('value')
+        plt.xlabel('epoch')
+
+        # if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
+        plt.plot(self.myCallback.history[history_keys[2]], label=history_keys[2])
+        np.savetxt(self.parameters.get('directory_plots') + history_keys[2] + '.txt',
+                   self.myCallback.history[history_keys[2]], fmt="%s")
+        plt.legend(history_keys, loc='upper left')
+        plt.savefig(self.parameters.get('directory_plots') + 'IoU.png')
 
     '''
     #@tf.function
