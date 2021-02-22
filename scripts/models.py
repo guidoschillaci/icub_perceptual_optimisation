@@ -227,7 +227,7 @@ class CustomModel(Model):
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
             # Compute the loss value for this minibatch.
             val_loss_value, val_loss_aux_visual, val_loss_aux_proprio, val_loss_aux_motor = \
-                                     = self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
+                                      self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                                    predictions, \
                                                    fusion_weights=weights_predictions)
             # Add any extra losses created during the forward pass.
