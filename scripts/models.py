@@ -149,10 +149,9 @@ class CustomModel(Model):
             #    self.get_layer('fusion_activity_regularizer_layer').pass_auxiliary_losses([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
             #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total  , \
-                    loss_aux_visual, loss_aux_proprio, loss_aux_motor
-                   #tf.reduce_mean(loss_aux_visual), \
-                   #tf.reduce_mean(loss_aux_proprio), \
-                   #tf.reduce_mean(loss_aux_motor)
+                   tf.reduce_mean(loss_aux_visual), \
+                   tf.reduce_mean(loss_aux_proprio), \
+                   tf.reduce_mean(loss_aux_motor)
 
     @tf.function
     def train_step(self, data):
