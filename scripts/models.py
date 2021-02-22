@@ -1,7 +1,7 @@
 import tensorflow as tf
 #tf.compat.v1.disable_eager_execution()
 #tf.compat.v1.experimental.output_all_intermediates(True)
-tf.config.run_functions_eagerly(True)
+#tf.config.run_functions_eagerly(True)
 
 from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxPooling2D,UpSampling2D, Reshape, Concatenate, Add, Multiply, Softmax, ActivityRegularization, Layer
 from tensorflow.keras import Model
@@ -80,12 +80,12 @@ class CustomModel(Model):
         count_union = tf.math.count_nonzero(union)
         return count_intersection / count_union
 
-    @tf.function
+    #@tf.function
     def loss_fn_regul(self, y_true, y_pred):
         true_main_out = y_true[0]
         return tf.keras.losses.mean_squared_error(y_pred, true_main_out)
 
-    @tf.function
+    #@tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
         #print('size y_true', str(np.asarray(y_true).shape))
@@ -297,7 +297,7 @@ class FusionActivityRegularizationLayer(Layer):
     #def set_fusion_weights(self, fusion_w):
     #    self.fusion_weights = fusion_w
 
-    @tf.function
+    #@tf.function
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
         #print('shape loss ',str(loss.numpy().shape) )
         #print('shape w ', str(np.asarray(fusion_w).shape))
