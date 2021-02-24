@@ -7,7 +7,7 @@ from doepy import build # design of experiments
 if __name__ == "__main__":
 
     do_experiments = True
-    number_of_runs = 5
+    number_of_runs = 1#5
     main_path = os.getcwd()
     datasets_folder = main_path + '/' + 'datasets/'
     multiple_experiments_folder = main_path + '/' + 'experiments'
@@ -18,7 +18,8 @@ if __name__ == "__main__":
 
     # which train and test dataset to use
     doe = build.build_full_fact(
-        {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]}) # 0: robot alone in the scene; 1: robot and balls falling from the sky
+        {'dataset_type': [0], 'attenuation_test_dataset_type': [0]})
+    #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]}) # 0: robot alone in the scene; 1: robot and balls falling from the sky
     print(doe)
 
     if do_experiments:
@@ -65,6 +66,7 @@ if __name__ == "__main__":
                 else:
                     param.set('attenuation_test_dataset_type', 'robot_and_ball')
 
+                print(param)
                 '''
                 # create model
                 mod = Models(param)
