@@ -18,7 +18,7 @@ if __name__ == "__main__":
 
     # which train and test dataset to use
     doe = build.build_full_fact(
-        {'dataset_type': [0], 'attenuation_test_dataset_type': [0]})
+        {'dataset_type': [1], 'attenuation_test_dataset_type': [0]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]}) # 0: robot alone in the scene; 1: robot and balls falling from the sky
     print(doe)
 
@@ -55,10 +55,10 @@ if __name__ == "__main__":
                 dataset_type = doe.loc[exp, 'dataset_type']
                 if dataset_type == 0:
                     param.set('dataset_type', 'robot_alone')
-                    param.set('directory_datasets', datasets_folder + '/robot_alone/')
+                    param.set('directory_datasets', datasets_folder + 'robot_alone/')
                 else:
                     param.set('dataset_type', 'robot_and_ball')
-                    param.set('directory_datasets', datasets_folder + '/robot_and_ball/')
+                    param.set('directory_datasets', datasets_folder + 'robot_and_ball/')
 
                 attenuation_test_dataset_type = doe.loc[exp, 'attenuation_test_dataset_type']
                 if attenuation_test_dataset_type == 0:
