@@ -21,6 +21,8 @@ class Parameters:
             'image_size': 32,
             'image_channels': 1,
 
+            'dataset_type': 'robot_and_ball', # 'robot_alone' or 'robot_and_ball'
+            'attenuation_test_dataset_type': 'robot_and_ball',  # 'robot_alone' or 'robot_and_ball'
             'dataset_shuffle': True,
             'dataset_shuffle_seed': 42,
             'test_dataset_factor': 0.1, # the portion of the train dataset to be used as test
