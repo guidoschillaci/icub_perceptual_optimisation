@@ -40,7 +40,7 @@ if __name__ == "__main__":
                 directory_models = run_folder + 'models/'
                 directory_plots = run_folder + 'plots/'
                 directory_plots_gif = run_folder + 'plots/gif/'
-                os.makedirs(directory_results)
+                #os.makedirs(directory_results)
                 os.makedirs(directory_models)
                 os.makedirs(directory_plots)
                 os.makedirs(directory_plots_gif)
