@@ -17,9 +17,10 @@ if __name__ == "__main__":
     os.chdir(multiple_experiments_folder)
 
     # which train and test dataset to use
+    # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact(
         {'dataset_type': [1], 'attenuation_test_dataset_type': [0]})
-    #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]}) # 0: robot alone in the scene; 1: robot and balls falling from the sky
+    #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
     print(doe)
 
     if do_experiments:
