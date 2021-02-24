@@ -36,20 +36,20 @@ if __name__ == "__main__":
                 if not os.path.exists(run_folder):
                     os.makedirs(run_folder)
                 os.chdir(run_folder)
-                directory_results = run_folder +'results/'
-                directory_models = run_folder + 'results/models/'
-                directory_plots = run_folder + 'results/plots/'
-                directory_plots_gif = run_folder + 'results/plots/gif/'
+                directory_results = run_folder
+                directory_models = run_folder + 'models/'
+                directory_plots = run_folder + 'plots/'
+                directory_plots_gif = run_folder + 'plots/gif/'
                 os.makedirs(directory_results)
                 os.makedirs(directory_models)
                 os.makedirs(directory_plots)
                 os.makedirs(directory_plots_gif)
                 # create parameters object
                 param = Parameters()
-                param.set('directory_results', run_folder+'results/')
-                param.set('directory_models', run_folder+'results/models/')
-                param.set('directory_plots', run_folder+'results/plots/')
-                param.set('directory_plots_gif', run_folder+'results/plots/gif/')
+                param.set('directory_results', run_folder)
+                param.set('directory_models', run_folder+'models/')
+                param.set('directory_plots', run_folder+'plots/')
+                param.set('directory_plots_gif', run_folder+'plots/gif/')
 
                 dataset_type = doe.loc[exp, 'dataset_type']
                 if dataset_type == 0:
