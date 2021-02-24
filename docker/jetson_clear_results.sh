@@ -2,7 +2,7 @@ echo "Deleting Optical Flow dataset"
 rm datasets/dataset_optical_flow.npy
 echo "Deleting old results and models"
 rm -r results
-rm -r experiments
+rm -r experiments/
 #echo "Creating results directories"
 #mkdir results
 #mkdir results/plots
