@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact(
-        {'dataset_type': [1], 'attenuation_test_dataset_type': [0]})
+        {'dataset_type': [1], 'attenuation_test_dataset_type': [1]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
     print(doe)
 
@@ -68,7 +68,7 @@ if __name__ == "__main__":
                     param.set('attenuation_test_dataset_type', 'robot_and_ball')
 
                 print(param)
-                '''
+
                 # create model
                 mod = Models(param)
                 # load dataset
@@ -84,4 +84,3 @@ if __name__ == "__main__":
                 mod.save_plots()
                 # save nn
                 mod.save_model()
-                '''
