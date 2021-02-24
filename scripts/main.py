@@ -32,6 +32,7 @@ if __name__ == "__main__":
             for run in range(number_of_runs):
                 print('Starting experiment n.', str(exp))
                 run_folder = exp_folder + '/run_' + str(run) + '/'
+                print('Current folder: ', run_folder)
                 if not os.path.exists(run_folder):
                     os.makedirs(run_folder)
                 os.chdir(run_folder)
