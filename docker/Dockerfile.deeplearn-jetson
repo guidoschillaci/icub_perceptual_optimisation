@@ -31,7 +31,8 @@ RUN pip3 install pydot
 
 ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
 RUN apt-get clean
-RUN apt-get update
+RUN rm -rf /var/lib/apt/lists/*
+RUN apt-get update --fix-missing
 
 # to avoid getting stuck on configuring tzdata, called by python3-tk
 ENV TZ=Europe/Rome
