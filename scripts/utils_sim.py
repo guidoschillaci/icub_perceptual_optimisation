@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+print('test')
 def generate_aruco_markers(num):
     print('generating ', str(num), ' aruco markers')
     # load the ArUCo dictionary
