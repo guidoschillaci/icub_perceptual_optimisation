@@ -26,7 +26,8 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --volume="/home/guido/code:/code/:rw"  \
       -w /code \
-      guidoski/icub:tf2-nogpu bash -c 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_intrinsic_motivation/yarp/apps/ &&  bash'
+      guidoski/icub:ubuntu bash -c 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_intrinsic_motivation/yarp/apps/ &&  bash'
+      #guidoski/icub:tf2-nogpu bash -c 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_intrinsic_motivation/yarp/apps/ &&  bash'
 else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
