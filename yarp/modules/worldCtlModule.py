@@ -166,6 +166,17 @@ config = yarp.Property()
 config.fromConfigFile('/code/icub_intrinsic_motivation/yarp/config.ini')
 max_num_objects = config.findGroup('GENERAL').find('max_num_objects').asInt32()
 
+# create marker objects
+marker_obj_0 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_1 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_2 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_3 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_4 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_5 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_6 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_7 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+marker_obj_8 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+
 while True:
     y = 1.0
     x = random.uniform(0, 0.3)
