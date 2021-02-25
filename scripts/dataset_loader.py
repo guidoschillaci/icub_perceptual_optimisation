@@ -52,6 +52,8 @@ class DatasetLoader():
         # images at time t
         if self.parameters.get('image_channels')==1:
             self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
+
+            print('ds shape ', self.dataset_images_t_orig.shape)
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
             #self.background_image = cv2.cvtColor(self.dataset_images_t_orig[1000], cv2.COLOR_GRAY2RGBA)
