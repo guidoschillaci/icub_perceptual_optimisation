@@ -62,6 +62,7 @@ class DatasetLoader():
             print('ds shape ', self.dataset_images_raw.shape)
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
+            self.dataset_images_orig_size_t = []
             #self.background_image = cv2.cvtColor(self.dataset_images_t_orig[1000], cv2.COLOR_GRAY2RGBA)
             #self.background_image = cv2.resize(self.dataset_images_t_orig[1000], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
             self.background_image = deepcopy(self.dataset_images_raw[1000])
@@ -78,6 +79,7 @@ class DatasetLoader():
             self.dataset_images_raw = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
+            self.dataset_images_orig_size_t = []
             for i in tqdm(range(len(self.dataset_images_raw)-1)):
                 cv2_img_reshaped = cv2.resize(self.dataset_images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
                 self.dataset_images_t.append( np.array(cv2_img_reshaped))
