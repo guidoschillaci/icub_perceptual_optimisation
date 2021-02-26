@@ -32,6 +32,9 @@ class DatasetLoader():
         self.train_dataset_images_t, self.test_dataset_images_t = train_test_split(self.dataset_images_t,
                                                             test_size = self.parameters.get('test_dataset_factor'),
                                                             random_state = self.parameters.get('dataset_split_seed'))
+        self.train_dataset_images_orig_size_t, self.test_dataset_images_orig_size_t = train_test_split(self.dataset_images_orig_size_t,
+                                                            test_size=self.parameters.get('test_dataset_factor'),
+                                                            random_state=self.parameters.get('dataset_split_seed'))
         self.train_dataset_images_tp1, self.test_dataset_images_tp1 = train_test_split(self.dataset_images_tp1,
                                                             test_size=self.parameters.get('test_dataset_factor'),
                                                             random_state=self.parameters.get('dataset_split_seed'))
@@ -60,7 +63,8 @@ class DatasetLoader():
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
             #self.background_image = cv2.cvtColor(self.dataset_images_t_orig[1000], cv2.COLOR_GRAY2RGBA)
-            self.background_image = cv2.resize(self.dataset_images_t_orig[1000], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
+            #self.background_image = cv2.resize(self.dataset_images_t_orig[1000], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
+            self.background_image = deepcopy(self.dataset_images_t_orig[1000])
             #self.background_image[:, :, 3] = 255*np.ones((self.parameters.get('image_size'), self.parameters.get('image_size'))) # alpha channel
 
             cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
@@ -76,6 +80,9 @@ class DatasetLoader():
             for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
                 cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
                 self.dataset_images_t.append( np.array(cv2_img))
+                self.dataset_images_orig_size_t.append(self.dataset_images_t_orig[i])
+                if self.parameters.get('image_original_shape') is None:
+                    self.parameters.set('image_original_shape', self.dataset_images_t_orig[i].shape)
             #else:
             #    self.dataset_images_t = self.dataset_images_t_orig[:-1]
 
@@ -94,8 +101,6 @@ class DatasetLoader():
                                  interpolation=cv2.INTER_LINEAR)
             self.dataset_images_tp1.append(np.array(cv2_img))
             self.dataset_images_orig_size_tp1.append(self.dataset_images_t_orig[i+1])
-            if self.parameters.get('image_original_shape') is None:
-                self.parameters.set('image_original_shape', self.dataset_images_t_orig[i+1].shape)
 
         # starts from t+1
         #self.dataset_images_tp1 = np.delete(self.dataset_images_tp1, 0, 0)
