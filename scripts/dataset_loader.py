@@ -84,11 +84,15 @@ class DatasetLoader():
         #else:
         #    self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
         self.dataset_images_tp1 = [] # deepcopy(self.dataset_images_t)
+        self.dataset_images_orig_size_tp1 = []  # original size
         for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
             cv2_img = cv2.resize(self.dataset_images_t_orig[i+1],
                                  (self.parameters.get('image_size'), self.parameters.get('image_size')),
                                  interpolation=cv2.INTER_LINEAR)
             self.dataset_images_tp1.append(np.array(cv2_img))
+            self.dataset_images_orig_size_tp1.append(self.dataset_images_t_orig[i+1])
+            if self.parameters.get('image_original_shape') is None:
+                self.parameters.set('image_original_shape', self.dataset_images_t_orig[i+1].shape)
 
         # starts from t+1
         #self.dataset_images_tp1 = np.delete(self.dataset_images_tp1, 0, 0)

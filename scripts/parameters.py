@@ -18,7 +18,8 @@ class Parameters:
             'model_filename':'model.h5',
             'model_plot_filename': 'model.png',
 
-            'image_size': 32,
+            'image_size': 32, # size of the input image in the model
+            'image_original_shape': None, # shape of the image in the original dataset
             'image_channels': 1,
 
             'dataset_type': 'robot_and_ball', # 'robot_alone' or 'robot_and_ball'
