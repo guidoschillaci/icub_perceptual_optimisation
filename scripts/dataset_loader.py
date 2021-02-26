@@ -57,32 +57,33 @@ class DatasetLoader():
 
         # images at time t
         if self.parameters.get('image_channels')==1:
-            self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
+            self.dataset_images_raw = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
 
-            print('ds shape ', self.dataset_images_t_orig.shape)
+            print('ds shape ', self.dataset_images_raw.shape)
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
             #self.background_image = cv2.cvtColor(self.dataset_images_t_orig[1000], cv2.COLOR_GRAY2RGBA)
             #self.background_image = cv2.resize(self.dataset_images_t_orig[1000], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
-            self.background_image = deepcopy(self.dataset_images_t_orig[1000])
+            self.background_image = deepcopy(self.dataset_images_raw[1000])
             #self.background_image[:, :, 3] = 255*np.ones((self.parameters.get('image_size'), self.parameters.get('image_size'))) # alpha channel
 
             cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
-            for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
-                cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
+            for i in tqdm(range(len(self.dataset_images_raw)-1)):
+                cv2_img = cv2.resize(self.dataset_images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
                 self.dataset_images_t.append( np.array(cv2_img))
+                self.dataset_images_orig_size_t.append(self.dataset_images_raw[i])
             #else:
             #    self.dataset_images_t = self.dataset_images_t_orig[:-1]
         else:
-            self.dataset_images_t_orig = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
+            self.dataset_images_raw = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
-            for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
-                cv2_img = cv2.resize(self.dataset_images_t_orig[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
-                self.dataset_images_t.append( np.array(cv2_img))
-                self.dataset_images_orig_size_t.append(self.dataset_images_t_orig[i])
+            for i in tqdm(range(len(self.dataset_images_raw)-1)):
+                cv2_img_reshaped = cv2.resize(self.dataset_images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size'), self.parameters.get('image_channels')), interpolation=cv2.INTER_LINEAR)
+                self.dataset_images_t.append( np.array(cv2_img_reshaped))
+                self.dataset_images_orig_size_t.append(self.dataset_images_raw[i])
                 if self.parameters.get('image_original_shape') is None:
-                    self.parameters.set('image_original_shape', self.dataset_images_t_orig[i].shape)
+                    self.parameters.set('image_original_shape', self.dataset_images_raw[i].shape)
             #else:
             #    self.dataset_images_t = self.dataset_images_t_orig[:-1]
 
@@ -95,12 +96,12 @@ class DatasetLoader():
         #    self.dataset_images_tp1 = np.load(self.parameters.get('directory_datasets') + 'dataset_images.npy')
         self.dataset_images_tp1 = [] # deepcopy(self.dataset_images_t)
         self.dataset_images_orig_size_tp1 = []  # original size
-        for i in tqdm(range(len(self.dataset_images_t_orig)-1)):
-            cv2_img = cv2.resize(self.dataset_images_t_orig[i+1],
+        for i in tqdm(range(len(self.dataset_images_raw)-1)):
+            cv2_img_reshaped = cv2.resize(self.dataset_images_raw[i+1],
                                  (self.parameters.get('image_size'), self.parameters.get('image_size')),
                                  interpolation=cv2.INTER_LINEAR)
-            self.dataset_images_tp1.append(np.array(cv2_img))
-            self.dataset_images_orig_size_tp1.append(self.dataset_images_t_orig[i+1])
+            self.dataset_images_tp1.append(np.array(cv2_img_reshaped))
+            self.dataset_images_orig_size_tp1.append(self.dataset_images_raw[i+1])
 
         # starts from t+1
         #self.dataset_images_tp1 = np.delete(self.dataset_images_tp1, 0, 0)
