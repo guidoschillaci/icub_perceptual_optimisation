@@ -131,7 +131,10 @@ class MyCallback(Callback):
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            plt.imshow(opt_unnorm.reshape(self.parameters.get('image_original_shape')), cmap='gray')
+            cv2_opt_unnorm = cv2.resize(opt_unnorm.reshape(self.parameters.get('image_original_shape'),
+                                                           self.parameters.get('image_original_shape'),
+                                                           interpolation=cv2.INTER_LINEAR))
+            plt.imshow(cv2_opt_unnorm, cmap='gray')
             ax3.get_xaxis().set_visible(False)
             ax3.get_yaxis().set_visible(False)
             ax3.set_ylabel('true OF', rotation=0)
@@ -156,7 +159,7 @@ class MyCallback(Callback):
 
             ax4 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             pred_unnorm = deepcopy(predictions[i])
-            pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
+            #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
                 pred_unnorm = self.threshold_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
@@ -164,7 +167,8 @@ class MyCallback(Callback):
                 pred_unnorm = self.threshold_optical_flow(pred_unnorm[...,0] )# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            plt.imshow(pred_unnorm, cmap='gray')
+            cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'), interpolation=cv2.INTER_LINEAR)
+            plt.imshow(cv2_pred_unnorm, cmap='gray')
             ax4.get_xaxis().set_visible(False)
             ax4.get_yaxis().set_visible(False)
             ax4.set_ylabel('pred.OF', rotation=0)
@@ -178,7 +182,7 @@ class MyCallback(Callback):
             #attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_original_shape')),
             #                    images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #                    self.datasets.background_image)
-            attenuated_image_tp1 = sensory_attenuation(pred_unnorm, images_tp1_orig_size[i], self.datasets.background_image)
+            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, images_tp1_orig_size[i], self.datasets.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
             ax6.get_yaxis().set_visible(False)
@@ -240,7 +244,7 @@ class MyCallback(Callback):
         ax8 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
         predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter])
-        predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
+        #predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
         if self.parameters.get('opt_flow_only_magnitude'):
             predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm)
@@ -248,7 +252,10 @@ class MyCallback(Callback):
             predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
-        plt.imshow(predcustom_unnorm, cmap='gray')
+        cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'),
+                                     interpolation=cv2.INTER_LINEAR)
+
+        plt.imshow(cv2_predcustom_unnorm, cmap='gray')
         ax8.get_xaxis().set_visible(False)
         ax8.get_yaxis().set_visible(False)
         ax8.set_ylabel('custom pred.', rotation=0)
@@ -265,7 +272,7 @@ class MyCallback(Callback):
         #    predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    images_tp1[iter].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    self.datasets.background_image)
-        attenuated_custom = sensory_attenuation(predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.background_image)
+        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.background_image)
         plt.imshow(attenuated_custom, cmap='gray')
         ax9.get_xaxis().set_visible(False)
         ax9.get_yaxis().set_visible(False)
