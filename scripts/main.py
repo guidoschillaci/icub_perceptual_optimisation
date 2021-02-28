@@ -67,8 +67,6 @@ if __name__ == "__main__":
                 else:
                     param.set('attenuation_test_dataset_type', 'robot_and_ball')
 
-                print(param)
-
                 # create model
                 mod = Models(param)
                 # load dataset
@@ -77,6 +75,8 @@ if __name__ == "__main__":
                 mod.make_model()
                 # save a plot of the model
                 mod.plot_model()
+                # print parameters
+                mod.parameters.print()
                 # train the network
                 mod.train_model()
 

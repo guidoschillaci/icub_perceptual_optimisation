@@ -73,3 +73,8 @@ class Parameters:
         # save also as plain text file
         with open(os.path.join(self.get('directory'), 'parameters.txt'), 'w') as f:
             print(self.dictionary, file=f)
+
+    def print(self):
+        print('Parameters:')
+        for keys, values in self.dictionary.items():
+            print(keys, ': ', values)

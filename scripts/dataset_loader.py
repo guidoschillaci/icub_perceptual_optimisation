@@ -59,7 +59,7 @@ class DatasetLoader():
         if self.parameters.get('image_channels')==1:
             self.dataset_images_raw = np.load(self.parameters.get('directory_datasets')+'dataset_images_grayscale.npy')
 
-            print('ds shape ', self.dataset_images_raw.shape)
+            #print('ds shape ', self.dataset_images_raw.shape)
             #if self.parameters.get('image_size') != 64:
             self.dataset_images_t = []
             self.dataset_images_orig_size_t = []
