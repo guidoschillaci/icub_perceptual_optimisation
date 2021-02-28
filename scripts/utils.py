@@ -160,7 +160,7 @@ class MyCallback(Callback):
             count_line = count_line + 1
 
             ax4 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
-            pred_unnorm = deepcopy(predictions[i].squeeze().numpy())
+            pred_unnorm = deepcopy(predictions[i].squeeze())
             #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
@@ -169,6 +169,7 @@ class MyCallback(Callback):
                 pred_unnorm = self.threshold_optical_flow(pred_unnorm[...,0] )# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
+            pred_unnorm = np.array(pred_unnorm, dtype='uint8')
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             plt.imshow(cv2_pred_unnorm, cmap='gray')
             ax4.get_xaxis().set_visible(False)
