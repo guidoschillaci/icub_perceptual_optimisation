@@ -246,15 +246,16 @@ class MyCallback(Callback):
 
         ax8 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
-        predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].squeeze().numpy())
+        _predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].numpy())
         #predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
         if self.parameters.get('opt_flow_only_magnitude'):
-            predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm)
+            _predcustom_unnorm = self.threshold_optical_flow(_predcustom_unnorm)
         else:
-            predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm[..., 0])
+            _predcustom_unnorm = self.threshold_optical_flow(_predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
+        predcustom_unnorm = np.array(_predcustom_unnorm, dtype='uint8')
         cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
         plt.imshow(cv2_predcustom_unnorm, cmap='gray')
