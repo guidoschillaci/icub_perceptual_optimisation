@@ -73,6 +73,8 @@ class DatasetLoader():
                 cv2_img = cv2.resize(self.dataset_images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
                 self.dataset_images_t.append( np.array(cv2_img))
                 self.dataset_images_orig_size_t.append(self.dataset_images_raw[i])
+                if self.parameters.get('image_original_shape') is None:
+                    self.parameters.set('image_original_shape', self.dataset_images_raw[i].shape)
             #else:
             #    self.dataset_images_t = self.dataset_images_t_orig[:-1]
         else:
