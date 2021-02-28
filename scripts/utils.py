@@ -134,6 +134,7 @@ class MyCallback(Callback):
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
+            print('opt_unnorm shape', opt_unnorm.shape)
             cv2_opt_unnorm = cv2.resize(opt_unnorm, self.parameters.get('image_original_shape'))
             plt.imshow(cv2_opt_unnorm, cmap='gray')
             ax3.get_xaxis().set_visible(False)
