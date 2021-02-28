@@ -131,9 +131,7 @@ class MyCallback(Callback):
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            cv2_opt_unnorm = cv2.resize(opt_unnorm.reshape(self.parameters.get('image_original_shape'),
-                                                           self.parameters.get('image_original_shape'),
-                                                           interpolation=cv2.INTER_LINEAR))
+            cv2_opt_unnorm = cv2.resize(opt_unnorm, self.parameters.get('image_original_shape'))
             plt.imshow(cv2_opt_unnorm, cmap='gray')
             ax3.get_xaxis().set_visible(False)
             ax3.get_yaxis().set_visible(False)
@@ -167,7 +165,7 @@ class MyCallback(Callback):
                 pred_unnorm = self.threshold_optical_flow(pred_unnorm[...,0] )# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'), interpolation=cv2.INTER_LINEAR)
+            cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             plt.imshow(cv2_pred_unnorm, cmap='gray')
             ax4.get_xaxis().set_visible(False)
             ax4.get_yaxis().set_visible(False)
@@ -252,8 +250,7 @@ class MyCallback(Callback):
             predcustom_unnorm = self.threshold_optical_flow(predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
-        cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'),
-                                     interpolation=cv2.INTER_LINEAR)
+        cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
         plt.imshow(cv2_predcustom_unnorm, cmap='gray')
         ax8.get_xaxis().set_visible(False)
