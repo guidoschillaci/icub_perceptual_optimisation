@@ -126,7 +126,7 @@ class MyCallback(Callback):
             count_line = count_line + 1
 
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
-            opt_unnorm = deepcopy(opt_flow[i])
+            opt_unnorm = deepcopy(opt_flow[i].squeeze())
             if self.parameters.get('opt_flow_only_magnitude'):
                 opt_unnorm = self.threshold_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
             else:
