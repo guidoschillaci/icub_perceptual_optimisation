@@ -71,6 +71,7 @@ class MyCallback(Callback):
         for i in tqdm(range(len(start))):
             #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
+                                                   self.datasets.dataset_images_t[start[i]:end[i]], \
                                                    self.datasets.dataset_images_orig_size_t[start[i]:end[i]], \
                                                    self.datasets.dataset_images_orig_size_tp1[start[i]:end[i]], \
                                                    self.datasets.dataset_joints[start[i]:end[i]], \
@@ -84,7 +85,7 @@ class MyCallback(Callback):
     def threshold_optical_flow(self, optflow):
         return np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 255, 0)
 
-    def plot_predictions(self, filename, images_t, images_tp1, joints, commands, opt_flow, save_gif=False):
+    def plot_predictions(self, filename, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, opt_flow, save_gif=False):
         predictions_all_outputs = self.model.predict([images_t, joints, commands])
         if self.parameters.get('model_auxiliary'):
             predictions = predictions_all_outputs[0]
@@ -103,7 +104,7 @@ class MyCallback(Callback):
             # display original
             ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') +1)
             #plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
-            plt.imshow(images_t[i], cmap='gray')
+            plt.imshow(images_t_orig_size[i], cmap='gray')
             ax1.get_xaxis().set_visible(False)
             ax1.get_yaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
@@ -111,7 +112,7 @@ class MyCallback(Callback):
 
             ax2 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
             #plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),cmap='gray')
-            plt.imshow(images_tp1[i], cmap='gray')
+            plt.imshow(images_tp1_orig_size[i], cmap='gray')
             ax2.get_xaxis().set_visible(False)
             ax2.get_yaxis().set_visible(False)
             ax2.set_ylabel('img(t+1)', rotation=0)
@@ -177,7 +178,7 @@ class MyCallback(Callback):
             #attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_original_shape')),
             #                    images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #                    self.datasets.background_image)
-            attenuated_image_tp1 = sensory_attenuation(pred_unnorm, images_tp1[i], self.datasets.background_image)
+            attenuated_image_tp1 = sensory_attenuation(pred_unnorm, images_tp1_orig_size[i], self.datasets.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
             ax6.get_yaxis().set_visible(False)
@@ -188,33 +189,35 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_attenuated_'+str(i)+ '.png', bbox_inches=extent_6)
             count_line = count_line + 1
 
-            count_line = self.custom_weight_plots(0.6, 0.3, 0.1, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
-                                     i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.5, 0.3, 0.2, images_t, deepcopy(images_tp1), joints, commands,
-                                                  num_subplots,
-                                                  i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.3, 0.4, 0.3, images_t, deepcopy(images_tp1), joints, commands,
-                                                  num_subplots,
-                                                  i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.45, 0.1, 0.45, images_t, deepcopy(images_tp1), joints, commands,
-                                                  num_subplots,
-                                                  i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.2, 0.3, 0.5, images_t, deepcopy(images_tp1), joints, commands,
-                                                  num_subplots,
-                                                  i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.1, 0.3, 0.6, images_t, deepcopy(images_tp1), joints, commands, num_subplots,
-                                     i, count_line, bar_label, save_gif, fig, filename)
+            count_line = self.custom_weight_plots(0.6, 0.3, 0.1, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                                                  joints, commands, \
+                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
+            count_line = self.custom_weight_plots(0.5, 0.3, 0.2, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                                                  joints, commands, \
+                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
+            count_line = self.custom_weight_plots(0.3, 0.4, 0.3, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                                                  joints, commands, \
+                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
+            count_line = self.custom_weight_plots(0.45, 0.1, 0.45, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                                                  joints, commands, \
+                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
+            count_line = self.custom_weight_plots(0.2, 0.3, 0.5, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                                                  joints, commands, \
+                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
+            count_line = self.custom_weight_plots(0.1, 0.3, 0.6, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                                                  joints, commands, \
+                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
 
             count_line = count_line + 1
         plt.savefig(self.parameters.get('directory_plots') + filename + '.png')
 
         return fusion_weights
 
-    def custom_weight_plots(self, _wv,_wj,_wm, images_t, images_tp1, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
+    def custom_weight_plots(self, _wv,_wj,_wm, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
         w_v = np.ones(shape=[len(images_t),])*_wv
         w_j = np.ones(shape=[len(images_t),])*_wj
         w_m = np.ones(shape=[len(images_t),])*_wm
-        pred_pre_fusion_features = self.model_pre_fusion_features.predict([images_t, joints, commands])
+        pred_pre_fusion_features = self.model_pre_fusion_features([images_t, joints, commands], training=False)
         #print(pred_pre_fusion[0].shape)
         pred_custom_fusion_allvision = self.model_custom_fusion([pred_pre_fusion_features[0], w_v, w_v,
                                                                  pred_pre_fusion_features[1], w_j, w_j,
@@ -262,7 +265,7 @@ class MyCallback(Callback):
         #    predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    images_tp1[iter].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    self.datasets.background_image)
-        attenuated_custom = sensory_attenuation(predcustom_unnorm, images_tp1[iter], self.datasets.background_image)
+        attenuated_custom = sensory_attenuation(predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.background_image)
         plt.imshow(attenuated_custom, cmap='gray')
         ax9.get_xaxis().set_visible(False)
         ax9.get_yaxis().set_visible(False)
@@ -276,10 +279,11 @@ class MyCallback(Callback):
 
     def plot_predictions_test_dataset(self, epoch, logs):
         print('Callback: saving predicted images')
-        self.plot_predictions('predictions_epoch_' + str(epoch),\
-                                               self.datasets.test_dataset_images_orig_size_t[0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.test_dataset_images_orig_size_tp1[0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.test_dataset_joints[0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.test_dataset_cmd[0:self.parameters.get('plots_predict_size')], \
-                                               self.datasets.test_dataset_optical_flow[0:self.parameters.get('plots_predict_size')])
+        self.plot_predictions('predictions_epoch_' + str(epoch), \
+                              self.datasets.test_dataset_images_t[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test_dataset_images_orig_size_t[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test_dataset_images_orig_size_tp1[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test_dataset_joints[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test_dataset_cmd[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test_dataset_optical_flow[0:self.parameters.get('plots_predict_size')])
 
