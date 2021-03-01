@@ -1,6 +1,6 @@
 xhost +local:root
 
-ipclient=192.168.1.163
+ipclient=192.168.1.229
 
 if [ -z "$1" ]
   then
