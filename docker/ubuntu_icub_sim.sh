@@ -1,8 +1,3 @@
-if [[ "$OSTYPE" == "darwin"* ]]; then
-  echo "running script from MacOSX. Starting SOCAT"
-  socat TCP-LISTEN:6000,reuseaddr,fork UNIX-CLIENT:\"$DISPLAY\"
-fi
-
 xhost +local:root
 
 ipclient=localhost
