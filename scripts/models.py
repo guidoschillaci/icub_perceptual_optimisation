@@ -802,7 +802,7 @@ class Models:
         tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
 
     def save_model(self):
-        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True)
+        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True, save_format='tf')
         self.plot_model()
         print('model saved')
 
