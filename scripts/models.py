@@ -810,7 +810,7 @@ class Models:
         pd.DataFrame.from_dict(self.myCallback.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
 
         history_keys = list(self.myCallback.history.keys())
-        print ('hisotry keys ', history_keys)
+        #print ('hisotry keys ', history_keys)
 
         # summarize history for loss
         fig = plt.figure(figsize=(10, 12))
