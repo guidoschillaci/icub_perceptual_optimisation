@@ -4,8 +4,7 @@ ipclient=192.168.1.163
 
 if [ -z "$1" ]
   then
-    echo "No argument supplied. I set the address of the client pc to localhost."
-    ipclient=localhost
+    echo "No argument supplied. I set the address of the client pc to ${ipclient}."
   else
     ipclient=$1
     echo "Setting the address of the client pc to ${ipclient}"
