@@ -1,6 +1,6 @@
 xhost +local:root
 
-ipclient=192.168.1.229
+ipclient=''
 
 if [ -z "$1" ]
   then
@@ -25,7 +25,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
     docker run -it --rm \
       -e DISPLAY=$DISPLAY \
       --name "$DOCKER_CONTAINER_NAME" \
-      --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+      --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --privileged \
       --volume="/home/guido/code:/code/:rw"  \
       -w /code \
       guidoski/icub:tf2-nogpu bash -c 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_intrinsic_motivation/yarp/apps/ &&  yarpserver'
