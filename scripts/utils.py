@@ -85,8 +85,10 @@ class MyCallback(Callback):
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
 
-    def threshold_optical_flow(self, optflow):
-        return np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 255, 0)
+    def binarize_optical_flow(self, optflow):
+        if self.parameters.get('opt_flow_binarize'):
+            return np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 255, 0)
+        return optflow
 
     def plot_predictions(self, filename, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, opt_flow, save_gif=False):
         predictions_all_outputs = self.model.predict([images_t, joints, commands])
@@ -128,9 +130,9 @@ class MyCallback(Callback):
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             opt_unnorm = deepcopy(opt_flow[i].squeeze())
             if self.parameters.get('opt_flow_only_magnitude'):
-                opt_unnorm = self.threshold_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
+                opt_unnorm = self.binarize_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
             else:
-                opt_unnorm = self.threshold_optical_flow(opt_unnorm[...,0])# * self.parameters.get('opt_flow_max_value'))
+                opt_unnorm = self.binarize_optical_flow(opt_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
@@ -164,9 +166,9 @@ class MyCallback(Callback):
             #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             if self.parameters.get('opt_flow_only_magnitude'):
-                pred_unnorm = self.threshold_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
+                pred_unnorm = self.binarize_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
             else:
-                pred_unnorm = self.threshold_optical_flow(pred_unnorm[...,0] )# * self.parameters.get('opt_flow_max_value'))
+                pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
             pred_unnorm = np.array(pred_unnorm, dtype='uint8')
@@ -250,9 +252,9 @@ class MyCallback(Callback):
         #predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
         if self.parameters.get('opt_flow_only_magnitude'):
-            _predcustom_unnorm = self.threshold_optical_flow(_predcustom_unnorm)
+            _predcustom_unnorm = self.binarize_optical_flow(_predcustom_unnorm)
         else:
-            _predcustom_unnorm = self.threshold_optical_flow(_predcustom_unnorm[..., 0])
+            _predcustom_unnorm = self.binarize_optical_flow(_predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
         predcustom_unnorm = np.array(_predcustom_unnorm, dtype='uint8')

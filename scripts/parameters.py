@@ -42,6 +42,7 @@ class Parameters:
             'model_use_activity_regularization_layer': True,
 
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
+            'opt_flow_binarize': False,  # if true, opt_flow (only for sensory attenuation) will have only 0 or 1 values, according to the threhsold specified below
             'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
