@@ -49,9 +49,9 @@ class MyCallback(Callback):
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
-        #if self.parameters.get('make_plots'):
-        #    # plot also sequences of predictions
-        #    self.plot_train_sequences(save_gif=True)
+        if self.parameters.get('make_plots'):
+            # plot also sequences of predictions
+            self.plot_train_sequences(save_gif=True)
 
     def on_train_end(self, logs=None):
         if self.parameters.get('make_plots'):
