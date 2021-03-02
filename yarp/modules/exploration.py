@@ -15,7 +15,7 @@ class ExplorationModule(yarp.RFModule):
     def configure(self, rf):
 
         self.config = yarp.Property()
-        self.config.fromConfigFile('/code/icub_intrinsic_motivation/yarp/config.ini')
+        self.config.fromConfigFile('/code/icub_perceptual_optimisation/yarp/config.ini')
         self.width = self.config.findGroup('CAMERA').find('width').asInt32()
         self.height = self.config.findGroup('CAMERA').find('height').asInt32()
 
