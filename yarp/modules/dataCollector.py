@@ -16,7 +16,7 @@ class DataCollector(yarp.RFModule):
         self.lock = threading.Lock()
 
         self.config = yarp.Property()
-        self.config.fromConfigFile('/code/icub_intrinsic_motivation/yarp/config.ini')
+        self.config.fromConfigFile('/code/icub_perceptual_optimisation/yarp/config.ini')
         self.width = self.config.findGroup('CAMERA').find('width').asInt32()
         self.height = self.config.findGroup('CAMERA').find('height').asInt32()
         self.max_dataset_size = self.config.findGroup('GENERAL').find('max_dataset_size').asInt32()
