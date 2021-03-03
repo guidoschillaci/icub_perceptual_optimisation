@@ -26,8 +26,9 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       -e DISPLAY=$DISPLAY \
       --name "$DOCKER_CONTAINER_NAME" \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-      --volume="/usr/lib/nvidia-390:/usr/lib/nvidia-390"  \
+      --volume="/usr/lib/nvidia-390:/usr/lib/nvidia-390:rw"  \
       --volume="/home/guido/code:/code/:rw"  \
+      --gpus all  \
       -w /code \
       guidoski/icub:tf2-nogpu bash -c 'yarpserver'
 else

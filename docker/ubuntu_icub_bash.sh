@@ -26,6 +26,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --name "$DOCKER_CONTAINER_NAME" \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --volume="/home/guido/code:/code/:rw"  \
+      --gpus all  \
       -w /code \
       guidoski/icub:tf2-nogpu bash -c 'bash'
 else
