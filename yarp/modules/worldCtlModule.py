@@ -109,6 +109,32 @@ class WorldController:
             print ('error in creating object')
             return -1  # error
 
+    def create_markers(self, mark_id, size, location):
+        """Create an Aruco marker of a specified type, size, location, returning internal object ID or -1 on error."""
+        print ('marker id', mark_id)
+        cmd = yarp.Bottle()
+        cmd.clear()
+        #result.addString(["world", "mk", obj])
+        cmd.addString("world")
+        cmd.addString("mk")
+        cmd.addString("smodel")
+        cmd.addString("marker_"+str(mark_id)+".x")
+        #cmd.addString("marker.x")
+        #cmd.addString("icosphere.x")
+        #cmd.addString("icosphere.bmp")
+        cmd.addString("marker_"+str(mark_id)+".bmp")
+        for i in range(len(size)):
+            cmd.addDouble(size[i])
+        #for i in range(len(location)):
+        #    cmd.addDouble(location[i])
+
+        print (cmd.toString())
+        if self._is_success(self._execute(cmd)):
+            print ('marker created')
+        else:
+            print ('error in creating marker')
+
+
     def _prepare_move_command(self, obj, obj_id, location):
         """Prepare the "world set <obj> <xyz>" command bottle."""
         result = yarp.Bottle()
@@ -163,19 +189,20 @@ class WorldController:
 
 wc = WorldController()
 config = yarp.Property()
-config.fromConfigFile('/code/icub_intrinsic_motivation/yarp/config.ini')
+config.fromConfigFile('/code/icub_perceptual_optimisation/yarp/config.ini')
 max_num_objects = config.findGroup('GENERAL').find('max_num_objects').asInt32()
 
+cmd = yarp.Bottle()
+cmd.clear()
+cmd.addString("world")
+cmd.addString("set")
+cmd.addString("mdir")
+cmd.addString("/code/icub_perceptual_optimisation/yarp/data/markers")
+if wc._is_success(wc._execute(cmd)):
+    print ('changed model folder')
 # create marker objects
-marker_obj_0 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_1 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_2 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_3 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_4 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_5 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_6 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_7 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
-marker_obj_8 = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
+for i in range(1):
+    wc.create_markers(i, [1, 1, 1 ], [ 1, 1, 1 ])
 
 while True:
     y = 1.0

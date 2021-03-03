@@ -22,20 +22,21 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
     fi
     echo "Connecting to new container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
-    docker run -it --rm \
+    docker run -it --rm --privileged \
       -e DISPLAY=$DISPLAY \
       --name "$DOCKER_CONTAINER_NAME" \
-      --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" --privileged \
+      --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+      --volume="/usr/lib/nvidia-390:/usr/lib/nvidia-390"  \
       --volume="/home/guido/code:/code/:rw"  \
       -w /code \
-      guidoski/icub:tf2-nogpu bash -c 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_intrinsic_motivation/yarp/apps/ &&  yarpserver'
+      guidoski/icub:tf2-nogpu bash -c 'yarpserver'
 else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
-    docker exec -it \
+    docker exec -it  --privileged \
       -e DISPLAY=$DISPLAY \
       "$DOCKER_CONTAINER_NAME" \
-      bash  -c 'export YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_intrinsic_motivation/yarp/apps/ && yarpserver'
+      bash  -c 'yarpserver'
 fi
 
 #-e DISPLAY=docker.for.mac.host.internal:0 \

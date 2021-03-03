@@ -27,14 +27,14 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --volume="/home/guido/code:/code/:rw"  \
       -w /code \
-      guidoski/icub:tf2-nogpu bash -c 'yarpmanager'
+      guidoski/icub:tf2-nogpu bash -c 'bash'
 else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
     docker exec -it --privileged \
       -e DISPLAY=$DISPLAY \
       "$DOCKER_CONTAINER_NAME" \
-      bash -c 'yarpmanager'
+      bash  -c 'bash'
 fi
 
 #-e DISPLAY=docker.for.mac.host.internal:0 \

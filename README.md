@@ -26,3 +26,12 @@ To run the experiment:
 ```
 python script/main.py
 ```
+
+# Docker icub sim
+
+Build docker for icub-sim
+
+```
+docker build -f docker/Dockerfile.icub-sim . -t guidoski/icub:tf2-nogpu
+```
+

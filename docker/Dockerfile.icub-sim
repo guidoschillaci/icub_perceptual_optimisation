@@ -236,3 +236,7 @@ RUN alias python=python3
 # Enable ccache, for faster recompilation
 ENV PATH=/usr/lib/ccache:$PATH
 
+ENV PATH=/usr/lib/nvidia-390/bin:${PATH} 
+ENV LD_LIBRARY_PATH=/usr/lib/nvidia-390:${LD_LIBRARY_PATH} 
+ENV YARP_DATA_DIRS=$YARP_DATA_DIRS:/code/icub_perceptual_optimisation/yarp/apps/
+
