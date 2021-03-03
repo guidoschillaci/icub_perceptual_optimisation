@@ -35,3 +35,51 @@ Build docker for icub-sim
 docker build -f docker/Dockerfile.icub-sim . -t guidoski/icub:tf2-nogpu
 ```
 
+
+# Run icub sim
+
+Open a terminal and run
+
+```
+sh docker/ubuntu_icub_yarpserver.sh
+```
+
+Open a new terminal and run
+
+```
+sh docker/ubuntu_icub_yarpmanager.sh
+```
+
+Open a new terminal and run
+
+```
+sh docker/ubuntu_icub_sim.sh
+```
+
+
+Open a new terminal and run
+
+```
+sh docker/ubuntu_icub_bash.sh
+```
+
+
+To start babbling, inside the docker bash, enter the folder icub_perceptual_optimisation and run
+
+```
+python3 yarp/modules/exploration.py
+```
+
+
+To start recording, inside a new docker bash (run a new ubuntu_icub_bash script), enter the folder icub_perceptual_optimisation and run
+
+```
+python3 yarp/modules/dataCollector.py
+```
+
+If you want objects during simulation, run a new ubuntu_icub_bash script and then:
+
+```
+python3 yarp/modules/worldCtlModule.py
+```
+
