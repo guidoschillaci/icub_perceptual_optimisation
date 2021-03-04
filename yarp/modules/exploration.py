@@ -121,7 +121,7 @@ class ExplorationModule(yarp.RFModule):
 
     def close(self):
         print("Going to starting position and closing")
-        self.go_to_starting_pos()
+        #self.go_to_starting_pos()
 
     def interruptModule(self):
         return True

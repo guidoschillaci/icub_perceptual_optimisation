@@ -52,7 +52,7 @@ Frame Root {
            96.078431;
            0.500000; 0.500000; 0.500000;;
            0.000000; 0.000000; 0.000000;;
-          TextureFilename {"marker_0.bmp";}
+          TextureFilename {"marker_2.bmp";}
         }
       } // End of Cube material list
     } // End of Cube mesh

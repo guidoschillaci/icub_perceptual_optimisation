@@ -35,12 +35,12 @@ Frame Root {
       } // End of Cube normals
       MeshTextureCoords { // Cube UV coordinates
         6;
-         0.999900; 0.999900;,
-         0.999900; 0.000100;,
-         0.000100; 0.999900;,
-         0.999900; 0.000100;,
-         0.000100; 0.000100;,
-         0.000100; 0.999900;;
+         1; 1;,
+         1; 0;,
+         0; 1;,
+         1; 0;,
+         0; 0;,
+         0; 1;;
       } // End of Cube UV coordinates
       MeshMaterialList { // Cube material list
         1;
@@ -52,7 +52,7 @@ Frame Root {
            96.078431;
            0.500000; 0.500000; 0.500000;;
            0.000000; 0.000000; 0.000000;;
-          TextureFilename {"marker_0.bmp";}
+          TextureFilename {"marker_1.bmp";}
         }
       } // End of Cube material list
     } // End of Cube mesh

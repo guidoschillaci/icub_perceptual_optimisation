@@ -24,6 +24,9 @@ class WorldController:
         # so that outside one does not have to remember the type of object.
         self._objects = []
 
+        # A sequence to track markers
+        self._markers = []
+
     def _execute(self, cmd):
         """Execute an RPC command, returning obtained answer bottle."""
         ans = yarp.Bottle()
@@ -53,6 +56,7 @@ class WorldController:
             # Clear the counters
             self._sim_ids_counters.clear()
             del self._objects[:]
+            del self._markers[:]
 
         return result
 
@@ -183,7 +187,20 @@ class WorldController:
         except AttributeError:
             pass
 
-
+    def rotate(self, mark_id, rotation):
+        rotate_cmd = yarp.Bottle()
+        rotate_cmd.clear()
+        rotate_cmd.addString("world")
+        rotate_cmd.addString("rot")
+        rotate_cmd.addString("smodel")
+        rotate_cmd.addInt(mark_id+1)
+        rotate_cmd.addDouble(0)
+        rotate_cmd.addDouble(-55)
+        rotate_cmd.addDouble(-40)
+        print (rotate_cmd.toString())
+        if self._is_success(self._execute(rotate_cmd)):
+            print ('rotated marker ', str(mark_id))
+	
 
 
 
@@ -192,6 +209,8 @@ config = yarp.Property()
 config.fromConfigFile('/code/icub_perceptual_optimisation/yarp/config.ini')
 max_num_objects = config.findGroup('GENERAL').find('max_num_objects').asInt32()
 
+
+# make marker objects
 cmd = yarp.Bottle()
 cmd.clear()
 cmd.addString("world")
@@ -201,9 +220,28 @@ cmd.addString("/code/icub_perceptual_optimisation/yarp/data/markers")
 if wc._is_success(wc._execute(cmd)):
     print ('changed model folder')
 # create marker objects
-for i in range(1):
-    wc.create_markers(i, [1, 1, 1 ], [ 1, 1, 1 ])
+wc.create_markers(0, [1.5, 0.15, 0.5 ], [ 1, 1, 1 ])
+wc.rotate(0,  [0, -55, -30 ])
+wc.create_markers(1, [0.9, 0.15, 0.75 ], [ 1, 1, 1 ])
+wc.rotate(1,  [10, -45, -30 ])
+wc.create_markers(2, [0.4, 0.15, 1 ], [ 1, 1, 1 ])
+wc.rotate(2,  [30, -45, -20 ])
+wc.create_markers(3, [1.5, 0.65, 0.7 ], [ 1, 1, 1 ])
+wc.rotate(3,  [0, -55, -10 ])
+wc.create_markers(4, [0.9, 0.6, 0.95 ], [ 1, 1, 1 ])
+wc.rotate(4, [10, -45, -30 ])
+wc.create_markers(5, [0.45, 0.55, 1.2 ], [ 1, 1, 1 ])
+wc.rotate(5,  [30, -45, -20 ])
+wc.create_markers(6, [1.5, 1, 0.85 ], [ 1, 1, 1 ])
+wc.rotate(6,  [0, -55, -10 ])
+wc.create_markers(7, [1, 0.9, 1.15 ], [ 1, 1, 1 ])
+wc.rotate(7, [10, -45, -30 ])
+wc.create_markers(8, [0.5, 0.85, 1.4 ], [ 1, 1, 1 ])
+wc.rotate(8,  [30, -45, -20 ])
 
+
+
+# create falling ball objects
 while True:
     y = 1.0
     x = random.uniform(0, 0.3)
