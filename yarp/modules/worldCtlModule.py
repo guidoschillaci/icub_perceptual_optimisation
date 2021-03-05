@@ -113,7 +113,7 @@ class WorldController:
             print ('error in creating object')
             return -1  # error
 
-    def create_markers(self, mark_id, size, location):
+    def create_markers(self, mark_id, location):
         """Create an Aruco marker of a specified type, size, location, returning internal object ID or -1 on error."""
         print ('marker id', mark_id)
         cmd = yarp.Bottle()
@@ -127,8 +127,8 @@ class WorldController:
         #cmd.addString("icosphere.x")
         #cmd.addString("icosphere.bmp")
         cmd.addString("marker_"+str(mark_id)+".bmp")
-        for i in range(len(size)):
-            cmd.addDouble(size[i])
+        for i in range(len(location)):
+            cmd.addDouble(location[i])
         #for i in range(len(location)):
         #    cmd.addDouble(location[i])
 
@@ -137,6 +137,18 @@ class WorldController:
             print ('marker created')
         else:
             print ('error in creating marker')
+        rotate_cmd = yarp.Bottle()
+        rotate_cmd.clear()
+        rotate_cmd.addString("world")
+        rotate_cmd.addString("rot")
+        rotate_cmd.addString("smodel")
+        rotate_cmd.addInt(mark_id)
+        rotate_cmd.addDouble(0)
+        rotate_cmd.addDouble(-65)
+        rotate_cmd.addDouble(0)
+        print (rotate_cmd.toString())
+        if self._is_success(self._execute(rotate_cmd)):
+            print ('rotated marker ', str(mark_id))
 
 
     def _prepare_move_command(self, obj, obj_id, location):
@@ -194,9 +206,9 @@ class WorldController:
         rotate_cmd.addString("rot")
         rotate_cmd.addString("smodel")
         rotate_cmd.addInt(mark_id+1)
-        rotate_cmd.addDouble(0)
-        rotate_cmd.addDouble(-55)
-        rotate_cmd.addDouble(-40)
+        rotate_cmd.addDouble(rotation[0])
+        rotate_cmd.addDouble(rotation[1])
+        rotate_cmd.addDouble(rotation[2])
         print (rotate_cmd.toString())
         if self._is_success(self._execute(rotate_cmd)):
             print ('rotated marker ', str(mark_id))
@@ -220,24 +232,26 @@ cmd.addString("/code/icub_perceptual_optimisation/yarp/data/markers")
 if wc._is_success(wc._execute(cmd)):
     print ('changed model folder')
 # create marker objects
-wc.create_markers(0, [1.5, 0.15, 0.5 ], [ 1, 1, 1 ])
-wc.rotate(0,  [0, -55, -30 ])
-wc.create_markers(1, [0.9, 0.15, 0.75 ], [ 1, 1, 1 ])
-wc.rotate(1,  [10, -45, -30 ])
-wc.create_markers(2, [0.4, 0.15, 1 ], [ 1, 1, 1 ])
-wc.rotate(2,  [30, -45, -20 ])
-wc.create_markers(3, [1.5, 0.65, 0.7 ], [ 1, 1, 1 ])
-wc.rotate(3,  [0, -55, -10 ])
-wc.create_markers(4, [0.9, 0.6, 0.95 ], [ 1, 1, 1 ])
-wc.rotate(4, [10, -45, -30 ])
-wc.create_markers(5, [0.45, 0.55, 1.2 ], [ 1, 1, 1 ])
-wc.rotate(5,  [30, -45, -20 ])
-wc.create_markers(6, [1.5, 1, 0.85 ], [ 1, 1, 1 ])
-wc.rotate(6,  [0, -55, -10 ])
-wc.create_markers(7, [1, 0.9, 1.15 ], [ 1, 1, 1 ])
-wc.rotate(7, [10, -45, -30 ])
-wc.create_markers(8, [0.5, 0.85, 1.4 ], [ 1, 1, 1 ])
-wc.rotate(8,  [30, -45, -20 ])
+
+
+wc.create_markers(0, [1.4, 0.15, 0.5 ])
+wc.create_markers(1,  [0.85, 0.15, 0.75 ])
+#wc.rotate(0,  [0, -35, -40 ])
+#wc.rotate(1,  [0, 90, 0 ])
+wc.create_markers(2, [0.4, 0.15, 1 ])
+#wc.rotate(2,  [0, -55, -40 ])
+wc.create_markers(3, [1.5, 0.55, 0.7 ])
+#wc.rotate(3,  [0, -55, -40 ])
+wc.create_markers(4, [0.9, 0.55, 0.85 ])
+#wc.rotate(4,  [0, -55, -40 ])
+wc.create_markers(5, [0.45, 0.5, 1.2 ])
+#wc.rotate(5,  [0, -55, -40 ])
+wc.create_markers(6, [1.5, 0.95, 0.85 ])
+#wc.rotate(6,  [0, -55, -40 ])
+wc.create_markers(7, [1, 0.9, 1.15 ])
+#wc.rotate(7,  [0, -55, -20 ])
+wc.create_markers(8, [0.5, 0.8, 1.4 ])
+wc.rotate(8,  [0, -45, 0 ])
 
 
 
