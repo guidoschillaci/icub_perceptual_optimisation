@@ -65,11 +65,12 @@ class DatasetLoader():
             self.dataset_images_orig_size_t = []
             #self.background_image = cv2.cvtColor(self.dataset_images_t_orig[1000], cv2.COLOR_GRAY2RGBA)
             #self.background_image = cv2.resize(self.dataset_images_t_orig[1000], (self.parameters.get('image_size'), self.parameters.get('image_size')), interpolation=cv2.INTER_LINEAR)
-            self.background_image = deepcopy(self.dataset_images_raw[1000])
-            #self.background_image[:, :, 3] = 255*np.ones((self.parameters.get('image_size'), self.parameters.get('image_size'))) # alpha channel
+
+            #self.background_image = deepcopy(self.dataset_images_raw[1000])
+            self.background_image = cv2.cvtColor(cv2.imread(self.parameters.get('directory_datasets')+'background_image.png'), cv2.COLOR_BGR2GRAY)
             if self.parameters.get('image_original_shape') is None:
-                self.parameters.set('image_original_shape', self.dataset_images_raw[0].shape)
-            cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
+                self.parameters.set('image_original_shape', self.background_image.shape)
+            #cv2.imwrite( self.parameters.get('directory_plots')+'background_image.png',  self.background_image)
             for i in tqdm(range(len(self.dataset_images_raw)-1)):
                 cv2_img = cv2.resize(self.dataset_images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size')))
                 self.dataset_images_t.append( np.array(cv2_img))

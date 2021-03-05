@@ -10,6 +10,7 @@ import pandas as pd
 from tqdm import tqdm
 import cv2
 from tensorflow import keras as tfk
+from utils_sim import arucoDetector
 
 # the activation function of the output layer of the model
 def activation_opt_flow(x):
@@ -43,6 +44,16 @@ class MyCallback(Callback):
         self.model_pre_fusion_features = model_pre_fusion
         self.model_custom_fusion = model_custom_fusion
         #self.logs = {}
+        self.aruco_detector = arucoDetector()
+
+        # list containing the custom fusion weights to be used in modulating predictions
+        self.custom_weigths = []
+        self.custom_weigths.append( (0.6, 0.3, 0.1) )
+        self.custom_weigths.append( (0.5, 0.3, 0.2) )
+        self.custom_weigths.append( (0.3, 0.4, 0.3) )
+        self.custom_weigths.append( (0.45, 0.1, 0.45) )
+        self.custom_weigths.append( (0.2, 0.3, 0.5) )
+        self.custom_weigths.append( (0.1, 0.3, 0.6) )
 
     def on_train_begin(self, logs={}):
         self.history = {'loss': [], 'val_loss': [], 'IoU': []}
@@ -85,10 +96,11 @@ class MyCallback(Callback):
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
 
-    def binarize_optical_flow(self, optflow):
+    # output image has values: 0 or positive_value
+    def binarize_optical_flow(self, optflow, positive_value = 255):
         if self.parameters.get('opt_flow_binarize'):
-            return np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), 255, 0)
-        return optflow
+            return np.array(np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), positive_value, 0), dtype='uint8')
+        return np.array(optflow, dtype='uint8')
 
     def plot_predictions(self, filename, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, opt_flow, save_gif=False):
         predictions_all_outputs = self.model.predict([images_t, joints, commands])
@@ -136,7 +148,6 @@ class MyCallback(Callback):
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            opt_unnorm = np.array(opt_unnorm, dtype='uint8')
             cv2_opt_unnorm = cv2.resize(opt_unnorm, self.parameters.get('image_original_shape'))
             plt.imshow(cv2_opt_unnorm, cmap='gray')
             ax3.get_xaxis().set_visible(False)
@@ -171,7 +182,6 @@ class MyCallback(Callback):
                 pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            pred_unnorm = np.array(pred_unnorm, dtype='uint8')
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             plt.imshow(cv2_pred_unnorm, cmap='gray')
             ax4.get_xaxis().set_visible(False)
@@ -198,34 +208,19 @@ class MyCallback(Callback):
                 fig.savefig(self.parameters.get('directory_plots_gif')+ filename +'_attenuated_'+str(i)+ '.png', bbox_inches=extent_6)
             count_line = count_line + 1
 
-            count_line = self.custom_weight_plots(0.6, 0.3, 0.1, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+            for cw in range(len(self.custom_weigths)):
+                count_line = self.custom_weight_plots(self.custom_weigths[cw], images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
                                                   joints, commands, \
                                                   num_subplots, i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.5, 0.3, 0.2, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
-                                                  joints, commands, \
-                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.3, 0.4, 0.3, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
-                                                  joints, commands, \
-                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.45, 0.1, 0.45, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
-                                                  joints, commands, \
-                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.2, 0.3, 0.5, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
-                                                  joints, commands, \
-                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
-            count_line = self.custom_weight_plots(0.1, 0.3, 0.6, images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
-                                                  joints, commands, \
-                                                  num_subplots, i, count_line, bar_label, save_gif, fig, filename)
-
             count_line = count_line + 1
         plt.savefig(self.parameters.get('directory_plots') + filename + '.png')
 
         return fusion_weights
 
-    def custom_weight_plots(self, _wv,_wj,_wm, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
-        w_v = np.ones(shape=[len(images_t),])*_wv
-        w_j = np.ones(shape=[len(images_t),])*_wj
-        w_m = np.ones(shape=[len(images_t),])*_wm
+    def custom_weight_plots(self, custom_weights, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
+        w_v = np.ones(shape=[len(images_t),])*custom_weights[0]
+        w_j = np.ones(shape=[len(images_t),])*custom_weights[1]
+        w_m = np.ones(shape=[len(images_t),])*custom_weights[2]
         pred_pre_fusion_features = self.model_pre_fusion_features([images_t, joints, commands], training=False)
         #print(pred_pre_fusion[0].shape)
         pred_custom_fusion_allvision = self.model_custom_fusion([pred_pre_fusion_features[0], w_v, w_v,
@@ -248,16 +243,15 @@ class MyCallback(Callback):
 
         ax8 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
-        _predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].numpy())
+        predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].numpy())
         #predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
         if self.parameters.get('opt_flow_only_magnitude'):
-            _predcustom_unnorm = self.binarize_optical_flow(_predcustom_unnorm)
+            predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
         else:
-            _predcustom_unnorm = self.binarize_optical_flow(_predcustom_unnorm[..., 0])
+            predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
-        predcustom_unnorm = np.array(_predcustom_unnorm, dtype='uint8')
         cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
         plt.imshow(cv2_predcustom_unnorm, cmap='gray')
@@ -299,3 +293,86 @@ class MyCallback(Callback):
                               self.datasets.test_dataset_cmd[0:self.parameters.get('plots_predict_size')], \
                               self.datasets.test_dataset_optical_flow[0:self.parameters.get('plots_predict_size')])
 
+    # attenuate on test dataset using learned weights
+    def attenuate_test_ds(self):
+        predictions_all_outputs = self.model.predict([self.datasets.test_dataset_images_t, \
+                                                      self.datasets.test_dataset_joints, \
+                                                      self.datasets.test_dataset_cmd])
+        if self.parameters.get('model_auxiliary'):
+            predictions = predictions_all_outputs[0]
+        else:
+            predictions = predictions_all_outputs
+
+        attenuated_imgs = []
+        for i in range(len(predictions)):
+            pred_unnorm = predictions[i].squeeze()
+            cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
+            # binarise pred_unnorm (has values 0 or 255)
+            if self.parameters.get('opt_flow_only_magnitude'):
+                cv2_pred_unnorm = self.binarize_optical_flow(
+                    cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
+            else:
+                cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
+
+            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
+                                                       self.self.datasets.test_dataset_images_orig_size_tp1[i],
+                                                       self.datasets.background_image)
+            attenuated_imgs.append(attenuated_image_tp1)
+        return attenuated_imgs
+
+    # attenuate on test dataset using custom weights
+    def attenuate_test_ds_using_custom_weights(self, custom_weights):
+        len_img = len(self.datasets.test_dataset_images_orig_size_t)
+        w_v = np.ones(shape=[len_img,])*custom_weights[0]
+        w_j = np.ones(shape=[len_img,])*custom_weights[1]
+        w_m = np.ones(shape=[len_img,])*custom_weights[2]
+        # get the features extracted from each modality before the fusion
+        pred_pre_fusion_features = \
+            self.model_pre_fusion_features([self.datasets.test_dataset_images_t, \
+                                            self.datasets.test_dataset_joints, \
+                                            self.datasets.test_dataset_cmd], training=False)
+        # predict doing the fusion with the custom fusion weights
+        pred_custom_fusion_allvision = \
+            self.model_custom_fusion([pred_pre_fusion_features[0], w_v, w_v, \
+                                      pred_pre_fusion_features[1], w_j, w_j, \
+                                      pred_pre_fusion_features[2], w_m, w_m], training=False)
+
+        attenuated_imgs = []
+        for i in range(len(pred_custom_fusion_allvision)):
+            predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
+            if self.parameters.get('opt_flow_only_magnitude'):
+                predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
+            else:
+                predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
+            cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
+
+            attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
+                                                    self.datasets.test_dataset_images_orig_size_tp1[i], \
+                                                    self.datasets.background_image)
+            attenuated_imgs.append(attenuated_img)
+        return attenuated_imgs
+
+    def test_marker_detection(self):
+        print('testing marker detection...')
+        # counting markers in original images
+        self.results_markers_in_orig_img = \
+            self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test_dataset_images_orig_size_tp1)
+        print('average markers in original images: ' + str(self.results_markers_in_orig_img))
+        # count markers in the imgs where sensory attenuation is perfomed
+
+        ## first, predicting optflows using the learned fusion weights
+        attenuated_imgs_using_learned_weights = self.attenuate_test_ds()
+        self.results_markers_in_attenuated_img = \
+            self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_using_learned_weights)
+        print('average markers in attenuated images: ' + str(self.results_markers_in_attenuated_img))
+
+        ## then, using custom weights
+        self.results_markers_in_attenuated_img_with_custom_weights = []
+        # for each set of custom weights
+        for i in range(len(self.custom_weigths)):
+            attenuated_imgs_with_custom_weights = \
+                self.attenuate_test_ds_using_custom_weights(self.custom_weigths[i])
+            res = self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_with_custom_weights)
+            self.results_markers_in_attenuated_img_with_custom_weights.append(res)
+            print('average markers in attenuated images with custom weights (set '+str(i)+'): ' \
+                  + str(res))
