@@ -28,6 +28,7 @@ class arucoDetector():
     # count how many aruco markers are in the given image
     def count_aruco_markers_from_single_image(self, img):
         height, width = img.shape
+        print("detecting aruco markers img size before ", img.shape)
         if height != 320 or width != 240:
             cv2_img = cv2.resize(img, (320,240))
         else:
@@ -46,8 +47,8 @@ class arucoDetector():
     # returns the average number of markers detected in a given list of images
     def avg_mrk_in_list_of_img(self, list_img):
         num_markers_in_img = 0
-        print('len(list_img) ', len(list_img))
-        print('len(list_img 0 ) ', len(list_img[0]))
+        #print('len(list_img) ', len(list_img))
+        #print('len(list_img 0 ) ', len(list_img[0]))
         for i in range(len(list_img)):
             num_markers, id_markers = self.count_aruco_markers_from_single_image(list_img[i].astype(np.uint8))
             num_markers_in_img += num_markers
