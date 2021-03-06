@@ -36,9 +36,9 @@ class arucoDetector():
         #cv2.imwrite('marker_img.png',cv2_img)
 
         (corners, ids, rejected) = cv2.aruco.detectMarkers(cv2_img, self.arucoDict, parameters=self.arucoParams)
-        ids_sorted =np.sort(ids)
+        #ids_sorted =np.sort(ids)
         #print('detected ids ', str(np.asarray(ids_sorted)))
-        return len(ids_sorted), ids_sorted
+        return len(ids), ids
 
     # returns the average number of markers detected in a given list of images
     def avg_mrk_in_list_of_img(self, list_img):
