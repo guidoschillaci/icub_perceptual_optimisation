@@ -55,19 +55,19 @@ if __name__ == "__main__":
 
                 dataset_type = doe.loc[exp, 'dataset_train_type']
                 if dataset_type == 0:
-                    param.set('dataset_train_type', 'robot_alone')
-                    param.set('directory_datasets_train', datasets_folder + 'robot_alone/')
+                    param.set('dataset_train_type', 'icub_alone')
+                    param.set('directory_datasets_train', datasets_folder + 'icub_alone/')
                 else:
-                    param.set('dataset_train_type', 'robot_and_ball')
-                    param.set('directory_datasets_train', datasets_folder + 'robot_and_ball/')
+                    param.set('dataset_train_type', 'icub_and_ball')
+                    param.set('directory_datasets_train', datasets_folder + 'icub_and_ball/')
 
                 test_dataset_type = doe.loc[exp, 'dataset_test_type']
                 if test_dataset_type == 0:
-                    param.set('dataset_test_type', 'robot_alone')
-                    param.set('directory_datasets_test', datasets_folder + 'robot_alone/')
+                    param.set('dataset_test_type', 'icub_alone')
+                    param.set('directory_datasets_test', datasets_folder + 'icub_alone/')
                 else:
-                    param.set('dataset_test_type', 'robot_and_ball')
-                    param.set('directory_datasets_test', datasets_folder + 'robot_and_ball/')
+                    param.set('dataset_test_type', 'icub_and_ball')
+                    param.set('directory_datasets_test', datasets_folder + 'icub_and_ball/')
 
                 # create model
                 mod = Models(param)
