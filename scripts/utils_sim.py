@@ -27,7 +27,7 @@ class arucoDetector():
 
     # count how many aruco markers are in the given image
     def count_aruco_markers_from_single_image(self, img):
-        height, width, channels = img.shape
+        height, width = img.shape
         if height != 320 or width != 240:
             cv2_img = cv2.resize(img, (320,240))
         else:
