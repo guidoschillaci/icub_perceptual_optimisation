@@ -361,6 +361,7 @@ class MyCallback(Callback):
 
     def test_marker_detection(self):
         print('testing marker detection...')
+        print('self.datasets.test.images_orig_size_tp1 shape', self.datasets.test.images_orig_size_tp1.shape)
         # counting markers in original images
         self.results_markers_in_orig_img = \
             self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test.images_orig_size_tp1)
