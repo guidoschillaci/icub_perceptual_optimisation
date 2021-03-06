@@ -198,10 +198,11 @@ class MyCallback(Callback):
             #attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_original_shape')),
             #                    images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #                    self.datasets.background_image)
-            print('cv2_pred_unnorm shape ', cv2_pred_unnorm.shape)
-            print('images_tp1_orig_size[i] shape ', images_tp1_orig_size[i].shape)
-            print('self.datasets.train.background_image shape ', self.datasets.train.background_image.shape)
-            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, images_tp1_orig_size[i], self.datasets.train.background_image)
+            #print('cv2_pred_unnorm shape ', cv2_pred_unnorm.shape)
+            #print('images_tp1_orig_size[i] shape ', images_tp1_orig_size[i].shape)
+            #print('self.datasets.train.background_image shape ', self.datasets.train.background_image.shape)
+            _images_tp1_orig_size = cv2.resize(images_tp1_orig_size[i], self.parameters.get('image_original_shape'))
+            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, _images_tp1_orig_size, self.datasets.train.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
             ax6.get_yaxis().set_visible(False)
@@ -275,7 +276,8 @@ class MyCallback(Callback):
         #    predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    images_tp1[iter].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    self.datasets.background_image)
-        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.train.background_image)
+        _images_tp1_orig_size = cv2.resize(images_tp1_orig_size[iter], self.parameters.get('image_original_shape'))
+        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, _images_tp1_orig_size, self.datasets.train.background_image)
         plt.imshow(attenuated_custom, cmap='gray')
         ax9.get_xaxis().set_visible(False)
         ax9.get_yaxis().set_visible(False)
@@ -317,9 +319,9 @@ class MyCallback(Callback):
                 cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
             #else:
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
-
+            _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
-                                                       self.self.datasets.test.images_orig_size_tp1[i],
+                                                       _images_orig_size_tp1,
                                                        self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_image_tp1)
         return attenuated_imgs
@@ -350,8 +352,9 @@ class MyCallback(Callback):
             #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
+            _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
-                                                    self.datasets.test.images_orig_size_tp1[i], \
+                                                    _images_orig_size_tp1, \
                                                     self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_img)
         return attenuated_imgs
