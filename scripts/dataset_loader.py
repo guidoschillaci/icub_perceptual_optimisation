@@ -210,16 +210,16 @@ class DatasetLoader():
                                                         self.parameters.get('image_size'), \
                                                         self.parameters.get('image_channels'))
 
-        if self.parameters.get('opt_flow_only_magnitude'):
-            dataset.optical_flow = dataset.optical_flow.reshape(len(dataset.optical_flow), \
-                                                                self.parameters.get('image_size'), \
-                                                                self.parameters.get('image_size'), \
-                                                                1)
-        else:
-            dataset.optical_flow = dataset.optical_flow.reshape(len(dataset.optical_flow), \
-                                                                self.parameters.get('image_size'), \
-                                                                self.parameters.get('image_size'), \
-                                                                3)
+        #if self.parameters.get('opt_flow_only_magnitude'):
+        dataset.optical_flow = dataset.optical_flow.reshape(len(dataset.optical_flow), \
+                                                            self.parameters.get('image_size'), \
+                                                            self.parameters.get('image_size'), \
+                                                            1)
+        #else:
+        #    dataset.optical_flow = dataset.optical_flow.reshape(len(dataset.optical_flow), \
+        #                                                        self.parameters.get('image_size'), \
+        #                                                        self.parameters.get('image_size'), \
+        #                                                        3)
 
         self.split_train_test(dataset, type)
         print ('Datasets loaded!')
