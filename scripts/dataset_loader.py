@@ -44,6 +44,7 @@ class DatasetLoader():
         self.parameters = param
         self.train = Dataset(param)
         self.test = Dataset(param)
+        self.train_unshuffled = Dataset(param)
 
     def split_train_test(self, dataset, dataset_type):
         print('splitting train/test datasets')
@@ -223,6 +224,7 @@ class DatasetLoader():
         #                                                        self.parameters.get('image_size'), \
         #                                                        3)
 
+        self.train_unshuffled = deepcopy(self.train)
         self.split_train_test(dataset, type)
         print ('Datasets loaded!')
 
