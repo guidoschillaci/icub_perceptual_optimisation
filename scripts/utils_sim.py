@@ -32,8 +32,8 @@ class arucoDetector():
             cv2_img = cv2.resize(img, (320,240))
         else:
             cv2_img = deepcopy(img)
-        #print("detecting aruco markers")
-        #cv2.imwrite('marker_img.png',cv2_img)
+        print("detecting aruco markers img size ", cv2_img.shape)
+        cv2.imwrite('marker_img.png',cv2_img)
 
         (corners, ids, rejected) = cv2.aruco.detectMarkers(cv2_img, self.arucoDict, parameters=self.arucoParams)
         #ids_sorted =np.sort(ids)
