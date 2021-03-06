@@ -142,10 +142,10 @@ class MyCallback(Callback):
 
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             opt_unnorm = deepcopy(opt_flow[i].squeeze())
-            if self.parameters.get('opt_flow_only_magnitude'):
-                opt_unnorm = self.binarize_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
-            else:
-                opt_unnorm = self.binarize_optical_flow(opt_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            opt_unnorm = self.binarize_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
+            #else:
+            #    opt_unnorm = self.binarize_optical_flow(opt_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
@@ -177,10 +177,10 @@ class MyCallback(Callback):
             pred_unnorm = deepcopy(predictions[i].squeeze())
             #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
-            if self.parameters.get('opt_flow_only_magnitude'):
-                pred_unnorm = self.binarize_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
-            else:
-                pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            pred_unnorm = self.binarize_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
+            #else:
+            #    pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
@@ -247,10 +247,10 @@ class MyCallback(Callback):
         predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].numpy())
         #predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
-        if self.parameters.get('opt_flow_only_magnitude'):
-            predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
-        else:
-            predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
+        #if self.parameters.get('opt_flow_only_magnitude'):
+        predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
+        #else:
+        #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
         cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
@@ -309,11 +309,11 @@ class MyCallback(Callback):
             pred_unnorm = predictions[i].squeeze()
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             # binarise pred_unnorm (has values 0 or 255)
-            if self.parameters.get('opt_flow_only_magnitude'):
-                cv2_pred_unnorm = self.binarize_optical_flow(
-                    cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
-            else:
-                cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            cv2_pred_unnorm = self.binarize_optical_flow(
+                cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
+            #else:
+            #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
 
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
                                                        self.self.datasets.test.images_orig_size_tp1[i],
@@ -341,10 +341,10 @@ class MyCallback(Callback):
         attenuated_imgs = []
         for i in range(len(pred_custom_fusion_allvision)):
             predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
-            if self.parameters.get('opt_flow_only_magnitude'):
-                predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
-            else:
-                predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
+            #else:
+            #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
