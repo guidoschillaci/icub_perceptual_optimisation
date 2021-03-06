@@ -500,16 +500,16 @@ class Models:
                            activation='relu', \
                            padding='same')(x)
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-            if self.parameters.get('opt_flow_only_magnitude'):
-                out_visual_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                                   activation='relu', \
-                                   padding='same',
-                                   name='aux_visual_output')(x)
-            else:
-                out_visual_aux_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                           activation=activation_opt_flow, \
-                           padding='same',\
-                           name='aux_visual_output')(x)
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            out_visual_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+                               activation='relu', \
+                               padding='same',
+                               name='aux_visual_output')(x)
+            #else:
+            #    out_visual_aux_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+            #               activation=activation_opt_flow, \
+            #               padding='same',\
+            #               name='aux_visual_output')(x)
 
             ## proprioceptive branch
             aux_proprioceptive_layer_1 = proprioceptive_layer_7 ( \
@@ -530,16 +530,16 @@ class Models:
                            activation='relu', \
                            padding='same')(x)
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-            if self.parameters.get('opt_flow_only_magnitude'):
-                out_proprio_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                                   activation='relu', \
-                                   padding='same', \
-                                name='aux_proprio_output')(x)
-            else:
-                out_proprio_aux_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                           activation=activation_opt_flow, \
-                           padding='same',\
-                           name='aux_proprio_output')(x)
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            out_proprio_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+                               activation='relu', \
+                               padding='same', \
+                            name='aux_proprio_output')(x)
+            #else:
+            #    out_proprio_aux_model = Conv2D(3, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+            #               activation=activation_opt_flow, \
+            #               padding='same',\
+            #               name='aux_proprio_output')(x)
 
             # motor branch
             aux_motor_layer_1 = motor_layer_7 ( \
@@ -561,18 +561,18 @@ class Models:
                            activation='relu', \
                            padding='same')(x)
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
-            if self.parameters.get('opt_flow_only_magnitude'):
-                out_motor_aux_model = Conv2D(1, (
-                self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                                               activation='relu', \
-                                               padding='same', \
-                                               name='aux_motor_output')(x)
-            else:
-                out_motor_aux_model = Conv2D(3, (
-                self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                                               activation=activation_opt_flow, \
-                                               padding='same',\
-                                               name='aux_motor_output')(x)
+            #if self.parameters.get('opt_flow_only_magnitude'):
+            out_motor_aux_model = Conv2D(1, (
+            self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+                                           activation='relu', \
+                                           padding='same', \
+                                           name='aux_motor_output')(x)
+            #else:
+            #    out_motor_aux_model = Conv2D(3, (
+            #    self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
+            #                                   activation=activation_opt_flow, \
+            #                                   padding='same',\
+            #                                   name='aux_motor_output')(x)
 
             # define the MAIN model
             self.model = CustomModel(inputs=[input_visual, input_proprioceptive, input_motor],
