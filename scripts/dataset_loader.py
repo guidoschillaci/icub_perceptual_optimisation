@@ -125,7 +125,7 @@ class DatasetLoader():
                 dataset.images_t.append( np.array(cv2_img_reshaped))
                 dataset.images_orig_size_t.append(dataset.images_raw[i])
                 if self.parameters.get('image_original_shape') is None:
-                    self.parameters.set('image_original_shape', dataset.images_raw[i].shape)
+                    self.parameters.set('image_original_shape', dataset.background_image.shape)
 
         for i in tqdm(range(len(dataset.images_raw)-1)):
             cv2_img_reshaped = cv2.resize(dataset.images_raw[i+1],

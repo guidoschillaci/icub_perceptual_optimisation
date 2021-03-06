@@ -198,6 +198,9 @@ class MyCallback(Callback):
             #attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_original_shape')),
             #                    images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #                    self.datasets.background_image)
+            print('cv2_pred_unnorm shape ', cv2_pred_unnorm.shape)
+            print('images_tp1_orig_size[i] shape ', images_tp1_orig_size[i].shape)
+            print('self.datasets.train.background_image shape ', self.datasets.train.background_image.shape)
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, images_tp1_orig_size[i], self.datasets.train.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
