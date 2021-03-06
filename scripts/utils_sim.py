@@ -39,7 +39,7 @@ class arucoDetector():
         #ids_sorted =np.sort(ids)
         #print('detected ids ', str(np.asarray(ids_sorted)))
         if ids is None:
-            return 0
+            return 0, None
         else:
             return len(ids), ids
 
