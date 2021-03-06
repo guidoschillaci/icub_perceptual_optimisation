@@ -63,6 +63,7 @@ class MyCallback(Callback):
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
             self.plot_train_sequences(save_gif=True)
+        self.test_marker_detection()
 
     def on_train_end(self, logs=None):
         if self.parameters.get('make_plots'):
