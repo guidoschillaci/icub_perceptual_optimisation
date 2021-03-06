@@ -223,8 +223,8 @@ class DatasetLoader():
         #                                                        self.parameters.get('image_size'), \
         #                                                        self.parameters.get('image_size'), \
         #                                                        3)
-
-        self.train_unshuffled = deepcopy(self.train)
+        if type =='train':
+            self.train_unshuffled = deepcopy(self.train)
         self.split_train_test(dataset, type)
         print ('Datasets loaded!')
 
