@@ -80,18 +80,18 @@ class MyCallback(Callback):
 
     # this is done on the original unshuffled dataset, because we want to show trajectories
     def plot_train_sequences(self, save_gif=False):
-        start = [700, 1300, 3000, 3780, 4570, 5100, 7497, 11900]
+        start = [700, 1300, 3000, 3780, 4570, 5100]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
         print('saving sequence plots...')
         for i in tqdm(range(len(start))):
             #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
-                                                   self.datasets.test.images_t[start[i]:end[i]], \
-                                                   self.datasets.test.images_orig_size_t[start[i]:end[i]], \
-                                                   self.datasets.test.images_orig_size_tp1[start[i]:end[i]], \
-                                                   self.datasets.test.joints[start[i]:end[i]], \
-                                                   self.datasets.test.cmd[start[i]:end[i]], \
-                                                   self.datasets.test.optical_flow[start[i]:end[i]],\
+                                                   self.datasets.train.images_t[start[i]:end[i]], \
+                                                   self.datasets.train.images_orig_size_t[start[i]:end[i]], \
+                                                   self.datasets.train.images_orig_size_tp1[start[i]:end[i]], \
+                                                   self.datasets.train.joints[start[i]:end[i]], \
+                                                   self.datasets.train.cmd[start[i]:end[i]], \
+                                                   self.datasets.train.optical_flow[start[i]:end[i]],\
                                                    save_gif=save_gif)
 
     #def get_fusion_weights(self):
