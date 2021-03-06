@@ -5,8 +5,31 @@ Tested on the iCub simulator
 Preliminary dataset available here:
 https://zenodo.org/record/4139790#.X5husEJKgUs
 
+# how to run on Nvidia Jetson Nano
 
-# how to run in a cloud remote instance
+## First-time setup
+ssh into the jetson and run 
+
+```
+sh docker/jetson_setup_docker.sh
+```
+
+## Run
+
+ssh into the jetson. 
+Run a docker container typing:
+
+```
+sh docker/jetson_start_docker.sh
+```
+
+Then, run
+
+```
+sh docker/jetson_run.sh
+```
+
+# how to run on a cloud remote instance
 
 clone this repo, enter the main folder and run:
 
