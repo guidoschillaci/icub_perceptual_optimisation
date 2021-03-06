@@ -12,7 +12,6 @@ from tensorflow.keras.optimizers import Adam, Adadelta
 from tensorflow.keras.metrics import Mean
 from tensorflow import keras as tfk
 from utils import Split, MyCallback, activation_opt_flow
-#from keract import get_activations, display_activations
 from copy import deepcopy
 import sys
 import time
@@ -25,8 +24,6 @@ import os
 import tkinter
 import matplotlib.pyplot as plt
 import pandas as pd
-
-#mae_metric = tfk.metrics.MeanSquaredError(name="mae")
 
 loss_tracker = tfk.metrics.Mean(name="loss")
 val_loss_tracker = tfk.metrics.Mean(name="val_loss")
@@ -88,8 +85,6 @@ class CustomModel(Model):
     #@tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
-        #print('size y_true', str(np.asarray(y_true).shape))
-        #print('size y_pred', str(np.asarray(y_pred).shape))
         true_main_out = y_true[0]
         pred_main_out = y_pred[0]
         loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
@@ -104,13 +99,6 @@ class CustomModel(Model):
             pred_aux_proprio = y_pred[2]
             pred_aux_motor = y_pred[3]
 
-            #print('size y_true[1]', str(np.asarray(y_true[1]).shape))
-            #print('size y_pred[1]', str(np.asarray(y_pred[1]).shape))
-            #print('size y_true[2]', str(np.asarray(y_true[2]).shape))
-            #print('size y_pred[2]', str(np.asarray(y_pred[2]).shape))
-            #print('size y_true[3]', str(np.asarray(y_true[3]).shape))
-            #print('size y_pred[3]', str(np.asarray(y_pred[3]).shape))
-
             alpha = self.parameters.get('model_sensor_fusion_alpha')  # 0.6 is good
             #beta = self.parameters.get('model_sensor_fusion_beta')  # 0.0
             #loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
@@ -122,32 +110,11 @@ class CustomModel(Model):
             #loss_aux_visual = K.mean(K.square(true_aux_visual - pred_aux_visual), axis=-1)
             #loss_aux_proprio =  K.mean(K.square(true_aux_proprio - pred_aux_proprio), axis=-1)
             #loss_aux_motor =  K.mean(K.square(true_aux_motor - pred_aux_motor), axis=-1)
-            #print('size loss_main_out', str(loss_main_out.numpy().shape))
-            #print('size loss_aux_visual', str(loss_aux_visual.numpy().shape))
-            #print('size loss_aux_proprio', str(loss_aux_proprio.numpy().shape))
-            #print('size loss_aux_motor', str(loss_aux_motor.numpy().shape))
-            #print('size weights', str(weights.numpy().shape))
 
             aux_loss_weighting_total = self.weight_loss(loss_aux_visual, fusion_weights[:,0], alpha) + \
                                        self.weight_loss(loss_aux_proprio, fusion_weights[:,1], alpha) + \
                                        self.weight_loss(loss_aux_motor, fusion_weights[:,2], alpha)
-            #aux_loss_weighting_total = tf.reduce_mean(self.weight_loss(loss_aux_visual, weights[:, 0], alpha)) + \
-            #                           tf.reduce_mean(self.weight_loss(loss_aux_proprio, weights[:, 1], alpha)) + \
-            #                           tf.reduce_mean(self.weight_loss(loss_aux_motor, weights[:, 2], alpha))
 
-            #fus_weight_regul_total = tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)) + \
-            #                         tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)) + \
-            #                         tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))
-            #print('shape fus_weight_regul_total', str(fus_weight_regul_total.numpy().shape))
-
-            #reg_fact = [tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_visual, weights[:,0], beta)), \
-            #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_proprio,weights[:,1], beta)), \
-            #            tf.reduce_mean(self.fusion_weights_regulariser(loss_aux_motor,  weights[:,2], beta))]
-            #print('shape reg_fact', str(np.asarray(reg_fact).shape))
-            #if self.parameters.get('model_use_activity_regularization_layer'):
-            #    #self.get_layer('fusion_activity_regularizer_layer').set_fusion_weights(fusion_weights)
-            #    self.get_layer('fusion_activity_regularizer_layer').pass_auxiliary_losses([loss_aux_visual, loss_aux_proprio, loss_aux_motor])
-            #print ('layer reg ', self.get_layer('fusion_activity_regularizer_layer').reg_fact)
             return loss_main_out + aux_loss_weighting_total  , \
                    tf.reduce_mean(loss_aux_visual), \
                    tf.reduce_mean(loss_aux_proprio), \
@@ -158,17 +125,11 @@ class CustomModel(Model):
         #print('data shape ', str(np.asarray(data).shape))
         if self.parameters.get('model_auxiliary'):
             (in_img, in_j, in_cmd), (out_of, out_aof1, out_aof2, out_aof3) = data
-            #print('in_img shape ', str(np.asarray(in_img).shape))
-            #print('before fusion model')
             weights_predictions = self.fusion_model((in_img, in_j, in_cmd), training=False)
-            #print('before maind model')
 
             with tf.GradientTape() as tape:
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
-                #print('before model_pre_fusion_features')
                 predicted_pre_fusion_features = self.pre_fusion_features_model((in_img, in_j, in_cmd), training=False)
-                #print('before loss')
-                # Compute the loss value for this minibatch.
                 loss_value, loss_aux_visual, loss_aux_proprio, loss_aux_motor = \
                     self.loss_fn((out_of, out_aof1, out_aof2, out_aof3), \
                                           predictions, \
@@ -177,21 +138,11 @@ class CustomModel(Model):
                 tf_loss_aux_visual = tf.ones_like(weights_predictions[:,0])*weights_predictions[:,0]
                 tf_loss_aux_proprio = tf.ones_like(weights_predictions[:,1])*weights_predictions[:,1]
                 tf_loss_aux_motor = tf.ones_like(weights_predictions[:,2])*weights_predictions[:,2]
-                #print('loss_aux_visual ',str(loss_aux_visual))
-                #print('loss_aux_proprio ', str(loss_aux_proprio))
-                #print('loss_aux_motor ', str(loss_aux_motor))
-                #np_weights_pred = np.asarray(weights_predictions)
-                #np_pred_fusion_features = np.asarray(predicted_pre_fusion_features)
-                #print('wei_pred shape ', str(np_weights_pred.shape))
-                #print('predicted_pre_fusion_features shape ', str(np_pred_fusion_features.shape))
-                #print('before model custom')
                 prediction_regulariz = self.custom_fusion_model(
                     [predicted_pre_fusion_features[0], weights_predictions[:,0], tf_loss_aux_visual, \
                      predicted_pre_fusion_features[1], weights_predictions[:,1], tf_loss_aux_proprio, \
                      predicted_pre_fusion_features[2], weights_predictions[:,2], tf_loss_aux_motor], \
                     training=True)
-                #print("prediction_regulariz ", str(prediction_regulariz))
-                #print('after model custom')
                 loss_regul = self.loss_fn_regul((out_of, out_aof1, out_aof2, out_aof3), prediction_regulariz)
                 loss_value += loss_regul
                 # Add any extra losses created during the forward pass.
@@ -305,30 +256,21 @@ class FusionActivityRegularizationLayer(Layer):
 
     #@tf.function
     def fusion_weights_regulariser(self, loss, fusion_w, fact):
-        #print('shape loss ',str(loss.numpy().shape) )
-        #print('shape w ', str(np.asarray(fusion_w).shape))
         #if len(np.asarray(loss)) != len(np.asarray(fusion_w) ):
         #    loss = loss[0:len(np.asarray(fusion_w)), :, :]
-        #    print('loss_reshaped shape ', str(np.asarray(loss).shape))
         ##_shape = (self.parameters.get('image_size'), self.parameters.get('image_size'))
-        ##print('shape weight_origin ', str(fusion_w.numpy().shape))
         # add dimension
         ##x = tf.tile(fusion_w, [1, _shape[1]])
-        #print('shape 1 ', str(x.numpy().shape))
         ##x = tf.expand_dims(x, axis=1)
-        #print('shape 2 ', str(x.numpy().shape))
         # repeat elements -> shape: [batch_size, image_shape_0]
         #x = tf.tile(x, [1, _shape[1]])
         # add dimension
         #x = tf.expand_dims(x, axis=1)
         # repeat elements -> shape: [batch_size, image_shape_0, image_shape_1]
         ##weight = tf.tile(x, [1, _shape[0], 1])
-        #print('shape 3 ', str(weight.numpy().shape))
         ##fact_matrix = tf.math.scalar_mul(fact, tf.ones_like(weight))
         #sig_soft_loss_aux = tf.nn.softmax(tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
         sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss, 2))))
-        ##print('shape weight  ', str(weight.numpy().shape))
-        #print('shape sig_soft_loss_aux  ', str(sig_soft_loss_aux.numpy().shape))
         #sig_soft_loss_aux = tf.math.sigmoid(tf.math.exp(-tf.math.pow(input, 2)))
         ##return fact * tf.math.pow((weight - sig_soft_loss_aux), 2)
         return fact * tf.math.pow((fusion_w - sig_soft_loss_aux), 2)
@@ -337,14 +279,9 @@ class FusionActivityRegularizationLayer(Layer):
 
     def call(self, inputs, training = None):
         if training:
-            #print('training is true in layer')
-            #print('inout shape ',str(np.asarray(inputs).shape) )
-            #print('inout 0 shape ', str(np.asarray(inputs[0]).shape))
 
             #self.fusion_weights = fusion_w
             outputs = inputs[0:self.parameters.get('model_num_modalities')]
-            #print('output shape before ', str(np.asarray(outputs).shape))
-            #print('shape inputs', str(inputs.numpy().shape))
             #Z = 0
             for i in range(self.parameters.get('model_num_modalities')):
                 tmp = tf.reduce_mean(self.fusion_weights_regulariser(inputs[i+self.parameters.get('model_num_modalities')], \
@@ -355,11 +292,9 @@ class FusionActivityRegularizationLayer(Layer):
                 outputs[i] = inputs[i] - tmp
             #self.add_loss(Z/float(self.parameters.get('model_num_modalities')))
             #return self.outputs[0], self.outputs[1], self.outputs[2]
-            #print('output shape after ', str(np.asarray(outputs).shape))
             #return tf.split(outputs, 3, axis=1)
             return outputs[0:self.parameters.get('model_num_modalities')]
         else:
-            #print('layer NOT trainable')
             return inputs[0:self.parameters.get('model_num_modalities')]
 
 class Models:
@@ -423,12 +358,12 @@ class Models:
             input_visual) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )
 
         # proprioceptive (joint encoders) branch
-        input_proprioceptive = Input( shape=(len(self.datasets.dataset_joints[0]),) )
-        proprioceptive_layer_1 = Dense(2 * len(self.datasets.dataset_joints[0]), activation='relu')
+        input_proprioceptive = Input( shape=(len(self.datasets.train.joints[0]),) )
+        proprioceptive_layer_1 = Dense(2 * len(self.datasets.train.joints[0]), activation='relu')
         proprioceptive_layer_2 = Dropout(0.4)
-        proprioceptive_layer_3 = Dense(4 * len(self.datasets.dataset_joints[0]), activation='relu')
+        proprioceptive_layer_3 = Dense(4 * len(self.datasets.train.joints[0]), activation='relu')
         proprioceptive_layer_4 = Dropout(0.4)
-        proprioceptive_layer_5 = Dense(8 * len(self.datasets.dataset_joints[0]), activation='relu')
+        proprioceptive_layer_5 = Dense(8 * len(self.datasets.train.joints[0]), activation='relu')
         proprioceptive_layer_6 = Dropout(0.4)
         proprioceptive_layer_7 = Dense(256, activation='relu')
         ## link layers of the proprioceptive branch of the main model
@@ -442,12 +377,12 @@ class Models:
             input_proprioceptive) ) ) ) ) ) )
 
         # motor commands branch
-        input_motor = Input( shape=(len(self.datasets.dataset_cmd[0]),) )
-        motor_layer_1 = Dense(2 * len(self.datasets.dataset_cmd[0]), activation='relu')
+        input_motor = Input( shape=(len(self.datasets.train.cmd[0]),) )
+        motor_layer_1 = Dense(2 * len(self.datasets.train.cmd[0]), activation='relu')
         motor_layer_2 = Dropout(0.4)
-        motor_layer_3 = Dense(4 * len(self.datasets.dataset_cmd[0]), activation='relu')
+        motor_layer_3 = Dense(4 * len(self.datasets.train.cmd[0]), activation='relu')
         motor_layer_4 = Dropout(0.4)
-        motor_layer_5 = Dense(8 * len(self.datasets.dataset_cmd[0]), activation='relu')
+        motor_layer_5 = Dense(8 * len(self.datasets.train.cmd[0]), activation='relu')
         motor_layer_6 = Dropout(0.4)
         motor_layer_7 = Dense(256, activation='relu')
         ## link layers of the motor branch of the main model
@@ -499,7 +434,6 @@ class Models:
                                                                           weighted_proprio([out_proprioceptive_features_main, fusion_weight_proprio]),
                                                                           weighted_motor([out_motor_features_main, fusion_weight_motor])]
                                                                           ) ) ) ) ) )
-
 
         # weighted_visual = Multiply(name='weighted_visual')([out_visual_main, fusion_weight_visual])
         # weighted_proprio = Multiply(name='weighted_proprio')([out_proprioceptive_main, fusion_weight_proprio])
@@ -741,45 +675,45 @@ class Models:
         self.myCallback = MyCallback(self.parameters, self.datasets, self.model, self.model_pre_fusion_features, self.model_custom_fusion)
         if self.parameters.get('model_auxiliary'):
             fusion_weights_train = self.model_fusion_weights.predict( \
-                [self.datasets.train_dataset_images_t, \
-                 self.datasets.train_dataset_joints, \
-                 self.datasets.train_dataset_cmd])
+                [self.datasets.train.images_t, \
+                 self.datasets.train.joints, \
+                 self.datasets.train.cmd])
 
             fusion_weights_test = self.model_fusion_weights.predict( \
-                [self.datasets.test_dataset_images_t, \
-                 self.datasets.test_dataset_joints, \
-                 self.datasets.test_dataset_cmd])
+                [self.datasets.test.images_t, \
+                 self.datasets.test.joints, \
+                 self.datasets.test.cmd])
 
-            self.history = self.model.fit([self.datasets.train_dataset_images_t, \
-                                           self.datasets.train_dataset_joints, \
-                                           self.datasets.train_dataset_cmd], \
-                                          [self.datasets.train_dataset_optical_flow, \
-                                           self.datasets.train_dataset_optical_flow, \
-                                           self.datasets.train_dataset_optical_flow, \
-                                           self.datasets.train_dataset_optical_flow], \
+            self.history = self.model.fit([self.datasets.train.images_t, \
+                                           self.datasets.train.joints, \
+                                           self.datasets.train.cmd], \
+                                          [self.datasets.train.optical_flow, \
+                                           self.datasets.train.optical_flow, \
+                                           self.datasets.train.optical_flow, \
+                                           self.datasets.train.optical_flow], \
                                           epochs=self.parameters.get('model_epochs'), \
                                           batch_size=self.parameters.get('model_batch_size'), \
-                                          validation_data=([self.datasets.test_dataset_images_t, \
-                                                            self.datasets.test_dataset_joints, \
-                                                            self.datasets.test_dataset_cmd], \
-                                                           [self.datasets.test_dataset_optical_flow, \
-                                                            self.datasets.test_dataset_optical_flow, \
-                                                            self.datasets.test_dataset_optical_flow, \
-                                                            self.datasets.test_dataset_optical_flow]), \
+                                          validation_data=([self.datasets.test.images_t, \
+                                                            self.datasets.test.joints, \
+                                                            self.datasets.test.cmd], \
+                                                           [self.datasets.test.optical_flow, \
+                                                            self.datasets.test.optical_flow, \
+                                                            self.datasets.test.optical_flow, \
+                                                            self.datasets.test.optical_flow]), \
                                           shuffle=True, \
                                           callbacks=[self.myCallback], \
                                           verbose=1)
         else:
-            self.history = self.model.fit([self.datasets.train_dataset_images_t, \
-                                           self.datasets.train_dataset_joints, \
-                                           self.datasets.train_dataset_cmd], \
-                                          self.datasets.train_dataset_optical_flow, \
+            self.history = self.model.fit([self.datasets.train.images_t, \
+                                           self.datasets.train.joints, \
+                                           self.datasets.train.cmd], \
+                                          self.datasets.train.optical_flow, \
                                           epochs=self.parameters.get('model_epochs'), \
                                           batch_size=self.parameters.get('model_batch_size'), \
-                                          validation_data=([self.datasets.test_dataset_images_t, \
-                                                            self.datasets.test_dataset_joints, \
-                                                            self.datasets.test_dataset_cmd], \
-                                                           self.datasets.test_dataset_optical_flow), \
+                                          validation_data=([self.datasets.test.images_t, \
+                                                            self.datasets.test.joints, \
+                                                            self.datasets.test.cmd], \
+                                                           self.datasets.test.optical_flow), \
                                           shuffle=True, \
                                           callbacks=[self.myCallback], \
                                           verbose=1)

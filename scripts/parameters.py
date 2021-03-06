@@ -13,7 +13,8 @@ class Parameters:
             'directory_results': '',
             'directory_plots': '',
             'directory_plots_gif': '',
-            'directory_datasets': '',
+            'directory_datasets_train': '',
+            'directory_datasets_test': '',
             'directory_models': '',
             'model_filename':'model.h5',
             'model_plot_filename': 'model.png',
@@ -22,7 +23,8 @@ class Parameters:
             'image_original_shape': None, # shape of the image in the original dataset
             'image_channels': 1,
 
-            'dataset_type': 'robot_and_ball', # 'robot_alone' or 'robot_and_ball'
+            'dataset_train_type': 'robot_and_ball', # 'robot_alone' or 'robot_and_ball'
+            'dataset_test_type': 'robot_and_ball',  # 'robot_alone' or 'robot_and_ball'
             'attenuation_test_dataset_type': 'robot_and_ball',  # 'robot_alone' or 'robot_and_ball'
             'dataset_shuffle': True,
             'dataset_shuffle_seed': 42,
@@ -44,7 +46,6 @@ class Parameters:
             'opt_flow_apply_threshold': False,  # if true, OF magnitudes below the following value are set to 0
             'opt_flow_binarize': True,  # if true, opt_flow (only for sensory attenuation) will have only 0 or 1 values, according to the threhsold specified below
             'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
-            'opt_flow_only_magnitude': True,
             'opt_flow_max_value': 25,
             'opt_flow_binary_threshold': 0.005, # below this, is set to 0, higher than this, it is set to 1
 

@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact(
-        {'dataset_type': [1], 'attenuation_test_dataset_type': [1]})
+        {'dataset_train_type': [1], 'dataset_test_type': [1]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
     print(doe)
 
@@ -53,19 +53,21 @@ if __name__ == "__main__":
                 param.set('directory_plots', run_folder+'plots/')
                 param.set('directory_plots_gif', run_folder+'plots/gif/')
 
-                dataset_type = doe.loc[exp, 'dataset_type']
+                dataset_type = doe.loc[exp, 'dataset_train_type']
                 if dataset_type == 0:
-                    param.set('dataset_type', 'robot_alone')
-                    param.set('directory_datasets', datasets_folder + 'robot_alone/')
+                    param.set('dataset_train_type', 'robot_alone')
+                    param.set('directory_datasets_train', datasets_folder + 'robot_alone/')
                 else:
-                    param.set('dataset_type', 'robot_and_ball')
-                    param.set('directory_datasets', datasets_folder + 'robot_and_ball/')
+                    param.set('dataset_train_type', 'robot_and_ball')
+                    param.set('directory_datasets_train', datasets_folder + 'robot_and_ball/')
 
-                attenuation_test_dataset_type = doe.loc[exp, 'attenuation_test_dataset_type']
-                if attenuation_test_dataset_type == 0:
-                    param.set('attenuation_test_dataset_type', 'robot_alone')
+                test_dataset_type = doe.loc[exp, 'dataset_test_type']
+                if test_dataset_type == 0:
+                    param.set('dataset_test_type', 'robot_alone')
+                    param.set('directory_datasets_test', datasets_folder + 'robot_alone/')
                 else:
-                    param.set('attenuation_test_dataset_type', 'robot_and_ball')
+                    param.set('dataset_test_type', 'robot_and_ball')
+                    param.set('directory_datasets_test', datasets_folder + 'robot_and_ball/')
 
                 # create model
                 mod = Models(param)

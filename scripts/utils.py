@@ -77,7 +77,7 @@ class MyCallback(Callback):
         self.history['IoU'].append(logs['val_IoU'])
         #logs['loss'] =
 
-
+    # this is done on the original unshuffled dataset, because we want to show trajectories
     def plot_train_sequences(self, save_gif=False):
         start = [700, 1300, 3000, 3780, 4570, 5100, 7497, 11900]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
@@ -85,12 +85,12 @@ class MyCallback(Callback):
         for i in tqdm(range(len(start))):
             #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
-                                                   self.datasets.dataset_images_t[start[i]:end[i]], \
-                                                   self.datasets.dataset_images_orig_size_t[start[i]:end[i]], \
-                                                   self.datasets.dataset_images_orig_size_tp1[start[i]:end[i]], \
-                                                   self.datasets.dataset_joints[start[i]:end[i]], \
-                                                   self.datasets.dataset_cmd[start[i]:end[i]], \
-                                                   self.datasets.dataset_optical_flow[start[i]:end[i]],\
+                                                   self.datasets.test.images_t[start[i]:end[i]], \
+                                                   self.datasets.test.images_orig_size_t[start[i]:end[i]], \
+                                                   self.datasets.test.images_orig_size_tp1[start[i]:end[i]], \
+                                                   self.datasets.test.joints[start[i]:end[i]], \
+                                                   self.datasets.test.cmd[start[i]:end[i]], \
+                                                   self.datasets.test.optical_flow[start[i]:end[i]],\
                                                    save_gif=save_gif)
 
     #def get_fusion_weights(self):
@@ -197,7 +197,7 @@ class MyCallback(Callback):
             #attenuated_image_tp1=sensory_attenuation(pred_unnorm.reshape(self.parameters.get('image_original_shape')),
             #                    images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #                    self.datasets.background_image)
-            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, images_tp1_orig_size[i], self.datasets.background_image)
+            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, images_tp1_orig_size[i], self.datasets.train.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
             ax6.get_yaxis().set_visible(False)
@@ -271,7 +271,7 @@ class MyCallback(Callback):
         #    predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    images_tp1[iter].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    self.datasets.background_image)
-        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.background_image)
+        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.train.background_image)
         plt.imshow(attenuated_custom, cmap='gray')
         ax9.get_xaxis().set_visible(False)
         ax9.get_yaxis().set_visible(False)
@@ -286,18 +286,18 @@ class MyCallback(Callback):
     def plot_predictions_test_dataset(self, epoch, logs):
         print('Callback: saving predicted images')
         self.plot_predictions('predictions_epoch_' + str(epoch), \
-                              self.datasets.test_dataset_images_t[0:self.parameters.get('plots_predict_size')], \
-                              self.datasets.test_dataset_images_orig_size_t[0:self.parameters.get('plots_predict_size')], \
-                              self.datasets.test_dataset_images_orig_size_tp1[0:self.parameters.get('plots_predict_size')], \
-                              self.datasets.test_dataset_joints[0:self.parameters.get('plots_predict_size')], \
-                              self.datasets.test_dataset_cmd[0:self.parameters.get('plots_predict_size')], \
-                              self.datasets.test_dataset_optical_flow[0:self.parameters.get('plots_predict_size')])
+                              self.datasets.test.images_t[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test.images_orig_size_t[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test.images_orig_size_tp1[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test.joints[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test.cmd[0:self.parameters.get('plots_predict_size')], \
+                              self.datasets.test.optical_flow[0:self.parameters.get('plots_predict_size')])
 
     # attenuate on test dataset using learned weights
     def attenuate_test_ds(self):
-        predictions_all_outputs = self.model.predict([self.datasets.test_dataset_images_t, \
-                                                      self.datasets.test_dataset_joints, \
-                                                      self.datasets.test_dataset_cmd])
+        predictions_all_outputs = self.model.predict([self.datasets.test.images_t, \
+                                                      self.datasets.test.joints, \
+                                                      self.datasets.test.cmd])
         if self.parameters.get('model_auxiliary'):
             predictions = predictions_all_outputs[0]
         else:
@@ -315,22 +315,22 @@ class MyCallback(Callback):
                 cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
 
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
-                                                       self.self.datasets.test_dataset_images_orig_size_tp1[i],
-                                                       self.datasets.background_image)
+                                                       self.self.datasets.test.images_orig_size_tp1[i],
+                                                       self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_image_tp1)
         return attenuated_imgs
 
     # attenuate on test dataset using custom weights
     def attenuate_test_ds_using_custom_weights(self, custom_weights):
-        len_img = len(self.datasets.test_dataset_images_orig_size_t)
+        len_img = len(self.datasets.test.images_orig_size_t)
         w_v = np.ones(shape=[len_img,])*custom_weights[0]
         w_j = np.ones(shape=[len_img,])*custom_weights[1]
         w_m = np.ones(shape=[len_img,])*custom_weights[2]
         # get the features extracted from each modality before the fusion
         pred_pre_fusion_features = \
-            self.model_pre_fusion_features([self.datasets.test_dataset_images_t, \
-                                            self.datasets.test_dataset_joints, \
-                                            self.datasets.test_dataset_cmd], training=False)
+            self.model_pre_fusion_features([self.datasets.test.images_t, \
+                                            self.datasets.test.joints, \
+                                            self.datasets.test.cmd], training=False)
         # predict doing the fusion with the custom fusion weights
         pred_custom_fusion_allvision = \
             self.model_custom_fusion([pred_pre_fusion_features[0], w_v, w_v, \
@@ -347,8 +347,8 @@ class MyCallback(Callback):
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
-                                                    self.datasets.test_dataset_images_orig_size_tp1[i], \
-                                                    self.datasets.background_image)
+                                                    self.datasets.test.images_orig_size_tp1[i], \
+                                                    self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_img)
         return attenuated_imgs
 
@@ -356,7 +356,7 @@ class MyCallback(Callback):
         print('testing marker detection...')
         # counting markers in original images
         self.results_markers_in_orig_img = \
-            self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test_dataset_images_orig_size_tp1)
+            self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test.images_orig_size_tp1)
         print('average markers in original images: ' + str(self.results_markers_in_orig_img))
         # count markers in the imgs where sensory attenuation is perfomed
 
