@@ -122,7 +122,7 @@ class MyCallback(Callback):
             # display original
             ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') +1)
             #plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
-            plt.imshow(images_t_orig_size[i], cmap='gray')
+            plt.imshow(cv2.resize(images_t_orig_size[i], self.parameters.get('image_original_shape')), cmap='gray')
             ax1.get_xaxis().set_visible(False)
             ax1.get_yaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
@@ -130,7 +130,7 @@ class MyCallback(Callback):
 
             ax2 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
             #plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),cmap='gray')
-            plt.imshow(images_tp1_orig_size[i], cmap='gray')
+            plt.imshow(cv2.resize(images_tp1_orig_size[i], self.parameters.get('image_original_shape')), cmap='gray')
             ax2.get_xaxis().set_visible(False)
             ax2.get_yaxis().set_visible(False)
             ax2.set_ylabel('img(t+1)', rotation=0)
