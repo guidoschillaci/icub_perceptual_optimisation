@@ -47,6 +47,7 @@ class arucoDetector():
     def avg_mrk_in_list_of_img(self, list_img):
         num_markers_in_img = 0
         print('len(list_img) ', len(list_img))
+        print('len(list_img 0 ) ', len(list_img[0]))
         for i in range(len(list_img)):
             num_markers, id_markers = self.count_aruco_markers_from_single_image(list_img[i])
             num_markers_in_img += num_markers
