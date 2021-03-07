@@ -342,7 +342,7 @@ class DatasetLoader():
         #    self.train_unshuffled = self.train
         self.split_train_test(dataset, type)
         # free memory
-        del self.dataset.images_raw
+        del dataset.images_raw
         print ('Datasets loaded!')
 
     '''
