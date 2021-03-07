@@ -25,8 +25,9 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --name "$DOCKER_CONTAINER_NAME" \
       --volume="/home/guido/code:/code/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-      --workdir="/code" \
-      guidoski/deeplearn:tf2 bash -c 'bash'
+      --gpus all  \
+      --workdir="/code/icub_perceptual_optimisation" \
+      guidoski/deeplearn:cloud-gpu bash -c 'bash'
 else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
