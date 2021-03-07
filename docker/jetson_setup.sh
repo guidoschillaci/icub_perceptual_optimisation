@@ -27,5 +27,5 @@ cd icub_alone
 cd ..
 cd ..
 
-# docker build -f docker/Dockerfile.deeplearn-tf2-latest-nogpu . -t guidoski/deeplearn:tf2
-docker build -f docker/Dockerfile.deeplearn-jetson . -t guidoski/deeplearn:jetson
+# docker build -f docker/Dockerfile.deeplearn-tf2-nogpu . -t guidoski/deeplearn:tf2
+#docker build -f docker/Dockerfile.deeplearn-jetson . -t guidoski/deeplearn:jetson
