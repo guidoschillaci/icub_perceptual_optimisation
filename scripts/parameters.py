@@ -27,7 +27,7 @@ class Parameters:
             'dataset_test_type': 'robot_and_ball',  # 'robot_alone' or 'robot_and_ball'
             'dataset_shuffle': True,
             'dataset_shuffle_seed': 42,
-            'test_dataset_factor': 0.1, # the portion of the train dataset to be used as test
+            'test_dataset_factor': 0.05, # the portion of the train dataset to be used as test
             'dataset_split_seed': 33, # the portion of the train dataset to be used as test
             'use_skin_data': False,
 

@@ -187,7 +187,7 @@ class DataCollector(yarp.RFModule):
         # read image
         self.input_port_cam.read(self.yarp_img_in)
         # scale down img_array and convert it to cv2 image
-        self.image = cv2.resize(self.img_array, (64, 64), interpolation=cv2.INTER_LINEAR)
+        self.image = cv2.resize(self.img_array, (self.width, self.height), interpolation=cv2.INTER_LINEAR)
         # append to dataset
         self.dataset_images.append(self.image)
 

@@ -76,6 +76,8 @@ class MyCallback(Callback):
         self.history['loss'].append(logs['loss'])
         self.history['val_loss'].append(logs['val_loss'])
         self.history['IoU'].append(logs['val_IoU'])
+        self.test_marker_detection()
+        self.save_marker_data(epoch)
         #logs['loss'] =
 
     # this is done on the original unshuffled dataset, because we want to show trajectories
@@ -384,3 +386,14 @@ class MyCallback(Callback):
             self.results_markers_in_attenuated_img_with_custom_weights.append(res)
             print('average markers in attenuated images with custom weights (set '+str(i)+'): ' \
                   + str(res))
+
+    def save_marker_data(self, epoch):
+        print('saving marker detection results...')
+        res = []
+        res.append(self.results_markers_in_orig_img)
+        res.append(self.results_markers_in_attenuated_img)
+        for i in range(len(self.custom_weigths)):
+            res.append(self.results_markers_in_attenuated_img_with_custom_weights[i])
+        np.savetxt(self.parameters.get('directory_plots') + 'markers_epoch_'+str(epoch) + '.txt',
+                   np.asarray(res), fmt="%s")
+        print('...saved')
