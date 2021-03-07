@@ -22,4 +22,4 @@
 #cd ..
 
 # docker build -f docker/Dockerfile.deeplearn-tf2-latest-nogpu . -t guidoski/deeplearn:tf2
-docker build -f docker/Dockerfile.deeplearn-cloud.gpu . -t guidoski/deeplearn:cloud-gpu
+docker build -f docker/Dockerfile.deeplearn-cloud-gpu . -t guidoski/deeplearn:cloud-gpu
