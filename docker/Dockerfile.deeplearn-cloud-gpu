@@ -17,7 +17,7 @@ ENV PATH=/usr/lib/ccache:$PATH
 RUN apt install -y --allow-unauthenticated  nano 
 RUN pip3 install matplotlib
 
-RUN apt install -y locale-gen --reinstall
+RUN apt install -y locales --reinstall
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
     dpkg-reconfigure --frontend=noninteractive locales && \
     update-locale LANG=en_US.UTF-8
