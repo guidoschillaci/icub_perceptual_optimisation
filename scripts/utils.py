@@ -86,12 +86,12 @@ class MyCallback(Callback):
         for i in tqdm(range(len(start))):
             #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
             fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
-                                                   self.datasets.train_unshuffled.images_t[start[i]:end[i]], \
-                                                   self.datasets.train_unshuffled.images_orig_size_t[start[i]:end[i]], \
-                                                   self.datasets.train_unshuffled.images_orig_size_tp1[start[i]:end[i]], \
-                                                   self.datasets.train_unshuffled.joints[start[i]:end[i]], \
-                                                   self.datasets.train_unshuffled.cmd[start[i]:end[i]], \
-                                                   self.datasets.train_unshuffled.optical_flow[start[i]:end[i]],\
+                                                   self.datasets.train.images_t[start[i]:end[i]], \
+                                                   self.datasets.train.images_orig_size_t[start[i]:end[i]], \
+                                                   self.datasets.train.images_orig_size_tp1[start[i]:end[i]], \
+                                                   self.datasets.train.joints[start[i]:end[i]], \
+                                                   self.datasets.train.cmd[start[i]:end[i]], \
+                                                   self.datasets.train.optical_flow[start[i]:end[i]],\
                                                    save_gif=save_gif)
 
     #def get_fusion_weights(self):

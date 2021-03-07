@@ -13,6 +13,11 @@ from sklearn.model_selection import train_test_split
 class Dataset():
     def __init__(self, param):
         self.parameters = param
+        # type of dataset, should be set to 'train' or 'test'
+        self.type = None
+        # indexes of the train and test elements
+        #self.idx_train = []
+        #self.idx_test = []
         # the images read from the file
         self.images_raw = []
         # the pre-processed images datasets, aligned at time t (its size is len(self.dataset_images_raw)-1)
@@ -37,6 +42,115 @@ class Dataset():
         # the optical flow between images at t and t+1
         self.optical_flow = []
 
+    '''
+    def get_img_t(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.images_t[self.idx_train]
+        else:
+            return self.images_t[self.idx_test]
+
+    def get_img_orig_size_t(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.images_orig_size_t[self.idx_train]
+        else:
+            return self.images_orig_size_t[self.idx_test]
+
+    def get_img_tp1(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.images_tp1[self.idx_train]
+        else:
+            return self.images_tp1[self.idx_test]
+
+    def get_img_orig_size_tp1(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.images_orig_size_tp1[self.idx_train]
+        else:
+            return self.images_orig_size_tp1[self.idx_test]
+
+    def get_joints(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.joints[self.idx_train]
+        else:
+            return self.joints[self.idx_test]
+
+    def get_cmd(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.cmd[self.idx_train]
+        else:
+            return self.cmd[self.idx_test]
+
+    def get_skin_val(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.skin_values[self.idx_train]
+        else:
+            return self.skin_values[self.idx_test]
+
+    def get_opt_flow(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.optical_flow[self.idx_train]
+        else:
+            return self.optical_flow[self.idx_test]
+
+    def get_timestamps(self):
+        if self.type == None:
+            print('dataset type == None')
+            sys.exit(-1)
+        if self.type == 'train':
+            return self.timestamps[self.idx_train]
+        else:
+            return self.timestamps[self.idx_test]
+
+    def get_unshuffled_img_t(self):
+        return self.images_t
+
+    def get_unshuffled_img_orig_size_t(self):
+        return self.images_orig_size_t
+
+    def get_unshuffled_img_tp1(self):
+        return self.images_tp1
+
+    def get_unshuffled_img_orig_size_tp1(self):
+        return self.images_orig_size_tp1
+
+    def get_unshuffled_joints(self):
+        return self.joints
+
+    def get_unshuffled_cmd(self):
+        return self.cmd
+
+    def get_unshuffled_skin_val(self):
+        return self.skin_values
+
+    def get_unshuffled_opt_flow(self):
+        return self.optical_flow
+
+    def get_unshuffled_timestamps(self):
+        return self.timestamps
+    '''
 
 class DatasetLoader():
 
@@ -223,9 +337,12 @@ class DatasetLoader():
         #                                                        self.parameters.get('image_size'), \
         #                                                        self.parameters.get('image_size'), \
         #                                                        3)
-        if type =='train':
-            self.train_unshuffled = deepcopy(self.train)
+        #if type =='train':
+        #    #self.train_unshuffled = deepcopy(self.train)
+        #    self.train_unshuffled = self.train
         self.split_train_test(dataset, type)
+        # free memory
+        del self.dataset.images_raw
         print ('Datasets loaded!')
 
     '''
