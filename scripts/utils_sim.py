@@ -60,5 +60,7 @@ if __name__ == "__main__":
     img = cv2.imread("datasets/background_image.png")
     cv2_img = cv2.resize(img, (160, 120))
     # generate_aruco_markers(9,arucoDict)
-    _arucoDetector.count_aruco_markers_from_single_image(cv2_img)
+    num_mrk, mrk = _arucoDetector.count_aruco_markers_from_single_image(cv2_img)
+    print('num markers ', str(num_mrk))
+    print('markers ', str(mrk))
 
