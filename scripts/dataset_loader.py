@@ -222,7 +222,7 @@ class DatasetLoader():
         if self.parameters.get('image_channels')==1:
             dataset.images_raw = np.load(folder+'dataset_images_grayscale.npy')
             print ('dataset image raw size', dataset.images_raw[0].shape)
-            print ('dataset image raw size', dataset.images_raw[0])
+
             # the background image to be used in the sensory attenuation process
             dataset.background_image = cv2.imread(folder+'background_image.png', cv2.IMREAD_GRAYSCALE)
             if self.parameters.get('image_original_shape') is None:
@@ -230,6 +230,7 @@ class DatasetLoader():
                                                              dataset.background_image.shape[0]))
 
             for i in tqdm(range(len(dataset.images_raw)-1)):
+                print('dataset image raw max ', np.max(dataset.images_raw[i]), ' min ', np.min(dataset.images_raw[0]))
                 cv2_img = cv2.resize(dataset.images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size')))
                 dataset.images_t.append( np.array(cv2_img))
                 dataset.images_orig_size_t.append(dataset.images_raw[i])
