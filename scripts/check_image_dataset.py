@@ -9,4 +9,4 @@ def load_and_save(dataset):
     cv2.imwrite('image_raw.png', image_raw[0])
 
 if __name__ == "__main__":
-    load_and_save('datasets/icub_alone/dataset_images_grayscale.npy')
+    load_and_save('results/dataset_images_grayscale.npy')
