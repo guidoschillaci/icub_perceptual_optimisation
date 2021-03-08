@@ -222,6 +222,7 @@ class DatasetLoader():
         if self.parameters.get('image_channels')==1:
             dataset.images_raw = np.load(folder+'dataset_images_grayscale.npy')
             print ('dataset image raw size', dataset.images_raw[0].shape)
+            print ('dataset image raw size', dataset.images_raw[0])
             # the background image to be used in the sensory attenuation process
             dataset.background_image = cv2.imread(folder+'background_image.png', cv2.IMREAD_GRAYSCALE)
             if self.parameters.get('image_original_shape') is None:
