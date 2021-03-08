@@ -34,4 +34,4 @@ wget https://zenodo.org/record/4139790/files/dataset_timestamps.npy --no-check-c
 
 cd ..
 
-docker build -f docker/Dockerfile.deeplearn-tf2-latest-nogpu . -t guidoski/deeplearn:tf2
+# docker build -f docker/Dockerfile.deeplearn-tf2-nogpu . -t guidoski/deeplearn:tf2-nogpu
