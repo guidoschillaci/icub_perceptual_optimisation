@@ -27,7 +27,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --name "$DOCKER_CONTAINER_NAME" \
       --volume="/home/jetson/code:/code/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-      --workdir="/code" \
+      --workdir="/code/icub_perceptual_optimisation" \
       guidoski/deeplearn:jetson bash -c 'bash'
 else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
