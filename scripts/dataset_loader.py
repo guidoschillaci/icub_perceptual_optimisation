@@ -225,8 +225,8 @@ class DatasetLoader():
             # the background image to be used in the sensory attenuation process
             dataset.background_image = cv2.imread(folder+'background_image.png', cv2.IMREAD_GRAYSCALE)
             if self.parameters.get('image_original_shape') is None:
-                self.parameters.set('image_original_shape', (dataset.background_image.shape[0],\
-                                                             dataset.background_image.shape[1]))
+                self.parameters.set('image_original_shape', (dataset.background_image.shape[1],\
+                                                             dataset.background_image.shape[0]))
 
             for i in tqdm(range(len(dataset.images_raw)-1)):
                 cv2_img = cv2.resize(dataset.images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size')))
