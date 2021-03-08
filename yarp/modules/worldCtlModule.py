@@ -6,7 +6,7 @@ import time
 import random
 
 yarp.Network.init() # Initialise YARP
-
+simulate_balls = False
 
 class WorldController:
     """Class for controlling iCub simulator via its RPC world port."""
@@ -257,18 +257,19 @@ wc.rotate(8,  [0, -45, 0 ])
 
 # create falling ball objects
 while True:
-    y = 1.0
-    x = random.uniform(0, 0.3)
-    z = random.uniform(0, 0.3)
-    if len(wc._objects) >= max_num_objects:
-        id = random.randint(0, max_num_objects-1)
-        print('moving ball ',id)
-        #del wc._objects[random.randint(0,9)]
-        wc.move_object(id, [ x, y, z ])
-    else:
-        print ('creating ball')
-        red_sphere = wc.create_object('sph', [ 0.03 ], [ x, y, z ], [ random.random(), random.random(), random.random() ]) # size, location, color
-    time.sleep(20)
+    if simulate_balls:
+        y = 1.0
+        x = random.uniform(0, 0.3)
+        z = random.uniform(0, 0.3)
+        if len(wc._objects) >= max_num_objects:
+            id = random.randint(0, max_num_objects-1)
+            print('moving ball ',id)
+            #del wc._objects[random.randint(0,9)]
+            wc.move_object(id, [ x, y, z ])
+        else:
+            print ('creating ball')
+            red_sphere = wc.create_object('sph', [ 0.03 ], [ x, y, z ], [ random.random(), random.random(), random.random() ]) # size, location, color
+        time.sleep(20)
 
 #green_box = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
 #blue_cylinder = wc.create_object('scyl', [ 0.05, 0.05 ], [ 1, 0.1, 0.1 ], [ 0, 0, 1 ])
