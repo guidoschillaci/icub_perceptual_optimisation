@@ -79,6 +79,7 @@ if __name__ == "__main__":
                 mod.plot_model()
                 # print parameters
                 mod.parameters.print()
+                mod.parameters.save()
                 # train the network
                 mod.train_model()
 
