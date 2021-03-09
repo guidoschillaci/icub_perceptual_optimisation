@@ -55,6 +55,13 @@ class MyCallback(Callback):
         self.custom_weigths.append( (0.2, 0.3, 0.5) )
         self.custom_weigths.append( (0.1, 0.3, 0.6) )
 
+        # these will contain marker detection results
+        self.markers_in_orig_img = []
+        self.markers_in_attenuated_img = [] # predictions executed with main model
+        self.markers_in_attenuated_img_with_custom_weights = []
+        for i in range(len(self.custom_weigths)):
+            self.markers_in_attenuated_img_with_custom_weights.append([])
+
     def on_train_begin(self, logs={}):
         self.history = {'loss': [], 'val_loss': [], 'IoU': []}
         # sub model with fusion weights output
@@ -66,6 +73,7 @@ class MyCallback(Callback):
         self.test_marker_detection()
 
     def on_train_end(self, logs=None):
+        self.save_marker_data()
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
             self.plot_train_sequences(save_gif=True)
@@ -77,7 +85,6 @@ class MyCallback(Callback):
         self.history['val_loss'].append(logs['val_loss'])
         self.history['IoU'].append(logs['val_IoU'])
         self.test_marker_detection()
-        self.save_marker_data(epoch)
         #logs['loss'] =
 
     # this is done on the original unshuffled dataset, because we want to show trajectories
@@ -365,35 +372,40 @@ class MyCallback(Callback):
         print('testing marker detection...')
         #print('self.datasets.test.images_orig_size_tp1 shape', np.asarray(self.datasets.test.images_orig_size_tp1).shape)
         # counting markers in original images
-        self.results_markers_in_orig_img = \
-            self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test.images_orig_size_tp1)
-        print('average markers in original images: ' + str(self.results_markers_in_orig_img))
+        self.results_markers_in_orig_img.append( \
+            self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test.images_orig_size_tp1) )
+        print('average markers in original images: ' + str(self.results_markers_in_orig_img[-1]))
         # count markers in the imgs where sensory attenuation is perfomed
 
         ## first, predicting optflows using the learned fusion weights
         attenuated_imgs_using_learned_weights = self.attenuate_test_ds()
-        self.results_markers_in_attenuated_img = \
-            self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_using_learned_weights)
-        print('average markers in attenuated images: ' + str(self.results_markers_in_attenuated_img))
+        self.markers_in_attenuated_img.append( \
+            self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_using_learned_weights))
+        print('average markers in attenuated images: ' + str(self.results_markers_in_attenuated_img[-1]))
 
         ## then, using custom weights
-        self.results_markers_in_attenuated_img_with_custom_weights = []
+        #self.results_markers_in_attenuated_img_with_custom_weights = []
         # for each set of custom weights
         for i in range(len(self.custom_weigths)):
             attenuated_imgs_with_custom_weights = \
                 self.attenuate_test_ds_using_custom_weights(self.custom_weigths[i])
             res = self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_with_custom_weights)
-            self.results_markers_in_attenuated_img_with_custom_weights.append(res)
+            self.markers_in_attenuated_img_with_custom_weights[i].append(res)
             print('average markers in attenuated images with custom weights (set '+str(i)+'): ' \
                   + str(res))
 
-    def save_marker_data(self, epoch):
+    def save_marker_data(self):
         print('saving marker detection results...')
-        res = []
-        res.append(self.results_markers_in_orig_img)
-        res.append(self.results_markers_in_attenuated_img)
+        #res = []
+        #res.append(self.results_markers_in_orig_img)
+        #res.append(self.results_markers_in_attenuated_img)
+        #for i in range(len(self.custom_weigths)):
+        #    res.append(self.results_markers_in_attenuated_img_with_custom_weights[i])
+        np.savetxt(self.parameters.get('directory_plots') + 'markers_in_original_img.txt', \
+                   np.asarray(self.markers_in_orig_img), fmt="%s")
+        np.savetxt(self.parameters.get('directory_plots') + 'markers_in_attenuated_img.txt', \
+                   np.asarray(self.markers_in_attenuated_img), fmt="%s")
         for i in range(len(self.custom_weigths)):
-            res.append(self.results_markers_in_attenuated_img_with_custom_weights[i])
-        np.savetxt(self.parameters.get('directory_plots') + 'markers_epoch_'+str(epoch) + '.txt',
-                   np.asarray(res), fmt="%s")
+            np.savetxt(self.parameters.get('directory_plots') + 'markers_in_att_custom_weig_'+str(i) + '.txt',
+                   np.asarray(self.markers_in_attenuated_img_with_custom_weights[i]), fmt="%s")
         print('...saved')
