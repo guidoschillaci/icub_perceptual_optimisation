@@ -72,7 +72,7 @@ class Parameters:
         # save as numpy array
         pickle.dump(self.dictionary, open(os.path.join(self.get('directory'), 'parameters.pkl'), 'wb'),  protocol=2) # protcolo2 for compatibility with python2
         # save also as plain text file
-        with open(os.path.join(self.get('directory'), 'parameters.txt'), 'w') as f:
+        with open(os.path.join(self.get('directory_results'), 'parameters.txt'), 'w') as f:
             print(self.dictionary, file=f)
 
     def print(self):
