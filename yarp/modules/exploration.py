@@ -25,18 +25,6 @@ class ExplorationModule(yarp.RFModule):
             self.ax_left = plt.subplot(1, 2, 1)
             self.ax_right = plt.subplot(1, 2, 2)
 
-        # Create a port and connect it to the iCub simulator virtual camera
-        self.input_port_cam = yarp.Port()
-        self.input_port_cam.open("/icub/camera_left")
-        yarp.Network.connect("/icubSim/cam/left", "/icub/camera_left")
-
-        # prepare image
-        self.yarp_img_in = yarp.ImageRgb()
-        self.yarp_img_in.resize(self.width, self.height)
-        self.img_array = np.ones((self.height, self.width, 3), dtype=np.uint8)
-        # yarp image will be available in self.img_array
-        self.yarp_img_in.setExternal(self.img_array.data, self.width, self.height)
-
         # prepare motor driver
         self.head_motors = 'head'
         self.head_motorprops = yarp.Property()

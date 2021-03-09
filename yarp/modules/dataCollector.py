@@ -17,8 +17,10 @@ class DataCollector(yarp.RFModule):
 
         self.config = yarp.Property()
         self.config.fromConfigFile('/code/icub_perceptual_optimisation/yarp/config.ini')
-        self.width = self.config.findGroup('CAMERA').find('width').asInt32()
-        self.height = self.config.findGroup('CAMERA').find('height').asInt32()
+        self.width = self.config.findGroup('CAMERA').find('yarp_width').asInt32()
+        self.height = self.config.findGroup('CAMERA').find('yarp_height').asInt32()
+        self.target_width = self.config.findGroup('CAMERA').find('target_width').asInt32()
+        self.target_height = self.config.findGroup('CAMERA').find('target_height').asInt32()
         self.max_dataset_size = self.config.findGroup('GENERAL').find('max_dataset_size').asInt32()
 
         if self.config.findGroup('GENERAL').find('show_images').asBool():
@@ -171,6 +173,7 @@ class DataCollector(yarp.RFModule):
         data = []
         for i in range (self.num_joints):
             data.append(left_encs.get(i))
+        print('encoders ', str(data))
         self.dataset_joint_encoders.append(deepcopy(data))
 
     def read_skin(self):
@@ -187,10 +190,12 @@ class DataCollector(yarp.RFModule):
         # read image
         self.input_port_cam.read(self.yarp_img_in)
         # scale down img_array and convert it to cv2 image
-        self.image = cv2.resize(self.img_array, (self.width, self.height), interpolation=cv2.INTER_LINEAR)
+        self.image = cv2.resize(self.img_array, (self.target_width, self.target_height), interpolation=cv2.INTER_LINEAR)
         # append to dataset
         self.dataset_images.append(self.image)
-
+        cv2.imwrite('image_raw.png', self.image)
+        yarp.write(self.yarp_img_in, 'image_yarp_jpg')
+        #cv2.imwrite('yarp_img_in.png', self.img_array)
         if self.config.findGroup('GENERAL').find('show_images').asBool():
             # display the image that has been read
             self.ax_left.imshow(self.image)

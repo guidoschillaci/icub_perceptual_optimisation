@@ -6,7 +6,7 @@ import time
 import random
 
 yarp.Network.init() # Initialise YARP
-simulate_balls = False
+simulate_balls = True
 
 class WorldController:
     """Class for controlling iCub simulator via its RPC world port."""
