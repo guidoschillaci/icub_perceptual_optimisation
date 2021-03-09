@@ -193,8 +193,8 @@ class DataCollector(yarp.RFModule):
         self.image = cv2.resize(self.img_array, (self.target_width, self.target_height), interpolation=cv2.INTER_LINEAR)
         # append to dataset
         self.dataset_images.append(self.image)
-        cv2.imwrite('image_raw.png', self.image)
-        yarp.write(self.yarp_img_in, 'image_yarp_jpg')
+        #cv2.imwrite('image_raw.png', self.image)
+        #yarp.write(self.yarp_img_in, 'image_yarp_jpg')
         #cv2.imwrite('yarp_img_in.png', self.img_array)
         if self.config.findGroup('GENERAL').find('show_images').asBool():
             # display the image that has been read
