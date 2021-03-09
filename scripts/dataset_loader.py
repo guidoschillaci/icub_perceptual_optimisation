@@ -231,7 +231,7 @@ class DatasetLoader():
                                                              dataset.background_image.shape[0]))
 
             for i in tqdm(range(len(dataset.images_raw)-1)):
-                print('dataset image raw max ', np.max(dataset.images_raw[i]), ' min ', np.min(dataset.images_raw[0]))
+                #print('dataset image raw max ', np.max(dataset.images_raw[i]), ' min ', np.min(dataset.images_raw[0]))
                 cv2_img = cv2.resize(dataset.images_raw[i], (self.parameters.get('image_size'), self.parameters.get('image_size')))
                 dataset.images_t.append( np.array(cv2_img))
                 dataset.images_orig_size_t.append(dataset.images_raw[i])
