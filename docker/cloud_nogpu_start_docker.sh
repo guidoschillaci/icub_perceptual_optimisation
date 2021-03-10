@@ -1,3 +1,5 @@
+git pull
+
 xhost +local:root
 
 ipclient=localhost
