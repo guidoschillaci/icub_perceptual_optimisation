@@ -35,7 +35,7 @@ class Parameters:
             #'model_custom_training_loop': False, # if False, use standard keras fit functions
             'model_auxiliary': True, # use auxiliary weight model
             'model_batch_size': 32,
-            'model_epochs': 2,
+            'model_epochs': 10,
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.5,
@@ -47,7 +47,7 @@ class Parameters:
             'opt_flow_binarize': True,  # if true, opt_flow (only for sensory attenuation) will have only 0 or 1 values, according to the threhsold specified below
             #'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_max_value': 25,
-            'opt_flow_binary_threshold': 0.002, # below this, is set to 0, higher than this, it is set to 1
+            'opt_flow_binary_threshold': 0.001, # below this, is set to 0, higher than this, it is set to 1
 
             'make_plots': True,
             'plots_predict_size': 5,
