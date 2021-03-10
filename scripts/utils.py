@@ -372,9 +372,9 @@ class MyCallback(Callback):
         print('testing marker detection...')
         #print('self.datasets.test.images_orig_size_tp1 shape', np.asarray(self.datasets.test.images_orig_size_tp1).shape)
         # counting markers in original images
-        self.results_markers_in_orig_img.append( \
+        self.markers_in_orig_img.append( \
             self.aruco_detector.avg_mrk_in_list_of_img(self.datasets.test.images_orig_size_tp1) )
-        print('average markers in original images: ' + str(self.results_markers_in_orig_img[-1]))
+        print('average markers in original images: ' + str(self.markers_in_orig_img[-1]))
         # count markers in the imgs where sensory attenuation is perfomed
 
         ## first, predicting optflows using the learned fusion weights
