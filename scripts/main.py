@@ -7,7 +7,7 @@ from doepy import build # design of experiments
 if __name__ == "__main__":
 
     do_experiments = True
-    number_of_runs = 1#5
+    number_of_runs = 5
     main_path = os.getcwd()
     datasets_folder = main_path + '/' + 'datasets/'
     multiple_experiments_folder = main_path + '/' + 'experiments'
