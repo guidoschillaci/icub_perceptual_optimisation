@@ -381,7 +381,7 @@ class MyCallback(Callback):
         attenuated_imgs_using_learned_weights = self.attenuate_test_ds()
         self.markers_in_attenuated_img.append( \
             self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_using_learned_weights))
-        print('average markers in attenuated images: ' + str(self.results_markers_in_attenuated_img[-1]))
+        print('average markers in attenuated images: ' + str(self.markers_in_attenuated_img[-1]))
 
         ## then, using custom weights
         #self.results_markers_in_attenuated_img_with_custom_weights = []
