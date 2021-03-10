@@ -12,5 +12,5 @@ fi
 echo "Clearing previous results"
 sh scripts/clear_results.sh
 echo "Downloading from jetson"
-scp -r cloudsigma@${ipclient}:/home/jetson/code/icub_perceptual_optimisation/experiments ./
+scp -r cloudsigma@${ipclient}:/home/cloudsigma/icub_perceptual_optimisation/experiments ./
 echo "Results and plots downloaded!"
