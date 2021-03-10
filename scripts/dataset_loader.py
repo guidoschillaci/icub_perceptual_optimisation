@@ -225,7 +225,7 @@ class DatasetLoader():
             #print ('dataset image raw size', dataset.images_raw[0].shape)
             #cv2.imwrite('image_raw.png', dataset.images_raw[0])
             # the background image to be used in the sensory attenuation process
-            dataset.background_image = cv2.imread(folder+'background_image.png', cv2.IMREAD_GRAYSCALE)
+            dataset.background_image = cv2.imread(self.parameters.get('directory_datasets')+'background_image.png', cv2.IMREAD_GRAYSCALE)
             if self.parameters.get('image_original_shape') is None:
                 self.parameters.set('image_original_shape', (dataset.background_image.shape[1],\
                                                              dataset.background_image.shape[0]))

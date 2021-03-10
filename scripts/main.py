@@ -52,7 +52,7 @@ if __name__ == "__main__":
                 param.set('directory_models', run_folder+'models/')
                 param.set('directory_plots', run_folder+'plots/')
                 param.set('directory_plots_gif', run_folder+'plots/gif/')
-
+                param.set('directory_datasets', datasets_folder)
                 dataset_type = doe.loc[exp, 'dataset_train_type']
                 if dataset_type == 0:
                     param.set('dataset_train_type', 'icub_alone')

@@ -15,6 +15,7 @@ class Parameters:
             'directory_plots_gif': '',
             'directory_datasets_train': '',
             'directory_datasets_test': '',
+            'directory_datasets': '',
             'directory_models': '',
             'model_filename':'model.h5',
             'model_plot_filename': 'model.png',
