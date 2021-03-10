@@ -27,7 +27,7 @@ sudo apt-get install docker-ce docker-ce-cli containerd.io
 #mkdir datasets
 #cd datasets
 wget https://zenodo.org/record/4593079/files/datasets.tar.xz --no-check-certificate
-tar xz -f datasets.tar.xz
+tar xzf datasets.tar.xz
 rm datasets.tar.xz
 #wget https://zenodo.org/record/4139790/files/dataset_images_grayscale.npy --no-check-certificate
 #wget https://zenodo.org/record/4139790/files/dataset_joint_encoders.npy --no-check-certificate
