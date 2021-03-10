@@ -35,7 +35,10 @@ rm datasets.tar.xz
 #wget https://zenodo.org/record/4139790/files/dataset_skin_values.npy --no-check-certificate
 #wget https://zenodo.org/record/4139790/files/dataset_timestamps.npy --no-check-certificate
 
-
+sudo groupadd docker
+sudo usermod -aG docker ${USER}
+# log out and log in
+su -s ${USER}
 
 #cd ..
 
