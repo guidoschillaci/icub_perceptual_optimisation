@@ -39,6 +39,7 @@ RUN apt install -y --allow-unauthenticated python3-tk graphviz
 
 RUN pip3 install pandas
 RUN pip3 install doepy
+RUN apt install -y screen
 
 CMD [ "bash" ]
 
