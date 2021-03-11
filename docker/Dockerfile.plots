@@ -1,0 +1,9 @@
+# re-adapted from https://github.com/robotology/icub-hri/blob/master/docker/Dockerfile
+FROM python
+
+RUN apt-get update
+RUN pip install doepy matplotlib numpy pandas tqdm
+
+CMD [ "bash" ]
+
+
