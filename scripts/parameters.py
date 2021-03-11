@@ -24,8 +24,8 @@ class Parameters:
             'image_original_shape': None, # shape of the image in the original dataset
             'image_channels': 1,
 
-            'dataset_train_type': 'robot_and_ball', # 'robot_alone' or 'robot_and_ball'
-            'dataset_test_type': 'robot_and_ball',  # 'robot_alone' or 'robot_and_ball'
+            'dataset_train_type': 'icub_and_ball', # 'icub_alone' or 'icub_and_ball' or 'only_ball'
+            'dataset_test_type': 'icub_and_ball',  # 'icub_alone' or 'icub_and_ball' or 'only_ball'
             'dataset_shuffle': True,
             'dataset_shuffle_seed': 42,
             'test_dataset_factor': 0.05, # the portion of the train dataset to be used as test

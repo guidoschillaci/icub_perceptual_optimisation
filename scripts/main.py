@@ -18,9 +18,13 @@ if __name__ == "__main__":
 
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
-    doe = build.build_full_fact(
+    doe = build.build_full_fact( \
         {'dataset_train_type': [0, 1], 'dataset_test_type': [0, 1]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
+    # add case:
+    # train: icub holding a starting position and balls falling from the sky
+    # test: icub babbling alone in the scene
+    doe.append({'dataset_train_type': 2, 'dataset_test_type': 0}, ignore_index=True)
     print(doe)
 
     if do_experiments:
@@ -57,18 +61,23 @@ if __name__ == "__main__":
                 if dataset_type == 0:
                     param.set('dataset_train_type', 'icub_alone')
                     param.set('directory_datasets_train', datasets_folder + 'icub_alone/')
-                else:
+                elif dataset_type == 1:
                     param.set('dataset_train_type', 'icub_and_ball')
                     param.set('directory_datasets_train', datasets_folder + 'icub_and_ball/')
+                else:
+                    param.set('dataset_train_type', 'only_ball')
+                    param.set('directory_datasets_train', datasets_folder + 'only_ball/')
 
                 test_dataset_type = doe.loc[exp, 'dataset_test_type']
                 if test_dataset_type == 0:
                     param.set('dataset_test_type', 'icub_alone')
                     param.set('directory_datasets_test', datasets_folder + 'icub_alone/')
-                else:
+                elif test_dataset_type == 1:
                     param.set('dataset_test_type', 'icub_and_ball')
                     param.set('directory_datasets_test', datasets_folder + 'icub_and_ball/')
-
+                else:
+                    param.set('dataset_test_type', 'only_ball')
+                    param.set('directory_datasets_test', datasets_folder + 'only_ball/')
                 # create model
                 mod = Models(param)
                 # load dataset
