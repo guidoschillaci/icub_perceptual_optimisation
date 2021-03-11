@@ -27,6 +27,7 @@ if __name__ == "__main__":
     doe.append({'dataset_train_type': 2, 'dataset_test_type': 0}, ignore_index=True)
     print(doe)
 
+
     if do_experiments:
         doe.to_csv(multiple_experiments_folder + '/doe.csv', index=True, header=True)
         # for each row in the design of the experiment table
