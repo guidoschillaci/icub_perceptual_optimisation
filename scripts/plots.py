@@ -23,6 +23,45 @@ def make_figure(means, stddevs, title, xlabel, ylabel, y_lim):
     plt.savefig(filename)
     plt.close()
 
+def make_figure_loss(means_l, stddevs_l, means_val, std_val, title, xlabel, ylabel, ylim):
+    fig1 = plt.figure(figsize=(10, 10))
+    plt.title(title)
+    plt.ylabel(xlabel)
+    plt.xlabel(ylabel)
+    plt.ylim(ylim)
+    plt.errorbar(range(len(means_l)), means_l, stddevs_l, capsize=5, errorevery=2, label='loss')
+    plt.errorbar(range(len(means_val)), means_val, std_val, capsize=5, errorevery=3, label='val_loss')
+    plt.legend()
+    filename = title +'.jpg'
+    plt.savefig(filename)
+    plt.close()
+
+def make_figure_markers(means_mo, stddevs_mo, \
+                        means_ma, stddevs_ma, \
+                        means_w0, stddevs_w0, \
+                        means_w1, stddevs_w1, \
+                        means_w2, stddevs_w2, \
+                        means_w3, stddevs_w3, \
+                        means_w4, stddevs_w4, \
+                        means_w5, stddevs_w5, \
+                        title, xlabel, ylabel, ylim):
+    fig1 = plt.figure(figsize=(10, 10))
+    plt.title(title)
+    plt.ylabel(xlabel)
+    plt.xlabel(ylabel)
+    plt.ylim(ylim)
+    plt.errorbar(range(len(means_mo)), means_mo, stddevs_mo, capsize=5, errorevery=2, label='original')
+    plt.errorbar(range(len(means_ma)), means_ma, stddevs_ma, capsize=5, errorevery=3, label='attenuated')
+    plt.errorbar(range(len(means_w0)), means_w0, stddevs_w0, capsize=5, errorevery=3, label='custom_w 0')
+    plt.errorbar(range(len(means_w1)), means_w0, stddevs_w1, capsize=5, errorevery=3, label='custom_w 1')
+    plt.errorbar(range(len(means_w2)), means_w0, stddevs_w2, capsize=5, errorevery=3, label='custom_w 2')
+    plt.errorbar(range(len(means_w3)), means_w0, stddevs_w3, capsize=5, errorevery=3, label='custom_w 3')
+    plt.errorbar(range(len(means_w4)), means_w0, stddevs_w4, capsize=5, errorevery=3, label='custom_w 4')
+    plt.errorbar(range(len(means_w5)), means_w0, stddevs_w5, capsize=5, errorevery=3, label='custom_w 5')
+    plt.legend()
+    filename = title + '.jpg'
+    plt.savefig(filename)
+    plt.close()
 
 # run this from the exp_x folder
 def do_stats_plot(num_runs):
@@ -78,19 +117,19 @@ def do_stats_plot(num_runs):
     stddev_mkr_att_custom_4 = np.std(np.asarray(data_mkr_att_custom_4), axis=0)
     stddev_mkr_att_custom_5 = np.std(np.asarray(data_mkr_att_custom_5), axis=0)
 
-    make_figure(mean_loss, stddev_loss, 'Mean_Loss', 'loss', 'epoch', [0,1])
-    make_figure(mean_val_loss, stddev_val_loss, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
+    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'Mean_Loss', 'loss', 'epoch', [0.00005,0.00022])
+    #make_figure(, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
     make_figure(mean_iou, stddev_iou, 'Mean_Intersection_Over_Unit', 'IoU', 'epoch',[0,1])
 
-    make_figure(mean_mkr_orig, stddev_mkr_orig, 'Mean_Marker_Detection_in_Original_Img', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att, stddev_mkr_att, 'Mean_Marker_Detection_in_Attenuated_Img', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att_custom_0, stddev_mkr_att_custom_0, 'Mean_Marker_Detection_in_Cust_Weight_0', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att_custom_1, stddev_mkr_att_custom_1, 'Mean_Marker_Detection_in_Cust_Weight_1', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att_custom_2, stddev_mkr_att_custom_2, 'Mean_Marker_Detection_in_Cust_Weight_2', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att_custom_3, stddev_mkr_att_custom_3, 'Mean_Marker_Detection_in_Cust_Weight_3', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att_custom_4, stddev_mkr_att_custom_4, 'Mean_Marker_Detection_in_Cust_Weight_4', 'Markers detected', 'epoch', [6,9])
-    make_figure(mean_mkr_att_custom_5, stddev_mkr_att_custom_5, 'Mean_Marker_Detection_in_Cust_Weight_5', 'Markers detected', 'epoch', [6,9])
-
+    make_figure_loss(mean_mkr_orig, stddev_mkr_orig, \
+                     mean_mkr_att, stddev_mkr_att, \
+                     mean_mkr_att_custom_0, stddev_mkr_att_custom_0, \
+                     mean_mkr_att_custom_1, stddev_mkr_att_custom_1, \
+                     mean_mkr_att_custom_2, stddev_mkr_att_custom_2, \
+                     mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
+                     mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
+                     mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
+                     'Mean_Marker_Detection_in_Original_Img', 'Markers detected', 'epoch', [6,9])
 
 if __name__ == "__main__":
     num_experiments = 4
