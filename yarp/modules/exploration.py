@@ -11,6 +11,8 @@ import random
 
 print(sys.argv)
 
+hold_hands = True
+
 class ExplorationModule(yarp.RFModule):
     def configure(self, rf):
 
@@ -188,17 +190,17 @@ class ExplorationModule(yarp.RFModule):
         self.left_startingPos = yarp.Vector(self.num_joints, start_left.data())
         self.right_startingPos = yarp.Vector(self.num_joints, start_right.data())
         self.head_iPos.positionMove(self.head_startingPos.data())
-        self.left_iPos.positionMove(self.left_startingPos.data())
-        self.right_iPos.positionMove(self.right_startingPos.data())
+        if not hold_hands:
+            self.left_iPos.positionMove(self.left_startingPos.data())
+            self.right_iPos.positionMove(self.right_startingPos.data())
 
     # main function, called periodically every getPeriod() seconds
     def updateModule(self):
         #self.read_image()
         #self.read_skin()
-        self.babble_arm()
-
+        if not hold_hands:
+            self.babble_arm()
         return True
-
 
 yarp.Network.init()
 
