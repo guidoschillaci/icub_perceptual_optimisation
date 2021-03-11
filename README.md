@@ -11,7 +11,7 @@ https://zenodo.org/record/4139790#.X5husEJKgUs
 ssh into the jetson and run 
 
 ```
-sh docker/jetson_setup_docker.sh
+sh docker/jetson_setup.sh
 ```
 
 ## Run
@@ -26,28 +26,30 @@ sh docker/jetson_start_docker.sh
 Then, run
 
 ```
-sh docker/jetson_run.sh
+sh scripts/run_experiment.sh
 ```
 
 # how to run on a cloud remote instance
 
-clone this repo, enter the main folder and run:
+clone this repo, enter the main folder and run the following commands
 
+## CPU instance
+
+(only the first time)
 ```
-sh docker/cloud_setup.sh
+sh docker/cloud_gpu_setup.sh
 ```
 
 then
 
 ```
-sh docker/cloud_deeplearn.sh
+sh docker/cloud_start_docker.sh
 ```
 
 To run the experiment:
 
-
 ```
-python script/main.py
+sh script/run_experiment.py
 ```
 
 # Docker icub sim
