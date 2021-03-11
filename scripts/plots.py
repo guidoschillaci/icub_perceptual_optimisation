@@ -53,11 +53,11 @@ def make_figure_markers(means_mo, stddevs_mo, \
     plt.errorbar(range(len(means_mo)), means_mo, stddevs_mo, capsize=5, errorevery=2, label='original')
     plt.errorbar(range(len(means_ma)), means_ma, stddevs_ma, capsize=5, errorevery=3, label='attenuated')
     plt.errorbar(range(len(means_w0)), means_w0, stddevs_w0, capsize=5, errorevery=3, label='custom_w 0')
-    plt.errorbar(range(len(means_w1)), means_w0, stddevs_w1, capsize=5, errorevery=3, label='custom_w 1')
-    plt.errorbar(range(len(means_w2)), means_w0, stddevs_w2, capsize=5, errorevery=3, label='custom_w 2')
-    plt.errorbar(range(len(means_w3)), means_w0, stddevs_w3, capsize=5, errorevery=3, label='custom_w 3')
-    plt.errorbar(range(len(means_w4)), means_w0, stddevs_w4, capsize=5, errorevery=3, label='custom_w 4')
-    plt.errorbar(range(len(means_w5)), means_w0, stddevs_w5, capsize=5, errorevery=3, label='custom_w 5')
+    plt.errorbar(range(len(means_w1)), means_w1, stddevs_w1, capsize=5, errorevery=3, label='custom_w 1')
+    plt.errorbar(range(len(means_w2)), means_w2, stddevs_w2, capsize=5, errorevery=3, label='custom_w 2')
+    plt.errorbar(range(len(means_w3)), means_w3, stddevs_w3, capsize=5, errorevery=3, label='custom_w 3')
+    plt.errorbar(range(len(means_w4)), means_w4, stddevs_w4, capsize=5, errorevery=3, label='custom_w 4')
+    plt.errorbar(range(len(means_w5)), means_w5, stddevs_w5, capsize=5, errorevery=3, label='custom_w 5')
     plt.legend()
     filename = title + '.jpg'
     plt.savefig(filename)
@@ -129,7 +129,7 @@ def do_stats_plot(num_runs):
                      mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
                      mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
-                     'Mean_Marker_Detection_in_Original_Img', 'Markers detected', 'epoch', [6,9])
+                     'Mean_Marker_Detection', 'Markers detected', 'epoch', [7,9])
 
 if __name__ == "__main__":
     num_experiments = 4
