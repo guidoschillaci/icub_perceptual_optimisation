@@ -25,7 +25,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
     docker run -it --rm \
       -e DISPLAY=$DISPLAY \
       --name "$DOCKER_CONTAINER_NAME" \
-      --volume="/home/guido/:/home/guido/:rw"  \
+      --volume="/Users/guido/:/home/guido/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --workdir="/Users/guido" \
       guidoski/deeplearn:plots bash -c 'bash'
