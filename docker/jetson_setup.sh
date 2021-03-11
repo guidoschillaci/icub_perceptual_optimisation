@@ -6,6 +6,6 @@
 # sudo apt-get update -y
 # sudo apt install -y docker docker.io
 
-wget https://zenodo.org/record/4593079/files/datasets.tar.xz --no-check-certificate
-tar xvf datasets.tar.xz
-rm datasets.tar.xz
+wget https://zenodo.org/record/4596464/files/Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz --no-check-certificate
+tar xvf Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
+rm Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
