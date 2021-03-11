@@ -121,7 +121,7 @@ def do_stats_plot(num_runs):
     #make_figure(, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
     make_figure(mean_iou, stddev_iou, 'Mean_Intersection_Over_Unit', 'IoU', 'epoch',[0,1])
 
-    make_figure_loss(mean_mkr_orig, stddev_mkr_orig, \
+    make_figure_markers(mean_mkr_orig, stddev_mkr_orig, \
                      mean_mkr_att, stddev_mkr_att, \
                      mean_mkr_att_custom_0, stddev_mkr_att_custom_0, \
                      mean_mkr_att_custom_1, stddev_mkr_att_custom_1, \
