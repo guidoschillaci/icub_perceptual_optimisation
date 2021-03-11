@@ -45,7 +45,7 @@ if __name__ == "__main__":
     num_experiments = 6
     num_runs = 5
     main_path = os.getcwd()
-    multiple_experiments_folder = main_path + '/' + 'experiments'
+    multiple_experiments_folder = main_path + '/' + 'experiments_good'
     os.chdir(multiple_experiments_folder)
     for exp in range(num_experiments):
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
