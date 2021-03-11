@@ -51,7 +51,7 @@ def make_figure_markers(means_mo, stddevs_mo, \
     plt.xlabel(ylabel)
     plt.ylim(ylim)
     plt.errorbar(range(len(means_mo)), means_mo, stddevs_mo, capsize=5, errorevery=2, label='original')
-    plt.errorbar(range(len(means_ma)), means_ma, stddevs_ma, capsize=5, errorevery=3, label='attenuated')
+    plt.errorbar(range(len(means_ma)), means_ma, stddevs_ma, capsize=5, errorevery=3, label='main model')
     plt.errorbar(range(len(means_w0)), means_w0, stddevs_w0, capsize=5, errorevery=3, label='custom_w 0')
     plt.errorbar(range(len(means_w1)), means_w1, stddevs_w1, capsize=5, errorevery=3, label='custom_w 1')
     plt.errorbar(range(len(means_w2)), means_w2, stddevs_w2, capsize=5, errorevery=3, label='custom_w 2')
@@ -129,7 +129,7 @@ def do_stats_plot(num_runs):
                      mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
                      mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
-                     'Mean_Marker_Detection', 'Markers detected', 'epoch', [7,9])
+                     'Mean_Marker_Detection', 'Markers detected', 'epoch', [7,8])
 
 if __name__ == "__main__":
     num_experiments = 4
