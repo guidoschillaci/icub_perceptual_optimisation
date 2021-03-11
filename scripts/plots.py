@@ -6,6 +6,12 @@ import pandas as pd
 from tqdm import tqdm
 import os
 
+import Tkinter
+if os.environ.get('DISPLAY','') == '':
+    print('no display found. Using :0.0')
+    os.environ.__setitem__('DISPLAY', ':0.0')
+
+
 def make_figure(means, stddevs, title, xlabel, ylabel):
     fig1 = plt.figure(figsize=(10, 10))
     plt.title(title)
