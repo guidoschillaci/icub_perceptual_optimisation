@@ -13,7 +13,7 @@ if [ -z "$1" ]
 fi
 
 
-export DOCKER_CONTAINER_NAME=deeplearn_container
+export DOCKER_CONTAINER_NAME=deeplearn_plot_container
 if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
     if [ "$(docker ps -aq -f status=exited -f name=${DOCKER_CONTAINER_NAME})" ]; then
         echo "Cleaning up existing container named ${DOCKER_CONTAINER_NAME}"
