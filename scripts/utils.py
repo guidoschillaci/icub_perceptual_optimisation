@@ -95,6 +95,8 @@ class MyCallback(Callback):
                  int(len(self.datasets.test)*0.4), \
                  int(len(self.datasets.test)*0.5), \
                  int(len(self.datasets.test)*0.6), \
+                 int(len(self.datasets.test)*0.7), \
+                 int(len(self.datasets.test)*0.8), \
                  ]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
         print('saving sequence plots...')
