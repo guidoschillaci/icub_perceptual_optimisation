@@ -50,7 +50,7 @@ class Parameters:
             'opt_flow_binary_threshold': 0.001, # below this, is set to 0, higher than this, it is set to 1
 
             'make_plots': True,
-            'plots_predict_size': 5,
+            'plots_predict_size': 20,
             'verbosity_level': 1
         }
 

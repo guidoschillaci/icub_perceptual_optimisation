@@ -18,7 +18,7 @@ sudo add-apt-repository \
    $(lsb_release -cs) \
    stable"
 sudo apt-get update -y
-sudo apt-get install docker-ce docker-ce-cli containerd.io
+sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 
 #mkdir results
 #mkdir results/plots
@@ -38,8 +38,8 @@ rm Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
 sudo groupadd docker
 sudo usermod -aG docker ${USER}
 # log out and log in
-su -s ${USER}
-
+#su -s ${USER}
+exit
 #cd ..
 
 # docker build -f docker/Dockerfile.deeplearn-tf2-nogpu . -t guidoski/deeplearn:tf2-nogpu

@@ -130,8 +130,8 @@ class MyCallback(Callback):
                                                             commands])
         bar_label = ['v', 'p', 'm']
         num_subplots = 25
-
-        fig = plt.figure(figsize=(6, 20))
+        horiz_fig_size = 6 * int(self.parameters.get('plots_predict_size') / 5)
+        fig = plt.figure(figsize=(horiz_fig_size, 20))
         for i in range(self.parameters.get('plots_predict_size')):
             count_line = 0
             # display original
