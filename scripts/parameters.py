@@ -26,7 +26,7 @@ class Parameters:
 
             'dataset_train_type': 'icub_and_ball', # 'icub_alone' or 'icub_and_ball' or 'only_ball'
             'dataset_test_type': 'icub_and_ball',  # 'icub_alone' or 'icub_and_ball' or 'only_ball'
-            'dataset_shuffle': True,
+            'dataset_test_shuffle': False,
             'dataset_shuffle_seed': 42,
             'test_dataset_factor': 0.05, # the portion of the train dataset to be used as test
             'dataset_split_seed': 33, # the portion of the train dataset to be used as test

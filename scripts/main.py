@@ -19,7 +19,8 @@ if __name__ == "__main__":
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact( \
-        {'dataset_train_type': [0, 1, 2], 'dataset_test_type': [0, 1]})
+        {'dataset_train_type': [1, 2], 'dataset_test_type': [1]})
+        #{'dataset_train_type': [0, 1, 2], 'dataset_test_type': [0, 1]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
     # add case:
     # train: icub holding a starting position and balls falling from the sky

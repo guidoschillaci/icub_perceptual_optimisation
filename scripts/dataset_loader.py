@@ -185,27 +185,37 @@ class DatasetLoader():
                                                        test_size = self.parameters.get('test_dataset_factor'),
                                                        random_state = self.parameters.get('dataset_split_seed'))
         else: # test
-            _, dataset.images_t = train_test_split(dataset.images_t,
-                                                   test_size = self.parameters.get('test_dataset_factor'),
-                                                   random_state = self.parameters.get('dataset_split_seed'))
-            _, dataset.images_orig_size_t = train_test_split(dataset.images_orig_size_t,
-                                                             test_size=self.parameters.get('test_dataset_factor'),
-                                                             random_state=self.parameters.get('dataset_split_seed'))
-            _, dataset.images_tp1 = train_test_split(dataset.images_tp1,
-                                                     test_size=self.parameters.get('test_dataset_factor'),
-                                                     random_state=self.parameters.get('dataset_split_seed'))
-            _, dataset.images_orig_size_tp1 = train_test_split(dataset.images_orig_size_tp1,
-                                                               test_size=self.parameters.get('test_dataset_factor'),
-                                                               random_state=self.parameters.get('dataset_split_seed'))
-            _, dataset.joints = train_test_split(dataset.joints,
-                                                 test_size = self.parameters.get('test_dataset_factor'),
-                                                 random_state = self.parameters.get('dataset_split_seed'))
-            _, dataset.cmd = train_test_split(dataset.cmd,
-                                              test_size = self.parameters.get('test_dataset_factor'),
-                                              random_state = self.parameters.get('dataset_split_seed'))
-            _, dataset.optical_flow = train_test_split(dataset.optical_flow,
+            if self.parameters.get('dataset_test_shuffle'):
+                _, dataset.images_t = train_test_split(dataset.images_t,
                                                        test_size = self.parameters.get('test_dataset_factor'),
                                                        random_state = self.parameters.get('dataset_split_seed'))
+                _, dataset.images_orig_size_t = train_test_split(dataset.images_orig_size_t,
+                                                                 test_size=self.parameters.get('test_dataset_factor'),
+                                                                 random_state=self.parameters.get('dataset_split_seed'))
+                _, dataset.images_tp1 = train_test_split(dataset.images_tp1,
+                                                         test_size=self.parameters.get('test_dataset_factor'),
+                                                         random_state=self.parameters.get('dataset_split_seed'))
+                _, dataset.images_orig_size_tp1 = train_test_split(dataset.images_orig_size_tp1,
+                                                                   test_size=self.parameters.get('test_dataset_factor'),
+                                                                   random_state=self.parameters.get('dataset_split_seed'))
+                _, dataset.joints = train_test_split(dataset.joints,
+                                                     test_size = self.parameters.get('test_dataset_factor'),
+                                                     random_state = self.parameters.get('dataset_split_seed'))
+                _, dataset.cmd = train_test_split(dataset.cmd,
+                                                  test_size = self.parameters.get('test_dataset_factor'),
+                                                  random_state = self.parameters.get('dataset_split_seed'))
+                _, dataset.optical_flow = train_test_split(dataset.optical_flow,
+                                                           test_size = self.parameters.get('test_dataset_factor'),
+                                                           random_state = self.parameters.get('dataset_split_seed'))
+            else: # unshuffled test dataset, use this only for plotting sequences
+                index_from = len(dataset.images_t) - int(len(dataset.images_t) * self.parameters.get('test_dataset_factor')) -1
+                dataset.images_t = deepcopy(dataset.images_t[index_from:])
+                dataset.images_orig_size_t = deepcopy(dataset.images_orig_size_t[index_from:])
+                dataset.images_tp1 = deepcopy(dataset.images_tp1[index_from:])
+                dataset.images_orig_size_tp1 = deepcopy(dataset.images_orig_size_tp1[index_from:])
+                dataset.joints = deepcopy(dataset.joints[index_from:])
+                dataset.cmd = deepcopy(dataset.cmd[index_from:])
+                dataset.optical_flow = deepcopy(dataset.optical_flow[index_from:])
 
     def load_datasets(self):
         print('loading datasets')
