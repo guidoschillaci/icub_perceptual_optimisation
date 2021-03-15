@@ -419,6 +419,7 @@ class Models:
         weighted_proprio = Multiply(name='weighted_proprio')
         weighted_motor = Multiply(name='weighted_motor')
         addition = Add()
+        concatenated_2 = Concatenate()
         final_1 = Dense(256, activation='relu')
         final_2 = Reshape(target_shape=(16, 16, 1))
         final_3 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
@@ -434,10 +435,10 @@ class Models:
         #                                                                  weighted_proprio([out_proprioceptive_features_main, fusion_weight_proprio]),
         #                                                                  weighted_motor([out_motor_features_main, fusion_weight_motor])]
         #                                                                  ) ) ) ) ) )
-        out_main_model = final_5(final_4(final_3(final_2(final_1([weighted_visual([out_visual_features_main, fusion_weight_visual]),
+        out_main_model = final_5(final_4(final_3(final_2(final_1(concatenated_2([weighted_visual([out_visual_features_main, fusion_weight_visual]),
                                                                           weighted_proprio([out_proprioceptive_features_main, fusion_weight_proprio]),
                                                                           weighted_motor([out_motor_features_main, fusion_weight_motor])]
-                                                                          ) ) ) ) )
+                                                                          ) ) ) ) ) )
 
         # weighted_visual = Multiply(name='weighted_visual')([out_visual_main, fusion_weight_visual])
         # weighted_proprio = Multiply(name='weighted_proprio')([out_proprioceptive_main, fusion_weight_proprio])
@@ -642,10 +643,10 @@ class Models:
             #                                 ))))))
             self.out_model_custom_fusion = final_5(
                 final_4(final_3(
-                    final_2(final_1([weighted_visual([self.custom_fusion_visual_inp, fusion_weight_visual]),
+                    final_2(final_1(concatenated_2([weighted_visual([self.custom_fusion_visual_inp, fusion_weight_visual]),
                                               weighted_proprio([self.custom_fusion_proprio_inp, fusion_weight_proprio]),
                                               weighted_motor([self.custom_fusion_motor_inp, fusion_weight_motor])]
-                                             )))))
+                                             ))))))
             # create the model with the defined inputs and outputs
             self.model_custom_fusion = Model(inputs=[self.custom_fusion_visual_inp, self.custom_fusion_weight_visual_inp, self.custom_fusion_regul_loss_visual,
                                               self.custom_fusion_proprio_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_regul_loss_proprio,
