@@ -431,11 +431,7 @@ class Models:
                                     padding='same', name='main_output')
 
         # link them
-        #out_main_model = final_5(final_4(final_3(final_2(final_1(addition([weighted_visual([out_visual_features_main, fusion_weight_visual]),
-        #                                                                  weighted_proprio([out_proprioceptive_features_main, fusion_weight_proprio]),
-        #                                                                  weighted_motor([out_motor_features_main, fusion_weight_motor])]
-        #                                                                  ) ) ) ) ) )
-        out_main_model = final_5(final_4(final_3(final_2(final_1(concatenated_2([weighted_visual([out_visual_features_main, fusion_weight_visual]),
+        out_main_model = final_5(final_4(final_3(final_2(final_1(addition([weighted_visual([out_visual_features_main, fusion_weight_visual]),
                                                                           weighted_proprio([out_proprioceptive_features_main, fusion_weight_proprio]),
                                                                           weighted_motor([out_motor_features_main, fusion_weight_motor])]
                                                                           ) ) ) ) ) )
@@ -635,18 +631,13 @@ class Models:
             #fusion_weight_visual, fusion_weight_proprio, fusion_weight_motor = Split()(fusion_weight_output)
             # adjust the final part of the branch of the main model, to get also fusion weights as inputs.
             # link the following layers until the opt_flow output
-            #self.out_model_custom_fusion = final_5(
-            #    final_4(final_3(
-            #        final_2(final_1(addition([weighted_visual([self.custom_fusion_visual_inp, fusion_weight_visual]),
-            #                                  weighted_proprio([self.custom_fusion_proprio_inp, fusion_weight_proprio]),
-            #                                  weighted_motor([self.custom_fusion_motor_inp, fusion_weight_motor])]
-            #                                 ))))))
             self.out_model_custom_fusion = final_5(
                 final_4(final_3(
-                    final_2(final_1(concatenated_2([weighted_visual([self.custom_fusion_visual_inp, fusion_weight_visual]),
+                    final_2(final_1(addition([weighted_visual([self.custom_fusion_visual_inp, fusion_weight_visual]),
                                               weighted_proprio([self.custom_fusion_proprio_inp, fusion_weight_proprio]),
                                               weighted_motor([self.custom_fusion_motor_inp, fusion_weight_motor])]
                                              ))))))
+
             # create the model with the defined inputs and outputs
             self.model_custom_fusion = Model(inputs=[self.custom_fusion_visual_inp, self.custom_fusion_weight_visual_inp, self.custom_fusion_regul_loss_visual,
                                               self.custom_fusion_proprio_inp, self.custom_fusion_weight_proprio_inp, self.custom_fusion_regul_loss_proprio,
