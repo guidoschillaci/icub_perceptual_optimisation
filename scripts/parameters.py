@@ -39,7 +39,7 @@ class Parameters:
             'model_max_pool_size': 2,
             'model_conv_size': 3,
             'model_sensor_fusion_alpha': 0.5,
-            'model_sensor_fusion_beta': 0.05, # was 0.01
+            'model_sensor_fusion_beta': 0.5, # was 0.05
             'model_num_modalities': 3, # visual, proprioceptive, motor
             'model_use_activity_regularization_layer': True,
 
