@@ -287,8 +287,8 @@ class MyCallback(Callback):
         if save_gif:
             # Save just the portion _inside_ the second axis's boundaries
             extent_8 = ax8.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-            fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_custom_predOF_' + str(iter) + '.png',
-                        bbox_inches=extent_8)
+            fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_custom_predOF_' +str(custom_weights_id) \
+                        + '_' + str(iter) + '.png', bbox_inches=extent_8)
         count_line = count_line + 1
 
         ax9 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
@@ -305,8 +305,8 @@ class MyCallback(Callback):
         if save_gif:
             # Save just the portion _inside_ the second axis's boundaries
             extent_9 = ax9.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-            fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_attenuated_custom_' + str(iter) + '.png',
-                        bbox_inches=extent_9)
+            fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_attenuated_custom_' + str(custom_weights_id)  \
+                + '_' + str(iter) + '.png', bbox_inches=extent_9)
         count_line = count_line + 1
         return count_line
 

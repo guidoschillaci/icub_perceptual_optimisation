@@ -437,6 +437,12 @@ if __name__ == "__main__":
                          starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
                 make_gif(exp_folder+'/run_0/plots/gif/', 'fw', \
                          starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                for w in range(6):
+                    make_gif(exp_folder+'/run_0/plots/gif/', 'custom_fw_'+str(w), \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+
+                    make_gif(exp_folder+'/run_0/plots/gif/', 'attenuated_custom_'+str(w), \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
 
         # go back
         os.chdir(multiple_experiments_folder)
