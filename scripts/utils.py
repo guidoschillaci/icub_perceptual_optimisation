@@ -256,7 +256,7 @@ class MyCallback(Callback):
         ax7.set_ylabel('fus. w', rotation=0)
 
         ax7.set_xticks(['v', 'p', 'm'])
-        ax7.get_xticklabels().set_visible(True)
+        #ax7.get_xticklabels().set_visible(True)
         if iter != 0:
             ax7.get_yaxis().set_visible(False)
         if save_gif:
