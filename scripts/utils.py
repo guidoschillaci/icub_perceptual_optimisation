@@ -231,7 +231,7 @@ class MyCallback(Callback):
             count_line = count_line + 1
 
             for cw in range(len(self.custom_weigths)):
-                count_line = self.custom_weight_plots(self.custom_weigths[cw], images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
+                count_line = self.custom_weight_plots(cw, self.custom_weigths[cw], images_t, deepcopy(images_t_orig_size), deepcopy(images_tp1_orig_size), \
                                                   joints, commands, \
                                                   num_subplots, i, count_line, bar_label, save_gif, fig, filename)
             count_line = count_line + 1
@@ -239,7 +239,7 @@ class MyCallback(Callback):
 
         return fusion_weights
 
-    def custom_weight_plots(self, custom_weights, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
+    def custom_weight_plots(self, custom_weights_id, custom_weights, images_t, images_t_orig_size, images_tp1_orig_size, joints, commands, num_subplots, iter, count_line, bar_label, save_gif, fig, filename):
         w_v = np.ones(shape=[len(images_t),])*custom_weights[0]
         w_j = np.ones(shape=[len(images_t),])*custom_weights[1]
         w_m = np.ones(shape=[len(images_t),])*custom_weights[2]
@@ -254,12 +254,16 @@ class MyCallback(Callback):
         ax7.set_ylim(0, 1)
         plt.bar(bar_label, [w_v[iter], w_j[iter], w_m[iter]], width=0.3)
         ax7.set_ylabel('fus. w', rotation=0)
+
+        ax7.set_xticks(['v', 'p', 'm'])
+        ax7.get_xticklabels().set_visible(True)
         if iter != 0:
             ax7.get_yaxis().set_visible(False)
         if save_gif:
             # Save just the portion _inside_ the second axis's boundaries
             extent_7 = ax7.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
-            fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_custom_fw_' + str(iter) + '.png',
+            fig.savefig(self.parameters.get('directory_plots_gif') + filename + '_custom_fw_' + str(custom_weights_id) \
+                        + '_' + str(iter) + '.png',
                         bbox_inches=extent_7)
         count_line = count_line + 1
 

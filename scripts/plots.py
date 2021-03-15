@@ -1,4 +1,4 @@
-
+import imageio
 import matplotlib.pyplot as plt
 import numpy as np
 from copy import deepcopy
@@ -396,18 +396,47 @@ def do_stats_plot(num_runs,exp):
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
                      'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [7,8.5])
 
+def make_gif(folder, test_name, first_id, last_id, num_frames =20):
+    images = []
+    for i in range(num_frames):
+        filename = folder+'pred_sequence_train_'+str(first_id)+ \
+            '_' + str(last_id) + '_' + test_name + '_'+str(i)+'.png'
+        images.append(imageio.imread(filename))
+    imageio.mimsave(folder+'movie_'+str(first_id)+ \
+            '_' + str(last_id)+ '_'+test_name+'.gif', images)
+
+
 if __name__ == "__main__":
 
+    do_stats = False
+    do_gif_videos = True
+
+    starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
+    num_frames = 20
+
     plt.rcParams.update({'font.size': 18})
-    num_experiments = 6
-    num_runs = 10
+    num_experiments = 1
+    num_runs = 1
     main_path = os.getcwd()
-    multiple_experiments_folder = main_path + '/' + 'experiments_good_long'
+    multiple_experiments_folder = main_path + '/' + 'experiments_video'
     os.chdir(multiple_experiments_folder)
     for exp in range(num_experiments):
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
         os.chdir(exp_folder)
-        do_stats_plot(num_runs, exp)
+        if do_stats:
+            do_stats_plot(num_runs, exp)
+        if do_gif_videos:
+            for i in range(len(starting_sample_for_gif)):
+                make_gif(exp_folder+'/run_0/plots/gif/', 'attenuated', \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                make_gif(exp_folder+'/run_0/plots/gif/', 'imgp1', \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                make_gif(exp_folder+'/run_0/plots/gif/', 'predOF', \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                make_gif(exp_folder+'/run_0/plots/gif/', 'trueOF', \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                make_gif(exp_folder+'/run_0/plots/gif/', 'fw', \
+                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
 
         # go back
         os.chdir(multiple_experiments_folder)
