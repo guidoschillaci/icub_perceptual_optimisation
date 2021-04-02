@@ -39,7 +39,8 @@ if __name__ == "__main__":
                 if not os.path.exists(run_folder):
                     os.makedirs(run_folder)
                 os.chdir(run_folder)
-
+                # create parameters object
+                param = Parameters()
                 # create model
                 mod = Models(param)
                 for phase in range(training_phases):
@@ -58,8 +59,7 @@ if __name__ == "__main__":
                     os.makedirs(directory_models)
                     os.makedirs(directory_plots)
                     os.makedirs(directory_plots_gif)
-                    # create parameters object
-                    param = Parameters()
+                    #modify parameters
                     param.set('directory_results', run_phase_folder)
                     param.set('directory_models', run_phase_folder+'models/')
                     param.set('directory_plots', run_phase_folder+'plots/')
