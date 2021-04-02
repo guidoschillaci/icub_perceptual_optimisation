@@ -76,7 +76,7 @@ class MyCallback(Callback):
         self.save_marker_data()
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
-            self.plot_train_sequences(save_gif=True)
+            self.plot_train_sequences(save_gif=self.parameters.get('save_sequence_plots_gif')
 
     def on_epoch_end(self, epoch, logs=None):
         #logs_keys = list(logs.keys())
@@ -99,17 +99,18 @@ class MyCallback(Callback):
                  int(len(self.datasets.test.images_t)*0.8), \
                  ]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
-        print('saving sequence plots...')
-        for i in tqdm(range(len(start))):
-            #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
-            fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
-                                                   self.datasets.test.images_t[start[i]:end[i]], \
-                                                   self.datasets.test.images_orig_size_t[start[i]:end[i]], \
-                                                   self.datasets.test.images_orig_size_tp1[start[i]:end[i]], \
-                                                   self.datasets.test.joints[start[i]:end[i]], \
-                                                   self.datasets.test.cmd[start[i]:end[i]], \
-                                                   self.datasets.test.optical_flow[start[i]:end[i]],\
-                                                   save_gif=save_gif)
+        if self.parameters.get('save_sequence_plots')):
+            print('saving sequence plots...')
+            for i in tqdm(range(len(start))):
+                #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
+                fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
+                                                       self.datasets.test.images_t[start[i]:end[i]], \
+                                                       self.datasets.test.images_orig_size_t[start[i]:end[i]], \
+                                                       self.datasets.test.images_orig_size_tp1[start[i]:end[i]], \
+                                                       self.datasets.test.joints[start[i]:end[i]], \
+                                                       self.datasets.test.cmd[start[i]:end[i]], \
+                                                       self.datasets.test.optical_flow[start[i]:end[i]],\
+                                                       save_gif=save_gif)
 
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])

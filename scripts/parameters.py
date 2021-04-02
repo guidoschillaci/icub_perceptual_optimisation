@@ -19,6 +19,8 @@ class Parameters:
             'directory_models': '',
             'model_filename':'model.h5',
             'model_plot_filename': 'model.png',
+            'save_sequence_plots': True,
+            'save_sequence_plots_gif': False, # all the gif files
 
             'image_size': 32, # size of the input image in the model
             'image_original_shape': None, # shape of the image in the original dataset
