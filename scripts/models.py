@@ -302,6 +302,9 @@ class Models:
         print('creating models')
         self.parameters = param
 
+    def set_parameters(self, param):
+        self.parameters = param
+
     def read_data(self):
         self.datasets = dataset_loader.DatasetLoader(self.parameters)
         self.datasets.load_datasets()
