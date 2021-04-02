@@ -99,7 +99,7 @@ class MyCallback(Callback):
                  int(len(self.datasets.test.images_t)*0.8), \
                  ]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
-        if self.parameters.get('save_sequence_plots')):
+        if self.parameters.get('save_sequence_plots'):
             print('saving sequence plots...')
             for i in tqdm(range(len(start))):
                 #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
