@@ -262,8 +262,8 @@ wc.rotate(8,  [0, -45, 0 ])
 while True:
     if simulate_balls:
         y = 1.0
-        x = random.uniform(0, 0.3)
-        z = random.uniform(0, 0.3)
+        x = random.uniform(0.1, 0.4)
+        z = random.uniform(0.1, 0.4)
         if len(wc._objects) >= max_num_objects:
             id = random.randint(0, max_num_objects-1)
             print('moving ball ',id)
