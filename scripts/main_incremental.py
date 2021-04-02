@@ -64,7 +64,7 @@ if __name__ == "__main__":
                     param.set('directory_models', run_phase_folder+'models/')
                     param.set('directory_plots', run_phase_folder+'plots/')
                     param.set('directory_plots_gif', run_phase_folder+'plots/gif/')
-                    param.set('directory_datasets', run_phase_folder)
+                    param.set('directory_datasets', datasets_folder)
 
                     if training_phases[phase] == 0:
                         param.set('dataset_train_type', 'icub_alone')
