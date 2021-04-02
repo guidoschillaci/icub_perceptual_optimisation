@@ -76,7 +76,7 @@ class MyCallback(Callback):
         self.save_marker_data()
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
-            self.plot_train_sequences(save_gif=self.parameters.get('save_sequence_plots_gif')
+            self.plot_train_sequences(save_gif=self.parameters.get('save_sequence_plots_gif'))
 
     def on_epoch_end(self, epoch, logs=None):
         #logs_keys = list(logs.keys())
