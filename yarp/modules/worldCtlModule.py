@@ -273,7 +273,7 @@ while True:
             print ('creating ball')
             red_sphere = wc.create_object('sph', [ 0.03 ], [ x, y, z ], [ random.random(), random.random(), random.random() ]) # size, location, color
         if many_balls:
-            time.sleep(3)
+            time.sleep(2)
         else:
             time.sleep(20)
 
