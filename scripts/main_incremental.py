@@ -43,7 +43,7 @@ if __name__ == "__main__":
                 param = Parameters()
                 # create model
                 mod = Models(param)
-                for phase in range(training_phases):
+                for phase in range(len(training_phases)):
                     print('Training phase ', str(phase))
                     run_phase_folder = run_folder + 'phase_'+str(phase)+'/'
                     print('Current folder: ', run_phase_folder)
