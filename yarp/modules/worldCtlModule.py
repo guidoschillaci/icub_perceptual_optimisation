@@ -7,6 +7,7 @@ import random
 
 yarp.Network.init() # Initialise YARP
 simulate_balls = True
+many_balls = True
 
 class WorldController:
     """Class for controlling iCub simulator via its RPC world port."""
@@ -220,6 +221,8 @@ wc = WorldController()
 config = yarp.Property()
 config.fromConfigFile('/code/icub_perceptual_optimisation/yarp/config.ini')
 max_num_objects = config.findGroup('GENERAL').find('max_num_objects').asInt32()
+if many_balls:
+    max_num_objects = max_num_objects * 3
 
 
 # make marker objects
@@ -269,7 +272,10 @@ while True:
         else:
             print ('creating ball')
             red_sphere = wc.create_object('sph', [ 0.03 ], [ x, y, z ], [ random.random(), random.random(), random.random() ]) # size, location, color
-        time.sleep(20)
+        if many_balls:
+            time.sleep(3)
+        else:
+            time.sleep(20)
 
 #green_box = wc.create_object('sbox', [ 0.1, 0.1, 0.1 ], [ 0, 0.1, 1 ], [ 0, 1, 0 ])
 #blue_cylinder = wc.create_object('scyl', [ 0.05, 0.05 ], [ 1, 0.1, 0.1 ], [ 0, 0, 1 ])

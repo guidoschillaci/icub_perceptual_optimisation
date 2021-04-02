@@ -408,41 +408,44 @@ def make_gif(folder, test_name, first_id, last_id, num_frames =20):
 
 if __name__ == "__main__":
 
-    do_stats = False
-    do_gif_videos = True
+    do_stats = True
+    do_gif_videos = False
 
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
 
     plt.rcParams.update({'font.size': 18})
-    num_experiments = 1
-    num_runs = 1
+    num_experiments = 6
+    num_runs = 10
     main_path = os.getcwd()
-    multiple_experiments_folder = main_path + '/' + 'experiments_video'
+    multiple_experiments_folder = main_path + '/' + 'experiments_paper'
     os.chdir(multiple_experiments_folder)
     for exp in range(num_experiments):
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
         os.chdir(exp_folder)
-        if do_stats:
-            do_stats_plot(num_runs, exp)
-        if do_gif_videos:
-            for i in range(len(starting_sample_for_gif)):
-                make_gif(exp_folder+'/run_0/plots/gif/', 'attenuated', \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-                make_gif(exp_folder+'/run_0/plots/gif/', 'imgp1', \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-                make_gif(exp_folder+'/run_0/plots/gif/', 'predOF', \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-                make_gif(exp_folder+'/run_0/plots/gif/', 'trueOF', \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-                make_gif(exp_folder+'/run_0/plots/gif/', 'fw', \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-                for w in range(6):
-                    make_gif(exp_folder+'/run_0/plots/gif/', 'custom_fw_'+str(w), \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-
-                    make_gif(exp_folder+'/run_0/plots/gif/', 'attenuated_custom_'+str(w), \
-                         starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+        for run in range(num_runs):
+            print('doing plots for exp '+str(exp)+ ' run ' + str(run))
+            if do_stats:
+                do_stats_plot(num_runs, exp)
+            if do_gif_videos:
+                for i in range(len(starting_sample_for_gif)):
+                    make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'attenuated', \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                    make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'imgp1', \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                    make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'predOF', \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                    make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'trueOF', \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                    make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'fw', \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                    for w in range(6):
+                        make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'custom_fw_'+str(w), \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                        make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'custom_predOF_'+str(w), \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
+                        make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'attenuated_custom_'+str(w), \
+                             starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
 
         # go back
         os.chdir(multiple_experiments_folder)

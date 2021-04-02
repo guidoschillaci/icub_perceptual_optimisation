@@ -2,7 +2,7 @@ git pull
 
 xhost +local:root
 
-ipclient=localhost
+ipclient=192.168.1.229
 
 if [ -z "$1" ]
   then
@@ -23,7 +23,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
     echo "Connecting to new container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
     docker run -it --rm \
-      -e DISPLAY=$DISPLAY \
+      -e DISPLAY=$ipclient:0 \
       --name "$DOCKER_CONTAINER_NAME" \
       --volume="/Volumes/data/code/:/code/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
@@ -33,7 +33,7 @@ else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
     # run your container 
     docker exec -it \
-      -e DISPLAY=$DISPLAY \
+      -e DISPLAY=$ipclient:0 \
       "$DOCKER_CONTAINER_NAME" \
       bash  -c 'bash'
 fi
