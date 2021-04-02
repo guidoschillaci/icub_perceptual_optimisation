@@ -11,7 +11,7 @@ import random
 
 print(sys.argv)
 
-hold_hands = True
+hold_hands = False
 
 class ExplorationModule(yarp.RFModule):
     def configure(self, rf):
