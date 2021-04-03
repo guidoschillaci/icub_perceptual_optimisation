@@ -7,7 +7,7 @@ from doepy import build # design of experiments
 if __name__ == "__main__":
 
     do_experiments = True
-    number_of_runs = 2
+    number_of_runs = 10
     main_path = os.getcwd()
     datasets_folder = main_path + '/' + 'datasets/'
     multiple_experiments_folder = main_path + '/' + 'experiments'
@@ -19,10 +19,10 @@ if __name__ == "__main__":
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact( \
-        {'dataset_test_type': [0,1]})
+        {'dataset_test_type': [0,3]})
     print(doe)
 
-    training_phases = [0,1,0] # first icub_alone, then icub_and_many_balls, then icub_alone
+    training_phases = [0,3,0] # first icub_alone, then icub_and_many_balls, then icub_alone
 
     if do_experiments:
         doe.to_csv(multiple_experiments_folder + '/doe.csv', index=True, header=True)
