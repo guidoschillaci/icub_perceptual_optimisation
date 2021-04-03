@@ -3,6 +3,7 @@
 # cd icub_sensory_enhancement
 # sudo usermod -aG docker cloudsigma
 # log out and in
+git pull
 sudo apt-get update -y
 sudo apt-get install -y \
     apt-transport-https \
@@ -25,6 +26,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 #mkdir results/plots/gif
 #mkdir results/models
 #mkdir datasets
+#rm -rf datasets
 #cd datasets
 wget https://zenodo.org/record/4660600/files/Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz --no-check-certificate
 tar xvf Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
