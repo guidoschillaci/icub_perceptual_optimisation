@@ -26,7 +26,7 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 #mkdir results/models
 #mkdir datasets
 #cd datasets
-wget https://zenodo.org/record/4596464/files/Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz --no-check-certificate
+wget https://zenodo.org/record/4660600/files/Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz --no-check-certificate
 tar xvf Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
 rm Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
 #wget https://zenodo.org/record/4139790/files/dataset_images_grayscale.npy --no-check-certificate
