@@ -30,20 +30,43 @@ def do_stats_plot_incremental(num_runs,exp, num_phases=3):
     data_mkr_att_custom_5 = []
     # load results for each run of this experiment
     for run in range(num_runs):
+        _data_loss = []
+        _data_val_loss = []
+        _data_iou = []
+        _data_mkr_orig = []
+        _data_mkr_att = []
+        _data_mkr_att_custom_0 = []
+        _data_mkr_att_custom_1 = []
+        _data_mkr_att_custom_2 = []
+        _data_mkr_att_custom_3 = []
+        _data_mkr_att_custom_4 = []
+        _data_mkr_att_custom_5 = []
         for phase in range(num_phases):
             directory = 'run_' + str(run) + '/phase_' + str(phase)+ '/'
-            data_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
-            data_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
-            data_iou.append(np.loadtxt(directory + 'plots/IoU.txt'))
+            _data_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+            _data_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+            _data_iou.append(np.loadtxt(directory + 'plots/IoU.txt'))
 
-            data_mkr_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
-            data_mkr_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
-            data_mkr_att_custom_0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
-            data_mkr_att_custom_1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
-            data_mkr_att_custom_2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
-            data_mkr_att_custom_3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
-            data_mkr_att_custom_4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
-            data_mkr_att_custom_5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+            _data_mkr_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+            _data_mkr_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+            _data_mkr_att_custom_0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+            _data_mkr_att_custom_1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+            _data_mkr_att_custom_2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+            _data_mkr_att_custom_3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+            _data_mkr_att_custom_4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+            _data_mkr_att_custom_5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+        data_loss.append(_data_loss)
+        data_val_loss.append(_data_val_loss)
+        data_iou.append(_data_iou)
+        data_mkr_orig.append(_data_mkr_orig)
+        data_mkr_att.append(_data_mkr_att)
+        data_mkr_att_custom_0.append(_data_mkr_att_custom_0)
+        data_mkr_att_custom_1.append(_data_mkr_att_custom_1)
+        data_mkr_att_custom_2.append(_data_mkr_att_custom_2)
+        data_mkr_att_custom_3.append(_data_mkr_att_custom_3)
+        data_mkr_att_custom_4.append(_data_mkr_att_custom_4)
+        data_mkr_att_custom_5.append(_data_mkr_att_custom_5)
+
     mean_loss = np.mean(np.asarray(data_loss), axis=0)
     mean_val_loss = np.mean(np.asarray(data_val_loss), axis=0)
     mean_iou = np.mean(np.asarray(data_iou), axis=0)
