@@ -2,7 +2,7 @@ git pull
 
 xhost +local:root
 
-ipclient=192.168.1.229
+ipclient=192.168.178.24
 
 if [ -z "$1" ]
   then
