@@ -41,6 +41,8 @@ RUN pip3 install pandas
 RUN pip3 install doepy
 RUN apt install -y screen
 
+RUN apt install nvidia-driver-440 nvidia-utils-440
+
 CMD [ "bash" ]
 
 
