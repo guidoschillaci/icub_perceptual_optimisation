@@ -1,4 +1,4 @@
-ipclient=94.156.201.157
+ipclient=94.156.203.185
 
 if [ -z "$1" ]
   then
@@ -11,6 +11,6 @@ fi
 
 echo "Clearing previous results"
 sh scripts/clear_results.sh
-echo "Downloading from jetson"
+echo "Downloading from cloudsigma, IP ${ipclient} "
 scp -r cloudsigma@${ipclient}:/home/cloudsigma/icub_perceptual_optimisation/experiments .
 echo "Results and plots downloaded!"
