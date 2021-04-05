@@ -36,7 +36,7 @@ class arucoDetector():
         #print("detecting aruco markers img size ", cv2_img.shape)
         #cv2.imwrite('marker_img.png',cv2_img)
 
-        (corners, ids, rejected) = cv2.aruco.detectMarkers(cv2_img, self.arucoDict, parameters=self.arucoParams)
+        (corners, ids, rejected) = cv2.aruco.detectMarkers(img, self.arucoDict, parameters=self.arucoParams)
         #ids_sorted =np.sort(ids)
         #print('detected ids ', str(np.asarray(ids_sorted)))
         if ids is None:
