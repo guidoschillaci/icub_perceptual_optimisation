@@ -27,7 +27,6 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --name "$DOCKER_CONTAINER_NAME" \
       --volume="/home/cloudsigma/:/home/cloudsigma/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
-      --runtime nvidia \
       --gpus all  \
       --workdir="/home/cloudsigma" \
       guidoski/deeplearn:tf2-gpu bash -c 'bash'
