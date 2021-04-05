@@ -1,15 +1,6 @@
 # re-adapted from https://github.com/robotology/icub-hri/blob/master/docker/Dockerfile
 FROM nvcr.io/nvidia/tensorflow:20.12-tf2-py3
 
-# install nvidia drivers and cuda
-RUN apt install -y linux-headers-$(uname -r)
-RUN curl -O https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
-RUN mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/7fa2af80.pub
-RUN add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/ /"
-RUN apt update
-RUN apt -y install cuda
-
 WORKDIR /
 RUN apt update && apt install -y --fix-missing make g++
 RUN apt update && apt install -y --fix-missing python3-pip libhdf5-serial-dev hdf5-tools
