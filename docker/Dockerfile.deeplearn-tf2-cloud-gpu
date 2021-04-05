@@ -1,0 +1,46 @@
+# re-adapted from https://github.com/robotology/icub-hri/blob/master/docker/Dockerfile
+FROM nvcr.io/nvidia/tensorflow:20.12-tf2-py3
+
+WORKDIR /
+RUN apt update && apt install -y --fix-missing make g++
+RUN apt update && apt install -y --fix-missing python3-pip libhdf5-serial-dev hdf5-tools
+RUN apt update && apt install -y python3-h5py git
+
+RUN pip3 install tqdm
+
+# CLEANUP
+RUN rm -rf /var/lib/apt/lists/*e
+
+# Enable ccache, for faster recompilation
+ENV PATH=/usr/lib/ccache:$PATH
+
+RUN apt install -y --allow-unauthenticated  nano 
+RUN pip3 install matplotlib
+
+RUN apt install -y locales --reinstall --allow-unauthenticated
+RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales && \
+    update-locale LANG=en_US.UTF-8
+ENV LANG en_US.UTF-8
+
+RUN pip3 install scikit-image scikit-learn
+RUN pip3 install --upgrade pip
+RUN apt install -y --allow-unauthenticated python3-opencv
+#RUN pip3 install opencv-python
+#RUN pip3 install opencv-contrib-python
+RUN pip3 install pydot
+
+#ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
+
+# to avoid getting stuck on configuring tzdata, called by python3-tk
+ENV TZ=Europe/Rome
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+RUN apt install -y --allow-unauthenticated python3-tk graphviz
+
+RUN pip3 install pandas
+RUN pip3 install doepy
+RUN apt install -y screen
+
+CMD [ "bash" ]
+
+

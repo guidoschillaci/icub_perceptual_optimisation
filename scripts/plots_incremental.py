@@ -229,13 +229,14 @@ if __name__ == "__main__":
 
     plt.rcParams.update({'font.size': 18})
     num_experiments = 1
-    id_first_dyn_exp = 6 # id of the first dynamic experiment
+    id_first_dyn_exp = 7 # id of the first dynamic experiment
     num_runs = 10
     num_phases = 3
     main_path = os.getcwd()
     multiple_experiments_folder = main_path + '/' + 'experiments'
     os.chdir(multiple_experiments_folder)
-    for exp in range(num_experiments) + id_first_dyn_exp:
+    for exp in range(num_experiments):
+        exp = exp + id_first_dyn_exp
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
         os.chdir(exp_folder)
         for run in range(num_runs):

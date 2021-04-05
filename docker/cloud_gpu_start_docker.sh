@@ -25,10 +25,10 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
     docker run -it --rm \
       -e DISPLAY=$DISPLAY \
       --name "$DOCKER_CONTAINER_NAME" \
-      --volume="/home/cloudsigma/:/home/cloudsigma/:rw"  \
+      --volume="/home/ubuntu/:/home/ubuntu/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --gpus all  \
-      --workdir="/home/cloudsigma" \
+      --workdir="/home/ubuntu" \
       guidoski/deeplearn:tf2-gpu bash -c 'bash'
 else
     echo "Connecting to existing container named ${DOCKER_CONTAINER_NAME}"
