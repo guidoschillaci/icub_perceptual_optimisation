@@ -44,6 +44,9 @@ rm Predictive_Robots_Perceptual_Optimisation_Datasets.tar.xz
 
 sudo groupadd docker
 sudo usermod -aG docker ${USER}
+
+echo "Testing nvidia-smi - if it does not run, check nvdia driver and cuda installations!"
+nvidia-smi
 # log out and log in
 #su -s ${USER}
 exit
