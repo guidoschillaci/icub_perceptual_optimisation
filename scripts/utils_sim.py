@@ -30,7 +30,7 @@ class arucoDetector():
         #height, width = img.shape
         #print("detecting aruco markers img size before ", img.shape)
         #if height != 320 or width != 240:
-        cv2_img = cv2.resize(img, (320,240))
+        #cv2_img = cv2.resize(img, (320,240))
         #else:
         #    cv2_img = deepcopy(img)
         #print("detecting aruco markers img size ", cv2_img.shape)
