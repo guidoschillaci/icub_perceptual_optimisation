@@ -22,7 +22,7 @@ if __name__ == "__main__":
         {'dataset_test_type': [3]})
     print(doe)
 
-    training_phases = [0,3,0] # first icub_alone, then icub not moving, then icub_alone
+    training_phases = [1,3,1] # first icub_alone, then icub not moving, then icub_alone
 
     if do_experiments:
         doe.to_csv(multiple_experiments_folder + '/doe.csv', index=True, header=True)

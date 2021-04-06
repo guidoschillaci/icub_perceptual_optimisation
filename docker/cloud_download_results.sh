@@ -1,5 +1,5 @@
 ipclient=94.156.203.185
-userid=ubuntu
+userid=cloudsigma
 if [ -z "$1" ]
   then
     echo "No argument supplied. I set the address of the cloud instance to localhost."

@@ -9,6 +9,7 @@ RUN pip install opencv-python
 RUN pip install opencv-contrib-python
 RUN pip install tabulate
 RUN pip install imageio
+RUN pip install scikit-learn
 CMD [ "bash" ]
 
 
