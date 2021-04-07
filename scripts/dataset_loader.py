@@ -9,6 +9,7 @@ from tqdm import tqdm
 import sys
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
+import utils
 
 class Dataset():
     def __init__(self, param):
@@ -42,115 +43,6 @@ class Dataset():
         # the optical flow between images at t and t+1
         self.optical_flow = []
 
-    '''
-    def get_img_t(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.images_t[self.idx_train]
-        else:
-            return self.images_t[self.idx_test]
-
-    def get_img_orig_size_t(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.images_orig_size_t[self.idx_train]
-        else:
-            return self.images_orig_size_t[self.idx_test]
-
-    def get_img_tp1(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.images_tp1[self.idx_train]
-        else:
-            return self.images_tp1[self.idx_test]
-
-    def get_img_orig_size_tp1(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.images_orig_size_tp1[self.idx_train]
-        else:
-            return self.images_orig_size_tp1[self.idx_test]
-
-    def get_joints(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.joints[self.idx_train]
-        else:
-            return self.joints[self.idx_test]
-
-    def get_cmd(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.cmd[self.idx_train]
-        else:
-            return self.cmd[self.idx_test]
-
-    def get_skin_val(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.skin_values[self.idx_train]
-        else:
-            return self.skin_values[self.idx_test]
-
-    def get_opt_flow(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.optical_flow[self.idx_train]
-        else:
-            return self.optical_flow[self.idx_test]
-
-    def get_timestamps(self):
-        if self.type == None:
-            print('dataset type == None')
-            sys.exit(-1)
-        if self.type == 'train':
-            return self.timestamps[self.idx_train]
-        else:
-            return self.timestamps[self.idx_test]
-
-    def get_unshuffled_img_t(self):
-        return self.images_t
-
-    def get_unshuffled_img_orig_size_t(self):
-        return self.images_orig_size_t
-
-    def get_unshuffled_img_tp1(self):
-        return self.images_tp1
-
-    def get_unshuffled_img_orig_size_tp1(self):
-        return self.images_orig_size_tp1
-
-    def get_unshuffled_joints(self):
-        return self.joints
-
-    def get_unshuffled_cmd(self):
-        return self.cmd
-
-    def get_unshuffled_skin_val(self):
-        return self.skin_values
-
-    def get_unshuffled_opt_flow(self):
-        return self.optical_flow
-
-    def get_unshuffled_timestamps(self):
-        return self.timestamps
-    '''
 
 class DatasetLoader():
 
@@ -216,6 +108,21 @@ class DatasetLoader():
                 dataset.joints = deepcopy(dataset.joints[index_from:])
                 dataset.cmd = deepcopy(dataset.cmd[index_from:])
                 dataset.optical_flow = deepcopy(dataset.optical_flow[index_from:])
+
+    def filter_out_samples_with_non_moving_objects(self,dataset):
+        print('filtering out samples with non-moving objects')
+        for i in range(len(dataset.optical_flow)):
+            binarised_of = utils.binarize_optical_flow(self, dataset.optical_flow[i], positive_value=1)
+            if np.count_nonzero(binarised_of == 1) < self.parameters.get('threshold_for_background_img'):
+                # nothing is moving in the visual input. remove this sample
+                dataset.images_t = np.delete(dataset.images_t, i,0)
+                dataset.images_orig_size_t = np.delete(dataset.images_orig_size_t, i,0)
+                dataset.images_tp1 = np.delete(dataset.images_tp1, i,0)
+                dataset.images_orig_size_tp1 = np.delete(dataset.images_orig_size_tp1, i,0)
+                dataset.joints =  np.delete(dataset.joints, i,0)
+                dataset.cmd =  np.delete(dataset.cmd, i,0)
+                dataset.optical_flow =  np.delete(dataset.optical_flow, i,0)
+        print('new dataset lenght:', str(len(dataset.optical_flow)))
 
     def load_datasets(self):
         print('loading datasets')
@@ -353,6 +260,10 @@ class DatasetLoader():
         #if type =='train':
         #    #self.train_unshuffled = deepcopy(self.train)
         #    self.train_unshuffled = self.train
+
+        if self.parameters.get('filter_out_background_images'):
+            self.filter_out_samples_with_non_moving_objects(dataset)
+
         self.split_train_test(dataset, type)
         # free memory
         del dataset.images_raw

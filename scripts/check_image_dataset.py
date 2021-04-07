@@ -24,6 +24,7 @@ def check_std(dataset):
 
 if __name__ == "__main__":
     param = parameters.Parameters()
+    img = np.load('datasets/icub_alone/dataset_images_grayscale.npy')
     joints = np.load('datasets/icub_alone/dataset_joint_encoders.npy')
     cmd = np.load('datasets/icub_alone/dataset_motor_commands.npy')
     #load_and_save('datasets/icub_alone/dataset_images_grayscale.npy')
@@ -44,6 +45,19 @@ if __name__ == "__main__":
                             test_size =param.get('test_dataset_factor'), \
                             random_state = param.get('dataset_split_seed'))
 
+    img1 = cv2.resize(img[(index_from+128)],
+                    (param.get('image_size'), param.get('image_size')),
+                                 interpolation=cv2.INTER_LINEAR)
+    img2 = cv2.resize(img[(index_from+129)],
+                    (param.get('image_size'), param.get('image_size')),
+                                 interpolation=cv2.INTER_LINEAR)
+    cv2.imwrite('image_raw.png', img1)
+    cv2.imwrite('image_raw_2.png', img2)
+    flow = cv2.calcOpticalFlowFarneback(img1, img2, None, 0.5, 3, 5, 3, 5, 0.9, 0)
+    magnitude, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
+    thresh = np.array(np.where(magnitude > param.get('opt_flow_binary_threshold'), 1, 0), dtype='uint8')
+    print('non zeros ', np.count_nonzero(thresh == 1))
+    print('list ', isinstance(img, list))
     print('tail joint original')
     print(joints[-2:])
 
