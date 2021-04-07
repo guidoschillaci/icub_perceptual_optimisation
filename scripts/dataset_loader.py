@@ -116,17 +116,20 @@ class DatasetLoader():
 
     def filter_out_samples_with_non_moving_objects(self,dataset):
         print('filtering out samples with non-moving objects')
+        indexes = []
         for i in tqdm(range(len(dataset.optical_flow))):
             binarised_of = self.binarize_optical_flow(dataset.optical_flow[i])
             if np.count_nonzero(binarised_of == 1) < self.parameters.get('threshold_for_background_img'):
                 # nothing is moving in the visual input. remove this sample
-                dataset.images_t = np.delete(dataset.images_t, i,0)
-                dataset.images_orig_size_t = np.delete(dataset.images_orig_size_t, i,0)
-                dataset.images_tp1 = np.delete(dataset.images_tp1, i,0)
-                dataset.images_orig_size_tp1 = np.delete(dataset.images_orig_size_tp1, i,0)
-                dataset.joints =  np.delete(dataset.joints, i,0)
-                dataset.cmd =  np.delete(dataset.cmd, i,0)
-                dataset.optical_flow =  np.delete(dataset.optical_flow, i,0)
+                indexes.append(i)
+        print('total to be removed = ', str(len(indexes)))
+        dataset.images_t = np.delete(dataset.images_t, indexes,0)
+        dataset.images_orig_size_t = np.delete(dataset.images_orig_size_t, indexes,0)
+        dataset.images_tp1 = np.delete(dataset.images_tp1, indexes,0)
+        dataset.images_orig_size_tp1 = np.delete(dataset.images_orig_size_tp1, indexes,0)
+        dataset.joints =  np.delete(dataset.joints, indexes,0)
+        dataset.cmd =  np.delete(dataset.cmd, indexes,0)
+        dataset.optical_flow =  np.delete(dataset.optical_flow, indexes,0)
         print('new dataset lenght:', str(len(dataset.optical_flow)))
 
     def load_datasets(self):
