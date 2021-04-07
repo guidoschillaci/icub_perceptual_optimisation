@@ -34,7 +34,7 @@ class Parameters:
             'dataset_split_seed': 33, # the portion of the train dataset to be used as test
             'use_skin_data': False,
             'filter_out_background_images': True,
-            'threshold_for_background_img': 380, #if moving pixels are less than this number, don't include the sample in the dataset
+            'threshold_for_background_img': 30, #if moving pixels are less than this number, don't include the sample in the dataset
 
             #'model_custom_training_loop': False, # if False, use standard keras fit functions
             'model_auxiliary': True, # use auxiliary weight model
