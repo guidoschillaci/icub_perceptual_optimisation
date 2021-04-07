@@ -116,7 +116,7 @@ class DatasetLoader():
 
     def filter_out_samples_with_non_moving_objects(self,dataset):
         print('filtering out samples with non-moving objects')
-        for i in range(len(dataset.optical_flow)):
+        for i in tqdm(range(len(dataset.optical_flow))):
             binarised_of = self.binarize_optical_flow(dataset.optical_flow[i])
             if np.count_nonzero(binarised_of == 1) < self.parameters.get('threshold_for_background_img'):
                 # nothing is moving in the visual input. remove this sample
