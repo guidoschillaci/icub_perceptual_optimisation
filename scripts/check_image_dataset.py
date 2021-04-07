@@ -45,7 +45,7 @@ if __name__ == "__main__":
                             random_state = param.get('dataset_split_seed'))
 
     print('head original')
-    print(joint[:2])
+    print(joints[:2])
 
     print('head shuffled')
     print(joint_shuffled[:2])
