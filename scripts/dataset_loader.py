@@ -158,7 +158,7 @@ class DatasetLoader():
         self.parameters = param
         self.train = Dataset(param)
         self.test = Dataset(param)
-        self.train_unshuffled = Dataset(param)
+        #self.train_unshuffled = Dataset(param)
 
     def split_train_test(self, dataset, dataset_type):
         print('splitting train/test datasets')

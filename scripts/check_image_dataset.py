@@ -43,6 +43,9 @@ if __name__ == "__main__":
     _, cmd_shuffled = train_test_split(cmd, \
                             test_size =param.get('test_dataset_factor'), \
                             random_state = param.get('dataset_split_seed'))
+
+    print('head')
+    print(joint_shuffled[:10])
     print('------')
     print('proprio unshuffled MEAN')
     check_mean(joints[index_from:])
