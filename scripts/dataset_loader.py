@@ -122,6 +122,8 @@ class DatasetLoader():
             if np.count_nonzero(binarised_of == 1) < self.parameters.get('threshold_for_background_img'):
                 # nothing is moving in the visual input. remove this sample
                 indexes.append(i)
+                if random.random() < 0.01:
+                    cv2.imwrite(self.parameters.get('directory_plots')+'image_removed_'+str(i)+'.png', dataset.images_t[i])
         print('total to be removed = ', str(len(indexes)))
         dataset.images_t = np.delete(dataset.images_t, indexes,0)
         dataset.images_orig_size_t = np.delete(dataset.images_orig_size_t, indexes,0)
