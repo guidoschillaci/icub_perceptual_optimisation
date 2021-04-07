@@ -44,10 +44,10 @@ if __name__ == "__main__":
                             test_size =param.get('test_dataset_factor'), \
                             random_state = param.get('dataset_split_seed'))
 
-    print('tail original')
+    print('tail joint original')
     print(joints[-2:])
 
-    print('head shuffled')
+    print('head joint shuffled')
     print(joint_shuffled[:2])
     print('random state seed ', param.get('dataset_split_seed'))
     print('------')
