@@ -45,7 +45,8 @@ if __name__ == "__main__":
                             random_state = param.get('dataset_split_seed'))
 
     print('head')
-    print(joint_shuffled[:10])
+    print(joint_shuffled[:2])
+    print('random state seed ', param.get('dataset_split_seed'))
     print('------')
     print('proprio unshuffled MEAN')
     check_mean(joints[index_from:])
