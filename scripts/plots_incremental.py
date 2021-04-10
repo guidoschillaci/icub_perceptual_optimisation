@@ -119,7 +119,7 @@ def do_stats_plot_incremental(num_runs,exp, num_phases=3):
                      mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
                      mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
-                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [7.4,8.5])
+                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [5.4,8.5])
 
 def save_csv():
     p0_orig = []
@@ -148,6 +148,7 @@ def save_csv():
     p2_att_w3 = []
     p2_att_w4 = []
     p2_att_w5 = []
+
     # load results for each run of this experiment
     for run in range(num_runs):
         directory = 'run_' + str(run) + '/phase_0/'
@@ -224,14 +225,214 @@ def save_csv():
     p2_df.to_csv('raw_phase_2.csv')
 
 
+def save_csv_phase6():
+    p0_orig = []
+    p0_att = []
+    p0_att_w0 = []
+    p0_att_w1 = []
+    p0_att_w2 = []
+    p0_att_w3 = []
+    p0_att_w4 = []
+    p0_att_w5 = []
+
+    p1_orig = []
+    p1_att = []
+    p1_att_w0 = []
+    p1_att_w1 = []
+    p1_att_w2 = []
+    p1_att_w3 = []
+    p1_att_w4 = []
+    p1_att_w5 = []
+
+    p2_orig = []
+    p2_att = []
+    p2_att_w0 = []
+    p2_att_w1 = []
+    p2_att_w2 = []
+    p2_att_w3 = []
+    p2_att_w4 = []
+    p2_att_w5 = []
+
+    p3_orig = []
+    p3_att = []
+    p3_att_w0 = []
+    p3_att_w1 = []
+    p3_att_w2 = []
+    p3_att_w3 = []
+    p3_att_w4 = []
+    p3_att_w5 = []
+
+    p4_orig = []
+    p4_att = []
+    p4_att_w0 = []
+    p4_att_w1 = []
+    p4_att_w2 = []
+    p4_att_w3 = []
+    p4_att_w4 = []
+    p4_att_w5 = []
+
+    p5_orig = []
+    p5_att = []
+    p5_att_w0 = []
+    p5_att_w1 = []
+    p5_att_w2 = []
+    p5_att_w3 = []
+    p5_att_w4 = []
+    p5_att_w5 = []
+
+    # load results for each run of this experiment
+    for run in range(num_runs):
+        directory = 'run_' + str(run) + '/phase_0/'
+        p0_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p0_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p0_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p0_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p0_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p0_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p0_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p0_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+        directory = 'run_' + str(run) + '/phase_1/'
+        p1_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p1_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p1_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p1_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p1_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p1_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p1_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p1_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+        directory = 'run_' + str(run) + '/phase_2/'
+        p2_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p2_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p2_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p2_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p2_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p2_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p2_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p2_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+        directory = 'run_' + str(run) + '/phase_3/'
+        p3_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p3_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p3_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p3_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p3_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p3_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p3_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p3_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+        directory = 'run_' + str(run) + '/phase_4/'
+        p4_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p4_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p4_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p4_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p4_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p4_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p4_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p4_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+        directory = 'run_' + str(run) + '/phase_5/'
+        p5_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p5_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p5_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p5_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p5_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p5_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p5_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p5_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+
+
+    # flatten list of lists
+    p0_orig = [val for sublist in p0_orig for val in sublist]
+    p0_att = [val for sublist in p0_att for val in sublist]
+    p0_att_w0 = [val for sublist in p0_att_w0 for val in sublist]
+    p0_att_w1 = [val for sublist in p0_att_w1 for val in sublist]
+    p0_att_w2 = [val for sublist in p0_att_w2 for val in sublist]
+    p0_att_w3 = [val for sublist in p0_att_w3 for val in sublist]
+    p0_att_w4 = [val for sublist in p0_att_w4 for val in sublist]
+    p0_att_w5 = [val for sublist in p0_att_w5 for val in sublist]
+
+    p1_orig = [val for sublist in p1_orig for val in sublist]
+    p1_att = [val for sublist in p1_att for val in sublist]
+    p1_att_w0 = [val for sublist in p1_att_w0 for val in sublist]
+    p1_att_w1 = [val for sublist in p1_att_w1 for val in sublist]
+    p1_att_w2 = [val for sublist in p1_att_w2 for val in sublist]
+    p1_att_w3 = [val for sublist in p1_att_w3 for val in sublist]
+    p1_att_w4 = [val for sublist in p1_att_w4 for val in sublist]
+    p1_att_w5 = [val for sublist in p1_att_w5 for val in sublist]
+
+    p2_orig = [val for sublist in p2_orig for val in sublist]
+    p2_att = [val for sublist in p2_att for val in sublist]
+    p2_att_w0 = [val for sublist in p2_att_w0 for val in sublist]
+    p2_att_w1 = [val for sublist in p2_att_w1 for val in sublist]
+    p2_att_w2 = [val for sublist in p2_att_w2 for val in sublist]
+    p2_att_w3 = [val for sublist in p2_att_w3 for val in sublist]
+    p2_att_w4 = [val for sublist in p2_att_w4 for val in sublist]
+    p2_att_w5 = [val for sublist in p2_att_w5 for val in sublist]
+
+    p3_orig = [val for sublist in p3_orig for val in sublist]
+    p3_att = [val for sublist in p3_att for val in sublist]
+    p3_att_w0 = [val for sublist in p3_att_w0 for val in sublist]
+    p3_att_w1 = [val for sublist in p3_att_w1 for val in sublist]
+    p3_att_w2 = [val for sublist in p3_att_w2 for val in sublist]
+    p3_att_w3 = [val for sublist in p3_att_w3 for val in sublist]
+    p3_att_w4 = [val for sublist in p3_att_w4 for val in sublist]
+    p3_att_w5 = [val for sublist in p3_att_w5 for val in sublist]
+
+    p4_orig = [val for sublist in p4_orig for val in sublist]
+    p4_att = [val for sublist in p4_att for val in sublist]
+    p4_att_w0 = [val for sublist in p4_att_w0 for val in sublist]
+    p4_att_w1 = [val for sublist in p4_att_w1 for val in sublist]
+    p4_att_w2 = [val for sublist in p4_att_w2 for val in sublist]
+    p4_att_w3 = [val for sublist in p4_att_w3 for val in sublist]
+    p4_att_w4 = [val for sublist in p4_att_w4 for val in sublist]
+    p4_att_w5 = [val for sublist in p4_att_w5 for val in sublist]
+
+    p5_orig = [val for sublist in p5_orig for val in sublist]
+    p5_att = [val for sublist in p5_att for val in sublist]
+    p5_att_w0 = [val for sublist in p5_att_w0 for val in sublist]
+    p5_att_w1 = [val for sublist in p5_att_w1 for val in sublist]
+    p5_att_w2 = [val for sublist in p5_att_w2 for val in sublist]
+    p5_att_w3 = [val for sublist in p5_att_w3 for val in sublist]
+    p5_att_w4 = [val for sublist in p5_att_w4 for val in sublist]
+    p5_att_w5 = [val for sublist in p5_att_w5 for val in sublist]
+
+
+    p0_tuples = list(zip(p0_orig, p0_att, p0_att_w0, p0_att_w1, p0_att_w2, p0_att_w3, p0_att_w4, p0_att_w5))
+    p0_df = pd.DataFrame(p0_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p0_df.to_csv('raw_phase_0.csv')
+
+    p1_tuples = list(zip(p1_orig, p1_att, p1_att_w0, p1_att_w1, p1_att_w2, p1_att_w3, p1_att_w4, p1_att_w5))
+    p1_df = pd.DataFrame(p1_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p1_df.to_csv('raw_phase_1.csv')
+
+    p2_tuples = list(zip(p2_orig, p2_att, p2_att_w0, p2_att_w1, p2_att_w2, p2_att_w3, p2_att_w4, p2_att_w5))
+    p2_df = pd.DataFrame(p2_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p2_df.to_csv('raw_phase_2.csv')
+
+    p3_tuples = list(zip(p3_orig, p3_att, p3_att_w0, p3_att_w1, p3_att_w2, p3_att_w3, p3_att_w4, p3_att_w5))
+    p3_df = pd.DataFrame(p3_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p3_df.to_csv('raw_phase_3.csv')
+
+    p4_tuples = list(zip(p4_orig, p4_att, p4_att_w0, p4_att_w1, p4_att_w2, p4_att_w3, p4_att_w4, p4_att_w5))
+    p4_df = pd.DataFrame(p4_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p4_df.to_csv('raw_phase_4.csv')
+
+    p5_tuples = list(zip(p5_orig, p5_att, p5_att_w0, p5_att_w1, p5_att_w2, p5_att_w3, p5_att_w4, p5_att_w5))
+    p5_df = pd.DataFrame(p5_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p5_df.to_csv('raw_phase_5.csv')
+
+
 if __name__ == "__main__":
     do_stats = True
-
+    print('started')
     plt.rcParams.update({'font.size': 18})
     num_experiments = 1
     id_first_dyn_exp = 0 # id of the first dynamic experiment
     num_runs = 10
-    num_phases = 3
+    num_phases = 6
     main_path = os.getcwd()
     multiple_experiments_folder = main_path + '/' + 'experiments'
     os.chdir(multiple_experiments_folder)
@@ -239,11 +440,14 @@ if __name__ == "__main__":
         exp = exp + id_first_dyn_exp
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
         os.chdir(exp_folder)
-        for run in range(num_runs):
-            print('doing plots for exp '+str(exp)+ ' run ' + str(run))
-            if do_stats:
-                do_stats_plot_incremental(num_runs, exp, num_phases)
-                save_csv()
+        #for run in range(num_runs):
+        print('doing plots for exp '+str(exp))
+        if do_stats:
+            do_stats_plot_incremental(num_runs, exp, num_phases)
+        if num_phases ==6:
+            save_csv_phase6()
+        else:
+            save_csv()
 
         # go back
         os.chdir(multiple_experiments_folder)
