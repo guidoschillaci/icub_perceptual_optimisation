@@ -22,6 +22,7 @@ def check_std(dataset):
     #print('stddev ',str(stdd))
     print('mean stddev ',str(np.mean(stdd)))
 
+
 if __name__ == "__main__":
     param = parameters.Parameters()
     img = np.load('datasets/icub_alone/dataset_images_grayscale.npy')
