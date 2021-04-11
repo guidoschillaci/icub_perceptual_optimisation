@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact( \
-        {'dataset_train_type': [4], 'dataset_test_type': [0, 3]})
+        {'dataset_train_type': [4], 'dataset_test_type': [0, 4]})
         #{'dataset_train_type': [0, 1, 2], 'dataset_test_type': [0, 1]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
     # add case:
@@ -73,8 +73,8 @@ if __name__ == "__main__":
                     param.set('dataset_train_type', 'icub_and_many_balls')
                     param.set('directory_datasets_train', datasets_folder + 'icub_and_many_balls/')
                 else:
-                    param.set('dataset_train_type', 'combined_alone_and_balls')
-                    param.set('directory_datasets_train', datasets_folder + 'combined_alone_and_balls/')
+                    param.set('dataset_train_type', 'combined_alone_and_many_balls')
+                    param.set('directory_datasets_train', datasets_folder + 'combined_alone_and_many_balls/')
 
 
                 test_dataset_type = doe.loc[exp, 'dataset_test_type']
