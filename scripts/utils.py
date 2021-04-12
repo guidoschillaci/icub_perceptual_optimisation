@@ -22,11 +22,12 @@ def activation_opt_flow(x):
     return tf.stack((x0,x1,x2),axis=-1)
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image, unnorm_tp1 = False):
-    if unnorm_tp1:
-        unnorm_next = (next_image * 255.0).astype(np.uint8)
-        return np.multiply((1.0 - predicted_opt_flow/255), unnorm_next) + np.multiply(predicted_opt_flow/255, background_image)
-    else:
-        return np.multiply((1.0 - predicted_opt_flow/255), next_image) + np.multiply(predicted_opt_flow/255, background_image)
+    #if unnorm_tp1:
+    #    unnorm_next = (next_image * 255.0).astype(np.uint8)
+    #    return np.multiply((1.0 - predicted_opt_flow/255), unnorm_next) + np.multiply(predicted_opt_flow/255, background_image)
+    #else:
+    return np.where( (predicted_opt_flow/255)<1, next_image, background_image)
+    #return np.multiply((1.0 - predicted_opt_flow/255), next_image) + np.multiply(predicted_opt_flow/255, background_image)
 
 class Split(tf.keras.layers.Layer):
     def __init__(self):
@@ -89,14 +90,19 @@ class MyCallback(Callback):
 
     # this is done on the original unshuffled dataset, because we want to show trajectories
     def plot_train_sequences(self, save_gif=False):
-        start = [int(len(self.datasets.test.images_t)*0.1), \
-                 int(len(self.datasets.test.images_t)*0.2), \
-                 int(len(self.datasets.test.images_t)*0.3), \
-                 int(len(self.datasets.test.images_t)*0.4), \
-                 int(len(self.datasets.test.images_t)*0.5), \
-                 int(len(self.datasets.test.images_t)*0.6), \
-                 int(len(self.datasets.test.images_t)*0.7), \
-                 int(len(self.datasets.test.images_t)*0.8), \
+        #start = [int(len(self.datasets.test.images_t) * 0.1), \
+        #         int(len(self.datasets.test.images_t) * 0.2), \
+        #         int(len(self.datasets.test.images_t) * 0.3), \
+        #         int(len(self.datasets.test.images_t) * 0.4), \
+        #         int(len(self.datasets.test.images_t) * 0.5), \
+        #         int(len(self.datasets.test.images_t) * 0.6), \
+        #         int(len(self.datasets.test.images_t) * 0.7), \
+        #         int(len(self.datasets.test.images_t) * 0.8), \
+        #         ]
+        start = [int(len(self.datasets.test.images_t) * 0.1), \
+                 int(len(self.datasets.test.images_t) * 0.3), \
+                 int(len(self.datasets.test.images_t) * 0.5), \
+                 int(len(self.datasets.test.images_t) * 0.7), \
                  ]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
         if self.parameters.get('save_sequence_plots'):
@@ -140,7 +146,7 @@ class MyCallback(Callback):
             # display original
             ax1 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') +1)
             #plt.imshow(images_t[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')), cmap='gray')
-            plt.imshow(cv2.resize(images_t_orig_size[i], self.parameters.get('image_original_shape')), cmap='gray')
+            plt.imshow(images_t_orig_size[i], cmap='gray')
             ax1.get_xaxis().set_visible(False)
             ax1.get_yaxis().set_visible(False)
             ax1.set_ylabel('img(t)', rotation=0)
@@ -148,7 +154,7 @@ class MyCallback(Callback):
 
             ax2 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * self.parameters.get('plots_predict_size') + 1)
             #plt.imshow(images_tp1[i].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),cmap='gray')
-            plt.imshow(cv2.resize(images_tp1_orig_size[i], self.parameters.get('image_original_shape')), cmap='gray')
+            plt.imshow(images_tp1_orig_size[i], cmap='gray')
             ax2.get_xaxis().set_visible(False)
             ax2.get_yaxis().set_visible(False)
             ax2.set_ylabel('img(t+1)', rotation=0)
@@ -159,15 +165,16 @@ class MyCallback(Callback):
             count_line = count_line + 1
 
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
-            opt_unnorm = deepcopy(opt_flow[i].squeeze())
+            #opt_unnorm = deepcopy(opt_flow[i].squeeze())
             #if self.parameters.get('opt_flow_only_magnitude'):
-            opt_unnorm = self.binarize_optical_flow(opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
+            #cv2_opt_unnorm = cv2.resize(opt_unnorm, self.parameters.get('image_original_shape'))
+            cv2_opt_unnorm = self.binarize_optical_flow(opt_flow[i].squeeze())# * self.parameters.get('opt_flow_max_value'))
             #else:
             #    opt_unnorm = self.binarize_optical_flow(opt_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
 
             #plt.imshow(opt_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            cv2_opt_unnorm = cv2.resize(opt_unnorm, self.parameters.get('image_original_shape'))
+
             plt.imshow(cv2_opt_unnorm, cmap='gray')
             ax3.get_xaxis().set_visible(False)
             ax3.get_yaxis().set_visible(False)
@@ -192,16 +199,17 @@ class MyCallback(Callback):
             count_line = count_line + 1
 
             ax4 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
-            pred_unnorm = deepcopy(predictions[i].squeeze())
+            #pred_unnorm = deepcopy(predictions[i].squeeze())
             #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             #if self.parameters.get('opt_flow_only_magnitude'):
-            pred_unnorm = self.binarize_optical_flow(pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
             #else:
             #    pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
-            cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
+            #cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
+            cv2_pred_unnorm = self.binarize_optical_flow(predictions[i].squeeze())  # * self.parameters.get('opt_flow_max_value'))
+
             plt.imshow(cv2_pred_unnorm, cmap='gray')
             ax4.get_xaxis().set_visible(False)
             ax4.get_yaxis().set_visible(False)
@@ -219,8 +227,8 @@ class MyCallback(Callback):
             #print('cv2_pred_unnorm shape ', cv2_pred_unnorm.shape)
             #print('images_tp1_orig_size[i] shape ', images_tp1_orig_size[i].shape)
             #print('self.datasets.train.background_image shape ', self.datasets.train.background_image.shape)
-            _images_tp1_orig_size = cv2.resize(images_tp1_orig_size[i], self.parameters.get('image_original_shape'))
-            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, _images_tp1_orig_size, self.datasets.train.background_image)
+            #_images_tp1_orig_size = cv2.resize(images_tp1_orig_size[i], self.parameters.get('image_original_shape'))
+            attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm, images_tp1_orig_size[i], self.datasets.train.background_image)
             plt.imshow(attenuated_image_tp1, cmap='gray')
             ax6.get_xaxis().set_visible(False)
             ax6.get_yaxis().set_visible(False)
@@ -270,16 +278,16 @@ class MyCallback(Callback):
 
         ax8 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'),
                           iter + count_line * (self.parameters.get('plots_predict_size')) + 1)
-        predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].numpy())
+        #predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[iter].numpy())
         #predcustom_unnorm = predcustom_unnorm.reshape(self.parameters.get('image_original_shape'))
         # print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
         #if self.parameters.get('opt_flow_only_magnitude'):
-        predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
+        cv2_predcustom_unnorm = cv2.resize(pred_custom_fusion_allvision[iter].numpy(), self.parameters.get('image_original_shape'))
+        cv2_predcustom_unnorm = self.binarize_optical_flow(cv2_predcustom_unnorm)
         #else:
         #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
         #plt.imshow(predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #           cmap='gray')
-        cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
         plt.imshow(cv2_predcustom_unnorm, cmap='gray')
         ax8.get_xaxis().set_visible(False)
@@ -298,8 +306,8 @@ class MyCallback(Callback):
         #    predcustom_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    images_tp1[iter].reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
         #    self.datasets.background_image)
-        _images_tp1_orig_size = cv2.resize(images_tp1_orig_size[iter], self.parameters.get('image_original_shape'))
-        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, _images_tp1_orig_size, self.datasets.train.background_image)
+        #_images_tp1_orig_size = cv2.resize(images_tp1_orig_size[iter], self.parameters.get('image_original_shape'))
+        attenuated_custom = sensory_attenuation(cv2_predcustom_unnorm, images_tp1_orig_size[iter], self.datasets.train.background_image)
         plt.imshow(attenuated_custom, cmap='gray')
         ax9.get_xaxis().set_visible(False)
         ax9.get_yaxis().set_visible(False)
@@ -337,13 +345,12 @@ class MyCallback(Callback):
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             # binarise pred_unnorm (has values 0 or 255)
             #if self.parameters.get('opt_flow_only_magnitude'):
-            cv2_pred_unnorm = self.binarize_optical_flow(
-                cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
+            cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
             #else:
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
-            _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
+            #_images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
-                                                       _images_orig_size_tp1,
+                                                       self.datasets.test.images_orig_size_tp1[i],
                                                        self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_image_tp1)
         return attenuated_imgs
@@ -369,14 +376,14 @@ class MyCallback(Callback):
         for i in range(len(pred_custom_fusion_allvision)):
             predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
             #if self.parameters.get('opt_flow_only_magnitude'):
-            predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm)
             #else:
             #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
+            cv2_predcustom_unnorm = self.binarize_optical_flow(cv2_predcustom_unnorm)
 
-            _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
+            #_images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
-                                                    _images_orig_size_tp1, \
+                                                    self.datasets.test.images_orig_size_tp1[i], \
                                                     self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_img)
         return attenuated_imgs
