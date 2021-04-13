@@ -24,6 +24,7 @@ import os
 import tkinter
 import matplotlib.pyplot as plt
 import pandas as pd
+import utils
 
 loss_tracker = tfk.metrics.Mean(name="loss")
 val_loss_tracker = tfk.metrics.Mean(name="val_loss")
@@ -71,8 +72,10 @@ class CustomModel(Model):
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
 
     def intersection_over_union(self, y_true, y_pred):
-        intersection = tf.math.multiply(y_true, y_pred)
-        union = y_true + y_pred - intersection
+        y_true_binarised = utils.binarize_optical_flow(y_true, positive_value=1)
+        y_pred_binarised = utils.binarize_optical_flow(y_pred, positive_value=1)
+        intersection = tf.math.multiply(y_true_binarised, y_pred_binarised)
+        union = y_true_binarised + y_pred_binarised - intersection
         count_intersection = tf.math.count_nonzero(intersection)
         count_union = tf.math.count_nonzero(union)
         return count_intersection / count_union

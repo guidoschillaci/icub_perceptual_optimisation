@@ -405,6 +405,27 @@ def make_gif(folder, test_name, first_id, last_id, num_frames =20):
     imageio.mimsave(folder+'movie_'+str(first_id)+ \
             '_' + str(last_id)+ '_'+test_name+'.gif', images)
 
+def do_ttest_self_other(num_runs):
+    _self = []
+    other = []
+    main_path = os.getcwd()
+    multiple_experiments_folder = main_path + '/' + 'experiments'
+
+    for run in range(num_runs):
+        __self=np.loadtxt(multiple_experiments_folder+'/exp0/run_'+str(run)+'/plots/markers_in_attenuated_img.txt')
+        for i in range(10):
+            _self.append(__self[i])
+        _other=np.loadtxt(multiple_experiments_folder+'/exp1/run_'+str(run)+'/plots/markers_in_attenuated_img.txt')
+        for i in range(10):
+            other.append(_other[i])
+    _self = np.asarray(_self)
+    other = np.asarray(other)
+    stat, p = stats.ttest_ind(_self, other)
+    print('self ', _self)
+    print('other ', _other)
+    print('self mean ', np.mean(_self), ' std ', np.std(_self))
+    print('other mean ', np.mean(other), ' std ', np.std(other))
+    print('stat ', stat, ' p ', p)
 
 if __name__ == "__main__":
 
@@ -413,21 +434,24 @@ if __name__ == "__main__":
 
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
-
-    plt.rcParams.update({'font.size': 18})
-    num_experiments = 6
+    num_experiments = 2
     num_runs = 10
+
+    do_ttest_self_other(num_runs)
+    plt.rcParams.update({'font.size': 18})
+
     main_path = os.getcwd()
-    multiple_experiments_folder = main_path + '/' + 'experiments_paper'
+    multiple_experiments_folder = main_path + '/' + 'experiments'
     os.chdir(multiple_experiments_folder)
     for exp in range(num_experiments):
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
         os.chdir(exp_folder)
-        for run in range(num_runs):
-            print('doing plots for exp '+str(exp)+ ' run ' + str(run))
-            if do_stats:
-                do_stats_plot(num_runs, exp)
-            if do_gif_videos:
+
+        print('doing plots for exp '+str(exp)+ ' run ')
+        if do_stats:
+            do_stats_plot(num_runs, exp)
+        if do_gif_videos:
+            for run in range(num_runs):
                 for i in range(len(starting_sample_for_gif)):
                     make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'attenuated', \
                              starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
