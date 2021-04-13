@@ -110,16 +110,16 @@ class DatasetLoader():
                 dataset.cmd = deepcopy(dataset.cmd[index_from:])
                 dataset.optical_flow = deepcopy(dataset.optical_flow[index_from:])
 
-    def binarize_optical_flow(self, optflow, positive_value = 1):
-        if self.parameters.get('opt_flow_binarize'):
-            return np.array(np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), positive_value, 0), dtype='uint8')
-        return np.array(optflow, dtype='uint8')
+    #def binarize_optical_flow(self, optflow, positive_value = 1):
+    #    if self.parameters.get('opt_flow_binarize'):
+    #        return np.array(np.where(optflow > self.parameters.get('opt_flow_binary_threshold'), positive_value, 0), dtype='uint8')
+    #    return np.array(optflow, dtype='uint8')
 
     def filter_out_samples_with_non_moving_objects(self,dataset):
         print('filtering out samples with non-moving objects')
         indexes = []
         for i in tqdm(range(len(dataset.optical_flow))):
-            binarised_of = self.binarize_optical_flow(dataset.optical_flow[i])
+            binarised_of = utils.binarize_optical_flow(self.parameters, dataset.optical_flow[i])
             if np.count_nonzero(binarised_of == 1) < self.parameters.get('threshold_for_background_img'):
                 # nothing is moving in the visual input. remove this sample
                 indexes.append(i)
