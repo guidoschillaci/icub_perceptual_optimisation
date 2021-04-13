@@ -34,9 +34,15 @@ def binarize_optical_flow(param, optflow, positive_value = 255):
         return np.array(np.where(optflow > param.get('opt_flow_binary_threshold'), positive_value, 0), dtype='uint8')
     return np.array(optflow, dtype='uint8')
 
-def intersection_over_union(param, y_true, y_pred):
-    y_true_binarised = binarize_optical_flow(param, y_true, positive_value=1)
-    y_pred_binarised = binarize_optical_flow(param, y_pred, positive_value=1)
+def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_binarised):
+    if not is_true_binarised:
+        y_true_binarised = binarize_optical_flow(param, y_true, positive_value=1)
+    else:
+        y_true_binarised = y_true
+    if not is_pred_binarised:
+        y_pred_binarised = binarize_optical_flow(param, y_pred, positive_value=1)
+    else:
+        y_pred_binarised = y_pred
     intersection = np.multiply(y_true_binarised, y_pred_binarised)
     union = y_true_binarised + y_pred_binarised - intersection
     count_intersection = np.count_nonzero(intersection)
@@ -381,7 +387,7 @@ class MyCallback(Callback):
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
 
-            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_pred_unnorm))
+            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_pred_unnorm, False, True))
 
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
                                                        _images_orig_size_tp1,
@@ -418,7 +424,7 @@ class MyCallback(Callback):
 
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
 
-            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_predcustom_unnorm))
+            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_predcustom_unnorm, False, True))
 
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
                                                     _images_orig_size_tp1, \
