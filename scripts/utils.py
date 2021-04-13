@@ -370,6 +370,7 @@ class MyCallback(Callback):
             predictions = predictions_all_outputs
 
         attenuated_imgs = []
+        iou = []
         for i in range(len(predictions)):
             pred_unnorm = predictions[i].squeeze()
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
@@ -379,13 +380,14 @@ class MyCallback(Callback):
             #else:
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
-            self.iou_main_model.append(intersection_over_union(self.parameters, _images_orig_size_tp1, \
-                                                               cv2_pred_unnorm))
+
+            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_pred_unnorm))
+
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
                                                        _images_orig_size_tp1,
                                                        self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_image_tp1)
-        return attenuated_imgs
+        return attenuated_imgs, np.mean(np.asarray(iou))
 
     # attenuate on test dataset using custom weights
     def attenuate_test_ds_using_custom_weights(self, custom_weights):
@@ -405,6 +407,7 @@ class MyCallback(Callback):
                                       pred_pre_fusion_features[2], w_m, w_m], training=False)
 
         attenuated_imgs = []
+        iou = []
         for i in range(len(pred_custom_fusion_allvision)):
             predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
             #if self.parameters.get('opt_flow_only_magnitude'):
@@ -415,12 +418,13 @@ class MyCallback(Callback):
 
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
 
+            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_predcustom_unnorm))
 
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
                                                     _images_orig_size_tp1, \
                                                     self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_img)
-        return attenuated_imgs, intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_predcustom_unnorm)
+        return attenuated_imgs, np.mean(np.asarray(iou))
 
 
     def test_marker_detection(self):
