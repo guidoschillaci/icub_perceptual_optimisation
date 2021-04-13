@@ -37,8 +37,8 @@ def binarize_optical_flow(param, optflow, positive_value = 255):
 # output image has values: 0 or positive_value
 def tf_binarize_optical_flow(param, optflow, positive_value = 255):
     if param.get('opt_flow_binarize'):
-        return np.array(tf.where(tf.greater(optflow, param.get('opt_flow_binary_threshold')), positive_value, 0), dtype='uint8')
-    return np.array(optflow, dtype='uint8')
+        return tf.where(tf.greater(optflow, param.get('opt_flow_binary_threshold')), positive_value, 0)
+    return optflow
 
 def intersection_over_union(param, y_true, y_pred):
     y_true_binarised = tf_binarize_optical_flow(param, y_true, positive_value=1)
