@@ -33,7 +33,7 @@ class Parameters:
             'test_dataset_factor': 0.05, # the portion of the train dataset to be used as test
             'dataset_split_seed': 33, # the portion of the train dataset to be used as test
             'use_skin_data': False,
-            'filter_out_background_images': True,
+            'filter_out_background_images': False,
             'threshold_for_background_img': 80, #if moving pixels are less than this number, don't include the sample in the dataset
 
             #'model_custom_training_loop': False, # if False, use standard keras fit functions
