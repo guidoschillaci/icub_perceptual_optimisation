@@ -89,14 +89,19 @@ class MyCallback(Callback):
 
     # this is done on the original unshuffled dataset, because we want to show trajectories
     def plot_train_sequences(self, save_gif=False):
-        start = [int(len(self.datasets.test.images_t)*0.1), \
-                 int(len(self.datasets.test.images_t)*0.2), \
-                 int(len(self.datasets.test.images_t)*0.3), \
-                 int(len(self.datasets.test.images_t)*0.4), \
-                 int(len(self.datasets.test.images_t)*0.5), \
-                 int(len(self.datasets.test.images_t)*0.6), \
-                 int(len(self.datasets.test.images_t)*0.7), \
-                 int(len(self.datasets.test.images_t)*0.8), \
+        #start = [int(len(self.datasets.test.images_t) * 0.1), \
+        #         int(len(self.datasets.test.images_t) * 0.2), \
+        #         int(len(self.datasets.test.images_t) * 0.3), \
+        #         int(len(self.datasets.test.images_t) * 0.4), \
+        #         int(len(self.datasets.test.images_t) * 0.5), \
+        #         int(len(self.datasets.test.images_t) * 0.6), \
+        #         int(len(self.datasets.test.images_t) * 0.7), \
+        #         int(len(self.datasets.test.images_t) * 0.8), \
+        #         ]
+        start = [int(len(self.datasets.test.images_t) * 0.1), \
+                 int(len(self.datasets.test.images_t) * 0.3), \
+                 int(len(self.datasets.test.images_t) * 0.5), \
+                 int(len(self.datasets.test.images_t) * 0.7), \
                  ]
         end = list(np.asarray(start) + self.parameters.get('plots_predict_size'))
         if self.parameters.get('save_sequence_plots'):
