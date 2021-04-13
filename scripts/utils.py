@@ -35,6 +35,14 @@ def binarize_optical_flow(param, optflow, positive_value = 255):
         return np.array(np.where(optflow > param.get('opt_flow_binary_threshold'), positive_value, 0), dtype='uint8')
     return np.array(optflow, dtype='uint8')
 
+ def intersection_over_union(param, y_true, y_pred):
+        y_true_binarised = binarize_optical_flow(param, y_true, positive_value=1)
+        y_pred_binarised = binarize_optical_flow(param, y_pred, positive_value=1)
+        intersection = tf.math.multiply(y_true_binarised, y_pred_binarised)
+        union = y_true_binarised + y_pred_binarised - intersection
+        count_intersection = tf.math.count_nonzero(intersection)
+        count_union = tf.math.count_nonzero(union)
+        return count_intersection / count_union
 
 class Split(tf.keras.layers.Layer):
     def __init__(self):
@@ -65,10 +73,17 @@ class MyCallback(Callback):
 
         # these will contain marker detection results
         self.markers_in_orig_img = []
-        self.markers_in_attenuated_img = [] # predictions executed with main model
+        self.markers_in_attenuated_img = []  # predictions executed with main model
         self.markers_in_attenuated_img_with_custom_weights = []
         for i in range(len(self.custom_weigths)):
             self.markers_in_attenuated_img_with_custom_weights.append([])
+
+        # these will contain intersection over units results
+        self.iou_main_model = []  # predictions executed with main model
+        self.iou_model_with_custom_weights = []
+        for i in range(len(self.custom_weigths)):
+            self.iou_model_with_custom_weights.append([])
+
 
     def on_train_begin(self, logs={}):
         self.history = {'loss': [], 'val_loss': [], 'IoU': []}
@@ -82,6 +97,7 @@ class MyCallback(Callback):
 
     def on_train_end(self, logs=None):
         self.save_marker_data()
+        self.save_iou_data()
         if self.parameters.get('make_plots'):
             # plot also sequences of predictions
             self.plot_train_sequences(save_gif=self.parameters.get('save_sequence_plots_gif'))
@@ -349,6 +365,8 @@ class MyCallback(Callback):
             #else:
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
+            self.iou_main_model.append(intersection_over_union(self.parameters, _images_orig_size_tp1, \
+                                                               cv2_pred_unnorm))
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
                                                        _images_orig_size_tp1,
                                                        self.datasets.train.background_image)
@@ -382,11 +400,14 @@ class MyCallback(Callback):
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
 
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
+
+
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
                                                     _images_orig_size_tp1, \
                                                     self.datasets.train.background_image)
             attenuated_imgs.append(attenuated_img)
-        return attenuated_imgs
+        return attenuated_imgs, intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_predcustom_unnorm)
+
 
     def test_marker_detection(self):
         print('testing marker detection...')
@@ -407,10 +428,11 @@ class MyCallback(Callback):
         #self.results_markers_in_attenuated_img_with_custom_weights = []
         # for each set of custom weights
         for i in range(len(self.custom_weigths)):
-            attenuated_imgs_with_custom_weights = \
+            attenuated_imgs_with_custom_weights, iou_custom_w = \
                 self.attenuate_test_ds_using_custom_weights(self.custom_weigths[i])
             res = self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_with_custom_weights)
             self.markers_in_attenuated_img_with_custom_weights[i].append(res)
+            self.iou_model_with_custom_weights[i].append(iou_custom_w)
             print('average markers in attenuated images with custom weights (set '+str(i)+'): ' \
                   + str(res))
 
@@ -428,4 +450,19 @@ class MyCallback(Callback):
         for i in range(len(self.custom_weigths)):
             np.savetxt(self.parameters.get('directory_plots') + 'markers_in_att_custom_weig_'+str(i) + '.txt',
                    np.asarray(self.markers_in_attenuated_img_with_custom_weights[i]), fmt="%s")
+        print('...saved')
+
+
+    def save_iou_data(self):
+        print('saving intersection_over_unit results...')
+        #res = []
+        #res.append(self.results_markers_in_orig_img)
+        #res.append(self.results_markers_in_attenuated_img)
+        #for i in range(len(self.custom_weigths)):
+        #    res.append(self.results_markers_in_attenuated_img_with_custom_weights[i])
+        np.savetxt(self.parameters.get('directory_plots') + 'iou_main_model.txt', \
+                   np.asarray(self.iou_main_model), fmt="%s")
+        for i in range(len(self.custom_weigths)):
+            np.savetxt(self.parameters.get('directory_plots') + 'iou_model_with_custom_weights_'+str(i) + '.txt',
+                   np.asarray(self.iou_model_with_custom_weights[i]), fmt="%s")
         print('...saved')

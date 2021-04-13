@@ -71,14 +71,14 @@ class CustomModel(Model):
         #sig_soft_loss_aux = (tf.math.sigmoid(tf.math.exp(-tf.math.pow(loss_modality, 2))))
         #return fact_matrix * tf.math.pow((w - sig_soft_loss_aux), 2)
 
-    def intersection_over_union(self, y_true, y_pred):
-        y_true_binarised = utils.binarize_optical_flow(y_true, positive_value=1)
-        y_pred_binarised = utils.binarize_optical_flow(y_pred, positive_value=1)
-        intersection = tf.math.multiply(y_true_binarised, y_pred_binarised)
-        union = y_true_binarised + y_pred_binarised - intersection
-        count_intersection = tf.math.count_nonzero(intersection)
-        count_union = tf.math.count_nonzero(union)
-        return count_intersection / count_union
+    #def intersection_over_union(self, y_true, y_pred):
+    #    y_true_binarised = utils.binarize_optical_flow(y_true, positive_value=1)
+    #    y_pred_binarised = utils.binarize_optical_flow(y_pred, positive_value=1)
+    #    intersection = tf.math.multiply(y_true_binarised, y_pred_binarised)
+    #    union = y_true_binarised + y_pred_binarised - intersection
+    #    count_intersection = tf.math.count_nonzero(intersection)
+    #    count_union = tf.math.count_nonzero(union)
+    #    return count_intersection / count_union
 
     #@tf.function
     def loss_fn_regul(self, y_true, y_pred):
@@ -188,7 +188,7 @@ class CustomModel(Model):
             #val_loss_value += sum(self.losses)
             val_loss_tracker.update_state(val_loss_value)
 
-            iou = self.intersection_over_union(out_of, predictions[0])
+            iou = utils.intersection_over_union(self.parameters, out_of, predictions[0])
             iou_tracker.update_state(iou)
 
             return {"loss": val_loss_tracker.result(), "IoU": iou_tracker.result()}
