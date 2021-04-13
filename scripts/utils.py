@@ -121,7 +121,7 @@ class MyCallback(Callback):
         #print(logs_keys)
         self.history['loss'].append(logs['loss'])
         self.history['val_loss'].append(logs['val_loss'])
-        self.history['IoU'].append(logs['val_IoU'])
+        #self.history['IoU'].append(logs['val_IoU'])
         self.test_marker_detection()
         #logs['loss'] =
 
