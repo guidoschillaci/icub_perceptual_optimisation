@@ -205,6 +205,7 @@ class DatasetLoader():
                 dataset.optical_flow.append(magnitude)
             dataset.optical_flow = np.array(dataset.optical_flow)
 
+
             max_optflow = np.max(np.asarray(dataset.optical_flow).flatten())
             dataset.optical_flow = dataset.optical_flow/max_optflow
 
