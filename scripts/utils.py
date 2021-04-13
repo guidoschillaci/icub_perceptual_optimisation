@@ -437,7 +437,8 @@ class MyCallback(Callback):
         # count markers in the imgs where sensory attenuation is perfomed
 
         ## first, predicting optflows using the learned fusion weights
-        attenuated_imgs_using_learned_weights = self.attenuate_test_ds()
+        attenuated_imgs_using_learned_weights, iou_main = self.attenuate_test_ds()
+        self.iou_main_model.append(iou_main)
         self.markers_in_attenuated_img.append( \
             self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_using_learned_weights))
         print('average markers in attenuated images: ' + str(self.markers_in_attenuated_img[-1]))
