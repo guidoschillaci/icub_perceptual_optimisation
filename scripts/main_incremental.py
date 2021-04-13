@@ -19,7 +19,7 @@ if __name__ == "__main__":
     # which train and test dataset to use
     # 0: robot alone in the scene; 1: robot and balls falling from the sky
     doe = build.build_full_fact( \
-        {'dataset_test_type': [0,3]})
+        {'dataset_test_type': [0]})
     print(doe)
 
     training_phases = [0,3,0,0,3,3] # first icub_alone, then icub not moving, then icub_alone
