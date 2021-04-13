@@ -28,6 +28,7 @@ if [ ! "$(docker ps -q -f name=${DOCKER_CONTAINER_NAME})" ]; then
       --volume="/home/ubuntu/:/home/ubuntu/:rw"  \
       --volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
       --gpus all  \
+      --shm-size=1g --ulimit memlock=-1 --ulimit stack=67108864 \
       --workdir="/home/ubuntu" \
       guidoski/deeplearn:tf2-gpu bash -c 'bash'
 else
