@@ -28,7 +28,7 @@ import utils
 
 loss_tracker = tfk.metrics.Mean(name="loss")
 val_loss_tracker = tfk.metrics.Mean(name="val_loss")
-iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
+#iou_tracker = tfk.metrics.Mean(name="IoU")  # intersection over union
 
 class CustomModel(Model):
 
@@ -188,10 +188,10 @@ class CustomModel(Model):
             #val_loss_value += sum(self.losses)
             val_loss_tracker.update_state(val_loss_value)
 
-            iou = utils.intersection_over_union(self.parameters, out_of, predictions[0])
-            iou_tracker.update_state(iou)
+            #iou = utils.intersection_over_union(self.parameters, out_of, predictions[0])
+            #iou_tracker.update_state(iou)
 
-            return {"loss": val_loss_tracker.result(), "IoU": iou_tracker.result()}
+            return {"loss": val_loss_tracker.result()}#, "IoU": iou_tracker.result()}
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
@@ -202,7 +202,7 @@ class CustomModel(Model):
             return {"loss": val_loss_tracker.result()}
     @property
     def metrics(self):
-        return [loss_tracker, val_loss_tracker, iou_tracker]
+        return [loss_tracker, val_loss_tracker]#, iou_tracker]
 
 class FusionActivityRegularizationLayer(Layer):
     """
@@ -767,17 +767,17 @@ class Models:
         plt.savefig(self.parameters.get('directory_plots') + 'history.png')
 
         # summarize history for loss
-        fig = plt.figure(figsize=(10, 12))
-        plt.title('Intersection over Unit')
-        plt.ylabel('value')
-        plt.xlabel('epoch')
+        #fig = plt.figure(figsize=(10, 12))
+        #plt.title('Intersection over Unit')
+        #plt.ylabel('value')
+        #plt.xlabel('epoch')
 
         # if (history_keys[i] == 'loss') or (history_keys[i]=='val_loss'):
-        plt.plot(self.myCallback.history[history_keys[2]], label=history_keys[2])
-        np.savetxt(self.parameters.get('directory_plots') + history_keys[2] + '.txt',
-                   self.myCallback.history[history_keys[2]], fmt="%s")
-        plt.legend(history_keys, loc='upper left')
-        plt.savefig(self.parameters.get('directory_plots') + 'IoU.png')
+        #plt.plot(self.myCallback.history[history_keys[2]], label=history_keys[2])
+        #np.savetxt(self.parameters.get('directory_plots') + history_keys[2] + '.txt',
+        #           self.myCallback.history[history_keys[2]], fmt="%s")
+        #plt.legend(history_keys, loc='upper left')
+        #plt.savefig(self.parameters.get('directory_plots') + 'IoU.png')
 
     '''
     #@tf.function
