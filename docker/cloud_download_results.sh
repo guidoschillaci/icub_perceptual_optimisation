@@ -2,9 +2,17 @@ ipclient=94.156.203.185
 userid=cloudsigma
 if [ -z "$1" ]
   then
+    echo "No argument supplied. I set the username of the cloud instance to cloudsigma."
+  else
+    userid=$1
+    echo "Setting the address of the cloud instance to ${userid}"
+fi
+
+if [ -z "$2" ]
+  then
     echo "No argument supplied. I set the address of the cloud instance to localhost."
   else
-    ipclient=$1
+    ipclient=$2
     echo "Setting the address of the cloud instance to ${ipclient}"
 fi
 
