@@ -47,6 +47,7 @@ class Dataset():
 class DatasetLoader():
 
     def __init__(self, param):
+        self.scaler_already_set = False
         self.parameters = param
         self.train = Dataset(param)
         self.test = Dataset(param)
@@ -207,23 +208,28 @@ class DatasetLoader():
 
 
             max_optflow = np.max(np.asarray(dataset.optical_flow).flatten())
-            dataset.optical_flow = dataset.optical_flow/max_optflow
+            dataset.optical_flow = dataset.optical_flow/self.parameters.get('opt_flow_max_value')
+            #max_optflow
 
             print('saving optical flow dataset')
             np.save(folder+'dataset_optical_flow.npy', dataset.optical_flow)
 
-        scaler_dataset_joints = preprocessing.MinMaxScaler()
-        scaler_dataset_cmd = preprocessing.MinMaxScaler()
-        if self.parameters.get('use_skin_data'):
-            scaler_dataset_skin = preprocessing.MinMaxScaler()
+        if not self.scaler_already_set:
+            self.scaler_dataset_joints = preprocessing.MinMaxScaler()
+            self.scaler_dataset_cmd = preprocessing.MinMaxScaler()
+            self.scaler_dataset_joints.fit(dataset.joints)
+            self.scaler_dataset_cmd.fit(dataset.cmd)
+            if self.parameters.get('use_skin_data'):
+                self.scaler_dataset_skin = preprocessing.MinMaxScaler()
+                self.scaler_dataset_skin.fit(dataset.skin_values)
 
         #normalise images
         dataset.images_t = np.asarray(dataset.images_t) / 255.
         dataset.images_tp1 = np.asarray(dataset.images_tp1) / 255.
-        dataset.joints = scaler_dataset_joints.fit_transform(dataset.joints)
-        dataset.cmd = scaler_dataset_cmd.fit_transform(dataset.cmd)
+        dataset.joints = self.scaler_dataset_joints.transform(dataset.joints)
+        dataset.cmd = self.scaler_dataset_cmd.transform(dataset.cmd)
         if self.parameters.get('use_skin_data'):
-            dataset.skin_values = scaler_dataset_skin.fit_transform(dataset.skin_values)
+            dataset.skin_values = self.scaler_dataset_skin.transform(dataset.skin_values)
 
         if self.parameters.get('verbosity_level') >= 2:
             print('nr images (t): ', str(np.asarray(dataset.images_t).shape))
