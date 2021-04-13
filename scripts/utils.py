@@ -417,10 +417,10 @@ class MyCallback(Callback):
         for i in range(len(pred_custom_fusion_allvision)):
             predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
             #if self.parameters.get('opt_flow_only_magnitude'):
-            predcustom_unnorm = binarize_optical_flow(self.parameters, predcustom_unnorm)
             #else:
             #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
+            cv2_predcustom_unnorm = binarize_optical_flow(self.parameters, cv2_predcustom_unnorm)
 
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
 
