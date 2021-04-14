@@ -22,11 +22,18 @@ def activation_opt_flow(x):
     return tf.stack((x0,x1,x2),axis=-1)
 
 def sensory_attenuation(predicted_opt_flow, next_image, background_image, unnorm_tp1 = False):
+    max_val = 255.0
+    predicted_opt_flow[predicted_opt_flow>max_val] = max_val
+    predicted_opt_flow[predicted_opt_flow<0] = 0
+
     if unnorm_tp1:
-        unnorm_next = (next_image * 255.0).astype(np.uint8)
-        return np.multiply((1.0 - predicted_opt_flow/255), unnorm_next) + np.multiply(predicted_opt_flow/255, background_image)
+        unnorm_next = (next_image * max_val).astype(np.uint8)
+        return np.multiply((1.0 - predicted_opt_flow/max_val), unnorm_next) + np.multiply(predicted_opt_flow/max_val, background_image)
     else:
-        return np.multiply((1.0 - predicted_opt_flow/255), next_image) + np.multiply(predicted_opt_flow/255, background_image)
+        #return np.multiply((1.0 - predicted_opt_flow/255), next_image) + np.multiply(predicted_opt_flow/255, background_image)
+        return np.multiply((1.0 - predicted_opt_flow / max_val), next_image) + np.multiply(predicted_opt_flow / max_val,
+                                                                                       background_image)
+
 
 # output image has values: 0 or positive_value
 def binarize_optical_flow(param, optflow, positive_value = 255.0):
@@ -64,19 +71,19 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
     return count_intersection / count_union
 
 # output image has values: 0 or positive_value
-def tf_binarize_optical_flow(param, optflow, positive_value = 255):
-    if param.get('opt_flow_binarize'):
-        return tf.cast(tf.where(tf.greater(optflow, param.get('opt_flow_binary_threshold')), positive_value, 0), tf.uint8)
-    return tf.cast(optflow, tf.uint8)
+#def tf_binarize_optical_flow(param, optflow, positive_value = 255):
+#    if param.get('opt_flow_binarize'):
+#        return tf.cast(tf.where(tf.greater(optflow, param.get('opt_flow_binary_threshold')), positive_value, 0), tf.uint8)
+#    return tf.cast(optflow, tf.uint8)
 
-def tf_intersection_over_union(param, y_true, y_pred):
-    y_true_binarised = tf_binarize_optical_flow(param, y_true, positive_value=1)
-    y_pred_binarised = tf_binarize_optical_flow(param, y_pred, positive_value=1)
-    intersection = tf.math.multiply(y_true_binarised, y_pred_binarised)
-    union = y_true_binarised + y_pred_binarised - intersection
-    count_intersection = tf.math.count_nonzero(intersection)
-    count_union = tf.math.count_nonzero(union)
-    return count_intersection / count_union
+#def tf_intersection_over_union(param, y_true, y_pred):
+#    y_true_binarised = tf_binarize_optical_flow(param, y_true, positive_value=1)
+#    y_pred_binarised = tf_binarize_optical_flow(param, y_pred, positive_value=1)
+#    intersection = tf.math.multiply(y_true_binarised, y_pred_binarised)
+#    union = y_true_binarised + y_pred_binarised - intersection
+#    count_intersection = tf.math.count_nonzero(intersection)
+#    count_union = tf.math.count_nonzero(union)
+#    return count_intersection / count_union
 
 class Split(tf.keras.layers.Layer):
     def __init__(self):
@@ -219,7 +226,7 @@ class MyCallback(Callback):
             ax3 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             opt_unnorm = deepcopy(opt_flow[i].squeeze())
             #if self.parameters.get('opt_flow_only_magnitude'):
-            opt_unnorm = binarize_optical_flow(self.parameters, opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
+            #opt_unnorm = binarize_optical_flow(self.parameters, opt_unnorm)# * self.parameters.get('opt_flow_max_value'))
             #else:
             #    opt_unnorm = self.binarize_optical_flow(opt_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
 
@@ -254,13 +261,13 @@ class MyCallback(Callback):
             #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
             #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
             #if self.parameters.get('opt_flow_only_magnitude'):
-            pred_unnorm = binarize_optical_flow(self.parameters, pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
+            ##pred_unnorm = binarize_optical_flow(self.parameters, pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
             #else:
             #    pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
-            plt.imshow(cv2_pred_unnorm, cmap='gray')
+            plt.imshow(cv2_pred_unnorm*255, cmap='gray')
             ax4.get_xaxis().set_visible(False)
             ax4.get_yaxis().set_visible(False)
             ax4.set_ylabel('pred.OF', rotation=0)
