@@ -29,9 +29,9 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image, unnorm
         return np.multiply((1.0 - predicted_opt_flow/255), next_image) + np.multiply(predicted_opt_flow/255, background_image)
 
 # output image has values: 0 or positive_value
-def binarize_optical_flow(param, optflow, positive_value = 255):
+def binarize_optical_flow(param, optflow, positive_value = 255.0):
     if param.get('opt_flow_binarize'):
-        return np.array(np.where(optflow > param.get('opt_flow_binary_threshold'), positive_value, 0))#, dtype='uint8')
+        return np.array(np.where(optflow > param.get('opt_flow_binary_threshold'), positive_value, 0.0))#, dtype='uint8')
     return np.array(optflow)#, dtype='uint8')
     #return np.array(optflow)
 
