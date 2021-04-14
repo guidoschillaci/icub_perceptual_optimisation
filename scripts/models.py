@@ -433,10 +433,10 @@ class Models:
         weighted_motor = Multiply(name='weighted_motor')
         addition = Add()
         concatenated_2 = Concatenate()
-        final_1 = Dense(256, activation='relu')
+        final_1 = Dense(256, activation='sigmoid')
         final_2 = Reshape(target_shape=(16, 16, 1))
         final_3 = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                         activation='relu', \
+                         activation='sigmoid', \
                          padding='same')
         final_4 = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))
         final_5 = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
@@ -504,14 +504,14 @@ class Models:
                 visual_layer_2( \
                 visual_layer_1( \
                 input_visual) ) ) ) ) ) ) ) ) ) ) ) ) ) ) ) )
-            x = Dense(256, activation='relu')(aux_visual_layer_1)
+            x = Dense(256, activation='sigmoid')(aux_visual_layer_1)
             x = Reshape(target_shape=(16, 16, 1))(x)
-            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='sigmoid', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('image_size') == 64:
                 x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                           activation='relu', \
+                           activation='sigmoid', \
                            padding='same')(x)
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             #if self.parameters.get('opt_flow_only_magnitude'):
@@ -534,14 +534,14 @@ class Models:
                 proprioceptive_layer_2 ( \
                 proprioceptive_layer_1 ( \
                 input_proprioceptive) ) ) ) ) ) )
-            x = Dense(256, activation='relu')(aux_proprioceptive_layer_1)
+            x = Dense(256, activation='sigmoid')(aux_proprioceptive_layer_1)
             x = Reshape(target_shape=(16, 16, 1))(x)
-            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='relu', \
+            x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), activation='sigmoid', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('image_size') == 64:
                 x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                           activation='relu', \
+                           activation='sigmoid', \
                            padding='same')(x)
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             #if self.parameters.get('opt_flow_only_magnitude'):
@@ -564,15 +564,15 @@ class Models:
                 motor_layer_2 ( \
                 motor_layer_1 ( \
                 input_motor) ) ) ) ) ) )
-            x = Dense(256, activation='relu')(aux_motor_layer_1)
+            x = Dense(256, activation='sigmoid')(aux_motor_layer_1)
             x = Reshape(target_shape=(16, 16, 1))(x)
             x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                       activation='relu', \
+                       activation='sigmoid', \
                        padding='same')(x)
             x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             if self.parameters.get('image_size') == 64:
                 x = Conv2D(8, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')),
-                           activation='relu', \
+                           activation='sigmoid', \
                            padding='same')(x)
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             #if self.parameters.get('opt_flow_only_magnitude'):
