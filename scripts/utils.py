@@ -390,15 +390,18 @@ class MyCallback(Callback):
         iou = []
         for i in range(len(predictions)):
             pred_unnorm = predictions[i].squeeze()
+
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             # binarise pred_unnorm (has values 0 or 255)
             #if self.parameters.get('opt_flow_only_magnitude'):
             cv2_pred_unnorm = binarize_optical_flow(self.parameters,cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
+
+            iou.append(intersection_over_union(self.parameters, \
+                                               self.datasets.test.optical_flow[i], \
+                                               cv2_pred_unnorm, False, True))
             #else:
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
-
-            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_pred_unnorm, False, True))
 
             attenuated_image_tp1 = sensory_attenuation(cv2_pred_unnorm,
                                                        _images_orig_size_tp1,
@@ -435,7 +438,9 @@ class MyCallback(Callback):
 
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
 
-            iou.append(intersection_over_union(self.parameters, _images_orig_size_tp1, cv2_predcustom_unnorm, False, True))
+            iou.append(intersection_over_union(self.parameters, \
+                                               self.datasets.test.optical_flow[i], \
+                                               cv2_predcustom_unnorm, False, True))
 
             attenuated_img = sensory_attenuation(cv2_predcustom_unnorm, \
                                                     _images_orig_size_tp1, \
