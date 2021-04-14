@@ -436,7 +436,7 @@ class MyCallback(Callback):
 
             iou.append(intersection_over_union(self.parameters, \
                                                self.datasets.test.optical_flow[i].squeeze(), \
-                                               predcustom_unnorm, False, False))
+                                               predcustom_unnorm.squeeze(), False, False))
 
             #if self.parameters.get('opt_flow_only_magnitude'):
             #else:
