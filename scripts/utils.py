@@ -38,11 +38,11 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
     if not is_true_binarised:
         y_true_binarised = binarize_optical_flow(param, y_true, positive_value=1)
     else:
-        y_true_binarised = y_true
+        y_true_binarised = y_true / np.max(y_true) # positive value was 255
     if not is_pred_binarised:
         y_pred_binarised = binarize_optical_flow(param, y_pred, positive_value=1)
     else:
-        y_pred_binarised = y_pred
+        y_pred_binarised = y_pred / np.max(y_pred)
     intersection = np.multiply(y_true_binarised, y_pred_binarised)
     union = y_true_binarised + y_pred_binarised - intersection
     count_intersection = np.count_nonzero(intersection)

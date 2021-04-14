@@ -360,9 +360,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('MA')
     _line_p.append('MA')
-    stat, p = stats.ttest_ind(means_ma, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     # ma ma
     _line_s.append('-')
     _line_p.append('-')
@@ -391,9 +388,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('W0')
     _line_p.append('W0')
-    stat, p = stats.ttest_ind(means_w0, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     stat, p = stats.ttest_ind(means_w0, means_ma)
     _line_s.append(round(stat, 1))
     _line_p.append(round(p,4))
@@ -423,9 +417,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('W1')
     _line_p.append('W1')
-    stat, p = stats.ttest_ind(means_w1, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     stat, p = stats.ttest_ind(means_w1, means_ma)
     _line_s.append(round(stat, 1))
     _line_p.append(round(p,4))
@@ -455,9 +446,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('W2')
     _line_p.append('W2')
-    stat, p = stats.ttest_ind(means_w2, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     stat, p = stats.ttest_ind(means_w2, means_ma)
     _line_s.append(round(stat, 1))
     _line_p.append(round(p,4))
@@ -487,9 +475,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('W3')
     _line_p.append('W3')
-    stat, p = stats.ttest_ind(means_w3, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     stat, p = stats.ttest_ind(means_w3, means_ma)
     _line_s.append(round(stat, 1))
     _line_p.append(round(p,4))
@@ -519,9 +504,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('W4')
     _line_p.append('W4')
-    stat, p = stats.ttest_ind(means_w4, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     stat, p = stats.ttest_ind(means_w4, means_ma)
     _line_s.append(round(stat, 1))
     _line_p.append(round(p,4))
@@ -551,9 +533,6 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
     _line_s.append('W5')
     _line_p.append('W5')
-    stat, p = stats.ttest_ind(means_w5, means_mo)
-    _line_s.append(round(stat, 1))
-    _line_p.append(round(p,4))
     stat, p = stats.ttest_ind(means_w5, means_ma)
     _line_s.append(round(stat, 1))
     _line_p.append(round(p,4))
@@ -612,6 +591,7 @@ def do_stats_plot(num_runs,exp):
         directory = 'run_' + str(run) + '/'
         data_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
         data_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
         data_iou_main.append(np.loadtxt(directory + 'plots/iou_main_model.txt'))
 
         data_iou_custom_0.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_0.txt'))
@@ -728,13 +708,15 @@ if __name__ == "__main__":
 
     do_stats = True
     do_gif_videos = False
+    do_self_other_test = False
 
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
     num_experiments = 2
     num_runs = 10
 
-    do_ttest_self_other(num_runs)
+    if do_self_other_test:
+        do_ttest_self_other(num_runs)
     plt.rcParams.update({'font.size': 18})
 
     main_path = os.getcwd()
