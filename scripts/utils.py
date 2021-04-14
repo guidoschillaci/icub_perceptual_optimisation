@@ -46,6 +46,8 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
     intersection = np.multiply(y_true_binarised, y_pred_binarised)
     union = y_true_binarised + y_pred_binarised - intersection
     count_intersection = np.count_nonzero(intersection)
+    print('y_true shape ', np.asarray(y_true_binarised).shape, ' max ' , np.max(y_true_binarised), ' min ', np.min(y_true_binarised))
+    print('y_pred shape ', np.asarray(y_pred_binarised).shape, ' max ' , np.max(y_pred_binarised), ' min ', np.min(y_pred_binarised))
     print('count int ', count_intersection)
 
     count_union = np.count_nonzero(union)
