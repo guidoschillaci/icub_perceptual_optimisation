@@ -7,7 +7,7 @@ from tensorflow.keras.layers import Dense, Input, Dropout, Flatten, Conv2D, MaxP
 from tensorflow.keras import Model
 from tensorflow.keras import backend as K
 from tensorflow.keras.models import load_model
-from tensorflow.keras.losses import mse
+from tensorflow.keras.losses import mse, binary_crossentropy
 from tensorflow.keras.optimizers import Adam, Adadelta
 from tensorflow.keras.metrics import Mean
 from tensorflow import keras as tfk
@@ -83,14 +83,16 @@ class CustomModel(Model):
     #@tf.function
     def loss_fn_regul(self, y_true, y_pred):
         true_main_out = y_true[0]
-        return tf.keras.losses.mean_squared_error(y_pred, true_main_out)
+        #return tf.keras.losses.mean_squared_error(y_pred, true_main_out)
+        return tf.keras.losses.binary_crossentropy(y_pred, true_main_out)
 
     #@tf.function
     def loss_fn(self, y_true, y_pred, fusion_weights=[]):
 
         true_main_out = y_true[0]
         pred_main_out = y_pred[0]
-        loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
+        #loss_main_out = tf.keras.losses.mean_squared_error(pred_main_out, true_main_out)
+        loss_main_out = tf.keras.losses.binary_crossentropy(pred_main_out, true_main_out)
         #loss_main_out = K.mean(K.square(pred_main_out - true_main_out), axis=-1)
         if not self.parameters.get('model_auxiliary'):
             return loss_main_out
@@ -107,9 +109,12 @@ class CustomModel(Model):
             #loss_aux_visual = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_visual), tf.squeeze(pred_aux_visual)))
             #loss_aux_proprio = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_proprio), tf.squeeze(pred_aux_proprio)))
             #loss_aux_motor = tf.reduce_mean(tf.math.squared_difference(tf.squeeze(true_aux_motor), tf.squeeze(pred_aux_motor)))
-            loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual)
-            loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
-            loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
+            ##loss_aux_visual = tf.keras.losses.mean_squared_error(true_aux_visual, pred_aux_visual)
+            loss_aux_visual = tf.keras.losses.binary_crossentropy(true_aux_visual, pred_aux_visual)
+            ##loss_aux_proprio = tf.keras.losses.mean_squared_error(true_aux_proprio, pred_aux_proprio)
+            loss_aux_proprio = tf.keras.losses.binary_crossentropy(true_aux_proprio, pred_aux_proprio)
+            ##loss_aux_motor = tf.keras.losses.mean_squared_error(true_aux_motor, pred_aux_motor)
+            loss_aux_motor = tf.keras.losses.binary_crossentropy(true_aux_motor, pred_aux_motor)
             #loss_aux_visual = K.mean(K.square(true_aux_visual - pred_aux_visual), axis=-1)
             #loss_aux_proprio =  K.mean(K.square(true_aux_proprio - pred_aux_proprio), axis=-1)
             #loss_aux_motor =  K.mean(K.square(true_aux_motor - pred_aux_motor), axis=-1)
@@ -162,7 +167,8 @@ class CustomModel(Model):
                 # forward pass
                 predictions = self((in_img, in_j, in_cmd), training=True)  # predictions for this minibatch
                 # Compute the loss value for this minibatch.
-                loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+                #loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+                loss_value = tf.keras.losses.binary_crossentropy(out_of, predictions)
                 # Add any extra losses created during the forward pass.
                 #loss_value += sum(self.losses)
             # compute gradients
@@ -195,7 +201,8 @@ class CustomModel(Model):
         else: # simple model
             (in_img, in_j, in_cmd), out_of  = data
             predictions = self((in_img, in_j, in_cmd), training=False)  # predictions for this minibatch
-            val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+            #val_loss_value = tf.keras.losses.mean_squared_error(out_of, predictions)
+            val_loss_value = tf.keras.losses.binary_crossentropy(out_of, predictions)
             # Add any extra losses created during the forward pass.
             #val_loss_value += sum(self.losses)
             val_loss_tracker.update_state(val_loss_value)
