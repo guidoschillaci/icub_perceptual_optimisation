@@ -31,19 +31,19 @@ def sensory_attenuation(predicted_opt_flow, next_image, background_image, unnorm
 # output image has values: 0 or positive_value
 def binarize_optical_flow(param, optflow, positive_value = 255):
     if param.get('opt_flow_binarize'):
-        return np.array(np.where(optflow > param.get('opt_flow_binary_threshold'), positive_value, 0))
-    return np.array(optflow)
+        return np.array(np.where(optflow > param.get('opt_flow_binary_threshold'), positive_value, 0), dtype='uint8')
+    return np.array(optflow, dtype='uint8')
     #return np.array(optflow)
 
 def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_binarised):
     #if not is_true_binarised:
     #    y_true_binarised = binarize_optical_flow(param, y_true, positive_value=1)
     #else:
-    y_true_binarised = y_true / np.max(y_true) # positive value was 255
+    y_true_binarised = y_true #/ np.max(y_true) # positive value was 255
     #if not is_pred_binarised:
     #    y_pred_binarised = binarize_optical_flow(param, y_pred, positive_value=1)
     #else:
-    y_pred_binarised = y_pred / np.max(y_pred)
+    y_pred_binarised = y_pred #/ np.max(y_pred)
 
     #print('y_true shape ', np.asarray(y_true_binarised).shape, ' max ', np.max(y_true_binarised), ' min ',
     #      np.min(y_true_binarised))
