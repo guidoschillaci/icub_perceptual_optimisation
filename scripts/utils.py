@@ -44,22 +44,22 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
     else:
         y_pred_binarised = y_pred / np.max(y_pred)
 
-    print('y_true shape ', np.asarray(y_true_binarised).shape, ' max ', np.max(y_true_binarised), ' min ',
-          np.min(y_true_binarised))
-    print('y_pred shape ', np.asarray(y_pred_binarised).shape, ' max ', np.max(y_pred_binarised), ' min ',
-          np.min(y_pred_binarised))
+    #print('y_true shape ', np.asarray(y_true_binarised).shape, ' max ', np.max(y_true_binarised), ' min ',
+    #      np.min(y_true_binarised))
+    #print('y_pred shape ', np.asarray(y_pred_binarised).shape, ' max ', np.max(y_pred_binarised), ' min ',
+    #      np.min(y_pred_binarised))
     intersection = np.multiply(y_true_binarised, y_pred_binarised)
     union = y_true_binarised + y_pred_binarised - intersection
     count_intersection = np.count_nonzero(intersection)
     count_union = np.count_nonzero(union)
-    print('int shape ', np.asarray(intersection).shape)
-    print('union shape ', np.asarray(union).shape)
-    print('count int ', count_intersection)
+    #print('int shape ', np.asarray(intersection).shape)
+    #print('union shape ', np.asarray(union).shape)
+    #print('count int ', count_intersection)
 
-    print('count uni ', count_union)
-    print('iou ', count_intersection / count_union)
-    cv2.imwrite(param.get('directory_plots')+'y_pred_bin.png', y_pred_binarised*255)
-    cv2.imwrite(param.get('directory_plots')+'y_true_bin.png', y_true_binarised*255)
+    #print('count uni ', count_union)
+    #print('iou ', count_intersection / count_union)
+    #cv2.imwrite(param.get('directory_plots')+'y_pred_bin.png', y_pred_binarised*255)
+    #cv2.imwrite(param.get('directory_plots')+'y_true_bin.png', y_true_binarised*255)
     return count_intersection / count_union
 
 # output image has values: 0 or positive_value
