@@ -51,7 +51,7 @@ class Parameters:
             'opt_flow_binarize': True,  # if true, opt_flow (only for sensory attenuation) will have only 0 or 1 values, according to the threhsold specified below
             #'opt_flow_treshold': 0.02, #was 0.02  # magnitudes below this value are set to 0. (original range btw 0 and 1)
             'opt_flow_max_value': 52,
-            'opt_flow_binary_threshold': 0.05, # was 0.001, # below this, is set to 0, higher than this, it is set to 1
+            'opt_flow_binary_threshold': 0.25, # was 0.001, # below this, is set to 0, higher than this, it is set to 1
 
             'make_plots': True,
             'plots_predict_size': 10,
