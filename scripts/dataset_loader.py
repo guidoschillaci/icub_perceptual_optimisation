@@ -203,12 +203,12 @@ class DatasetLoader():
                 opt_flow_polar_normalised = np.zeros((self.parameters.get('image_size'), self.parameters.get('image_size'),1))
                 flow = cv2.calcOpticalFlowFarneback(dataset.images_t[i], dataset.images_tp1[i], None, 0.5, 3, 5, 3, 5, 0.9, 0)
                 magnitude, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
-                dataset.optical_flow.append(utils.binarize_optical_flow(self.parameters,magnitude,positive_value=255))
+                dataset.optical_flow.append(utils.binarize_optical_flow(self.parameters,magnitude,positive_value=1))
             dataset.optical_flow = np.array(dataset.optical_flow)
 
 
             max_optflow = np.max(np.asarray(dataset.optical_flow).flatten())
-            dataset.optical_flow = dataset.optical_flow/self.parameters.get('opt_flow_max_value')
+            #dataset.optical_flow = dataset.optical_flow/self.parameters.get('opt_flow_max_value')
             #max_optflow
 
             print('saving optical flow dataset')
