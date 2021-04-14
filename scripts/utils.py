@@ -401,14 +401,15 @@ class MyCallback(Callback):
         for i in range(len(predictions)):
             pred_unnorm = predictions[i].squeeze()
 
-            iou.append(intersection_over_union(self.parameters, \
-                                               self.datasets.test.optical_flow[i].squeeze(), \
-                                               pred_unnorm, False, False))
 
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
             # binarise pred_unnorm (has values 0 or 255)
             #if self.parameters.get('opt_flow_only_magnitude'):
             cv2_pred_unnorm = binarize_optical_flow(self.parameters,cv2_pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
+
+            iou.append(intersection_over_union(self.parameters, \
+                                               self.datasets.test.optical_flow[i].squeeze(), \
+                                               cv2_pred_unnorm, False, False))
 
             #else:
             #    cv2_pred_unnorm = self.binarize_optical_flow(cv2_pred_unnorm[..., 0])
@@ -442,15 +443,15 @@ class MyCallback(Callback):
         for i in range(len(pred_custom_fusion_allvision)):
             predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
 
-            iou.append(intersection_over_union(self.parameters, \
-                                               self.datasets.test.optical_flow[i].squeeze(), \
-                                               predcustom_unnorm.squeeze(), False, False))
 
             #if self.parameters.get('opt_flow_only_magnitude'):
             #else:
             #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
             cv2_predcustom_unnorm = cv2.resize(predcustom_unnorm, self.parameters.get('image_original_shape'))
             cv2_predcustom_unnorm = binarize_optical_flow(self.parameters, cv2_predcustom_unnorm)
+            iou.append(intersection_over_union(self.parameters, \
+                                               self.datasets.test.optical_flow[i].squeeze(), \
+                                               predcustom_unnorm.squeeze(), False, False))
 
             _images_orig_size_tp1 = cv2.resize(self.datasets.test.images_orig_size_tp1[i], self.parameters.get('image_original_shape'))
 
