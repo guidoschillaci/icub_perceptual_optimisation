@@ -9,7 +9,7 @@ rm datasets/combined_alone_and_many_balls/dataset_optical_flow.npy
 #echo    # (optional) move to a new line
 #if [[ $REPLY =~ ^[Yy]$ ]]
 #then
-    echo "Deleting old results and models"
-    rm -r experiments/
-    echo "removed!"
+echo "Deleting old results and models"
+rm -r experiments/
+echo "removed!"
 #fi
