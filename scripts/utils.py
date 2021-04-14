@@ -42,6 +42,12 @@ def binarize_optical_flow(param, optflow, positive_value = 255.0):
     return np.array(optflow)#, dtype='uint8')
     #return np.array(optflow)
 
+
+# output image has values: 0 or positive_value
+def binarize_predicted_optical_flow(param, optflow, positive_value = 255.0):
+
+    return np.array(np.where(optflow > 0.02, positive_value, 0.0))
+
 def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_binarised):
     #if not is_true_binarised:
     #    y_true_binarised = binarize_optical_flow(param, y_true, positive_value=1)
@@ -404,7 +410,7 @@ class MyCallback(Callback):
 
             # binarise pred_unnorm (has values 0 or 255)
             #if self.parameters.get('opt_flow_only_magnitude'):
-            cv2_pred_unnorm = binarize_optical_flow(self.parameters,pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
+            cv2_pred_unnorm = binarize_predicted_optical_flow(self.parameters,pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
 
             iou.append(intersection_over_union(self.parameters, \
                                                self.datasets.test.optical_flow[i].squeeze(), \
@@ -447,7 +453,7 @@ class MyCallback(Callback):
             #if self.parameters.get('opt_flow_only_magnitude'):
             #else:
             #    predcustom_unnorm = self.binarize_optical_flow(predcustom_unnorm[..., 0])
-            cv2_predcustom_unnorm = binarize_optical_flow(self.parameters, predcustom_unnorm)
+            cv2_predcustom_unnorm = binarize_predicted_optical_flow(self.parameters, predcustom_unnorm)
 
             iou.append(intersection_over_union(self.parameters, \
                                                self.datasets.test.optical_flow[i].squeeze(), \
