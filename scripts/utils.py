@@ -46,7 +46,11 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
     intersection = np.multiply(y_true_binarised, y_pred_binarised)
     union = y_true_binarised + y_pred_binarised - intersection
     count_intersection = np.count_nonzero(intersection)
+    print('count int ', count_intersection)
+
     count_union = np.count_nonzero(union)
+    print('count uni ', count_union)
+    print('iou ', count_intersection / count_union)
     return count_intersection / count_union
 
 # output image has values: 0 or positive_value

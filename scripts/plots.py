@@ -567,7 +567,7 @@ def make_figure_iou(means_ma, stddevs_ma, \
 
 
 # run this from the exp_x folder
-def do_stats_plot(num_runs,exp):
+def do_stats_plot(num_runs,exp, do_iou):
     data_loss = []
     data_val_loss = []
     data_iou_main = []
@@ -592,14 +592,15 @@ def do_stats_plot(num_runs,exp):
         data_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
         data_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
 
-        data_iou_main.append(np.loadtxt(directory + 'plots/iou_main_model.txt'))
+        if do_iou:
+            data_iou_main.append(np.loadtxt(directory + 'plots/iou_main_model.txt'))
 
-        data_iou_custom_0.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_0.txt'))
-        data_iou_custom_1.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_1.txt'))
-        data_iou_custom_2.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_2.txt'))
-        data_iou_custom_3.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_3.txt'))
-        data_iou_custom_4.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_4.txt'))
-        data_iou_custom_5.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_5.txt'))
+            data_iou_custom_0.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_0.txt'))
+            data_iou_custom_1.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_1.txt'))
+            data_iou_custom_2.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_2.txt'))
+            data_iou_custom_3.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_3.txt'))
+            data_iou_custom_4.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_4.txt'))
+            data_iou_custom_5.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_5.txt'))
 
         data_mkr_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
         data_mkr_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
@@ -611,13 +612,14 @@ def do_stats_plot(num_runs,exp):
         data_mkr_att_custom_5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
     mean_loss = np.mean(np.asarray(data_loss), axis=0)
     mean_val_loss = np.mean(np.asarray(data_val_loss), axis=0)
-    mean_iou_main = np.mean(np.asarray(data_iou_main), axis=0)
-    mean_iou_custom_0 = np.mean(np.asarray(data_iou_custom_0), axis=0)
-    mean_iou_custom_1 = np.mean(np.asarray(data_iou_custom_1), axis=0)
-    mean_iou_custom_2 = np.mean(np.asarray(data_iou_custom_2), axis=0)
-    mean_iou_custom_3 = np.mean(np.asarray(data_iou_custom_3), axis=0)
-    mean_iou_custom_4 = np.mean(np.asarray(data_iou_custom_4), axis=0)
-    mean_iou_custom_5 = np.mean(np.asarray(data_iou_custom_5), axis=0)
+    if do_iou:
+        mean_iou_main = np.mean(np.asarray(data_iou_main), axis=0)
+        mean_iou_custom_0 = np.mean(np.asarray(data_iou_custom_0), axis=0)
+        mean_iou_custom_1 = np.mean(np.asarray(data_iou_custom_1), axis=0)
+        mean_iou_custom_2 = np.mean(np.asarray(data_iou_custom_2), axis=0)
+        mean_iou_custom_3 = np.mean(np.asarray(data_iou_custom_3), axis=0)
+        mean_iou_custom_4 = np.mean(np.asarray(data_iou_custom_4), axis=0)
+        mean_iou_custom_5 = np.mean(np.asarray(data_iou_custom_5), axis=0)
 
     mean_mkr_orig = np.mean(np.asarray(data_mkr_orig), axis=0)
     mean_mkr_att = np.mean(np.asarray(data_mkr_att), axis=0)
@@ -631,13 +633,14 @@ def do_stats_plot(num_runs,exp):
     stddev_loss = np.std(np.asarray(data_loss), axis=0)
     stddev_val_loss = np.std(np.asarray(data_val_loss), axis=0)
 
-    stddev_iou_main = np.std(np.asarray(data_iou_main), axis=0)
-    stddev_iou_custom_0 = np.std(np.asarray(data_iou_custom_0), axis=0)
-    stddev_iou_custom_1 = np.std(np.asarray(data_iou_custom_1), axis=0)
-    stddev_iou_custom_2 = np.std(np.asarray(data_iou_custom_2), axis=0)
-    stddev_iou_custom_3 = np.std(np.asarray(data_iou_custom_3), axis=0)
-    stddev_iou_custom_4 = np.std(np.asarray(data_iou_custom_4), axis=0)
-    stddev_iou_custom_5 = np.std(np.asarray(data_iou_custom_5), axis=0)
+    if do_iou:
+        stddev_iou_main = np.std(np.asarray(data_iou_main), axis=0)
+        stddev_iou_custom_0 = np.std(np.asarray(data_iou_custom_0), axis=0)
+        stddev_iou_custom_1 = np.std(np.asarray(data_iou_custom_1), axis=0)
+        stddev_iou_custom_2 = np.std(np.asarray(data_iou_custom_2), axis=0)
+        stddev_iou_custom_3 = np.std(np.asarray(data_iou_custom_3), axis=0)
+        stddev_iou_custom_4 = np.std(np.asarray(data_iou_custom_4), axis=0)
+        stddev_iou_custom_5 = np.std(np.asarray(data_iou_custom_5), axis=0)
 
     stddev_mkr_orig = np.std(np.asarray(data_mkr_orig), axis=0)
     stddev_mkr_att = np.std(np.asarray(data_mkr_att), axis=0)
@@ -648,19 +651,19 @@ def do_stats_plot(num_runs,exp):
     stddev_mkr_att_custom_4 = np.std(np.asarray(data_mkr_att_custom_4), axis=0)
     stddev_mkr_att_custom_5 = np.std(np.asarray(data_mkr_att_custom_5), axis=0)
 
-    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00005,0.00022])
+    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00003,0.00022])
     #make_figure(, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
     #make_figure(mean_iou, stddev_iou, 'exp'+str(exp)+'_Mean_Intersection_Over_Unit', 'IoU', 'epoch',[0,1])
 
-
-    make_figure_iou(mean_iou_main, stddev_iou_main, \
-                     mean_iou_custom_0, stddev_iou_custom_0, \
-                     mean_iou_custom_1, stddev_iou_custom_1, \
-                     mean_iou_custom_2, stddev_iou_custom_2, \
-                     mean_iou_custom_3, stddev_iou_custom_3, \
-                     mean_iou_custom_4, stddev_iou_custom_4, \
-                     mean_iou_custom_5, stddev_iou_custom_5, \
-                     'exp'+str(exp)+'_Mean_IoU', 'Intersection over Unit', 'epoch', [7,8.5])
+    if do_iou:
+        make_figure_iou(mean_iou_main, stddev_iou_main, \
+                         mean_iou_custom_0, stddev_iou_custom_0, \
+                         mean_iou_custom_1, stddev_iou_custom_1, \
+                         mean_iou_custom_2, stddev_iou_custom_2, \
+                         mean_iou_custom_3, stddev_iou_custom_3, \
+                         mean_iou_custom_4, stddev_iou_custom_4, \
+                         mean_iou_custom_5, stddev_iou_custom_5, \
+                         'exp'+str(exp)+'_Mean_IoU', 'Intersection over Unit', 'epoch', [7,8.5])
 
 
     make_figure_markers(mean_mkr_orig, stddev_mkr_orig, \
@@ -709,10 +712,12 @@ if __name__ == "__main__":
     do_stats = True
     do_gif_videos = False
     do_self_other_test = False
+    do_iou_plots = False
 
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
-    num_experiments = 2
+    num_experiments = 1
+    id_first_dyn_exp = 3 # id of the first dynamic experiment
     num_runs = 10
 
     if do_self_other_test:
@@ -723,12 +728,13 @@ if __name__ == "__main__":
     multiple_experiments_folder = main_path + '/' + 'experiments'
     os.chdir(multiple_experiments_folder)
     for exp in range(num_experiments):
+        exp = exp + id_first_dyn_exp
         exp_folder = multiple_experiments_folder + '/exp' + str(exp)
         os.chdir(exp_folder)
 
         print('doing plots for exp '+str(exp)+ ' run ')
         if do_stats:
-            do_stats_plot(num_runs, exp)
+            do_stats_plot(num_runs, exp, do_iou=do_iou_plots)
         if do_gif_videos:
             for run in range(num_runs):
                 for i in range(len(starting_sample_for_gif)):
