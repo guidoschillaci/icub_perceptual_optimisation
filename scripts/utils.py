@@ -258,16 +258,16 @@ class MyCallback(Callback):
 
             ax4 = plt.subplot(num_subplots, self.parameters.get('plots_predict_size'), i + count_line * (self.parameters.get('plots_predict_size')) + 1)
             pred_unnorm = deepcopy(predictions[i].squeeze())
-            #pred_unnorm = pred_unnorm.reshape(self.parameters.get('image_original_shape'))
-            #print('pred_unnorm shape ', np.asarray(pred_unnorm).shape)
-            #if self.parameters.get('opt_flow_only_magnitude'):
-            ##pred_unnorm = binarize_optical_flow(self.parameters, pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
+
+            print('main pred min ', np.min(pred_unnorm), ' max ', np.max(pred_unnorm) , ' mean  ', np.mean(pred_unnorm))
+
+            pred_unnorm = binarize_optical_flow(self.parameters, pred_unnorm)# * self.parameters.get('opt_flow_max_value'))
             #else:
             #    pred_unnorm = self.binarize_optical_flow(pred_unnorm[..., 0])# * self.parameters.get('opt_flow_max_value'))
             #plt.imshow(pred_unnorm.reshape(self.parameters.get('image_size'), self.parameters.get('image_size')),
             #           cmap='gray')
             cv2_pred_unnorm = cv2.resize(pred_unnorm, self.parameters.get('image_original_shape'))
-            plt.imshow(cv2_pred_unnorm*255, cmap='gray')
+            plt.imshow(cv2_pred_unnorm, cmap='gray')
             ax4.get_xaxis().set_visible(False)
             ax4.get_yaxis().set_visible(False)
             ax4.set_ylabel('pred.OF', rotation=0)

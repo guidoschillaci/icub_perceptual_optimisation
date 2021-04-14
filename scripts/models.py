@@ -751,9 +751,9 @@ class Models:
         tf.keras.utils.plot_model(self.model, to_file=model_plt_file, show_shapes=True)
 
     def save_model(self):
-        self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True, save_format='tf')
+        #self.model.save(self.parameters.get('directory_models') + self.parameters.get('model_filename'), overwrite=True, save_format='tf')
         self.plot_model()
-        print('model saved')
+        print('model plot saved')
 
     def save_plots(self):
         pd.DataFrame.from_dict(self.myCallback.history).to_csv(self.parameters.get('directory_results') +'history.csv', index=False)
