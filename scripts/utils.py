@@ -56,8 +56,8 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
 
     print('count uni ', count_union)
     print('iou ', count_intersection / count_union)
-    cv2.imwrite(param.get('directory_plots')+'y_pred_bin.png', y_pred_binarised)
-    cv2.imwrite(param.get('directory_plots')+'y_true_bin.png', y_true_binarised)
+    cv2.imwrite(param.get('directory_plots')+'y_pred_bin.png', y_pred_binarised*255)
+    cv2.imwrite(param.get('directory_plots')+'y_true_bin.png', y_true_binarised*255)
     return count_intersection / count_union
 
 # output image has values: 0 or positive_value
