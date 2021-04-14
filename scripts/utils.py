@@ -447,7 +447,7 @@ class MyCallback(Callback):
         self.iou_main_model.append(iou_main)
         self.markers_in_attenuated_img.append( \
             self.aruco_detector.avg_mrk_in_list_of_img(attenuated_imgs_using_learned_weights))
-        print('average markers in attenuated images: ' + str(self.markers_in_attenuated_img[-1]))
+        print('average markers in attenuated images: ' + str(self.markers_in_attenuated_img[-1]) + ' iou ' + str(iou_main))
 
         ## then, using custom weights
         #self.results_markers_in_attenuated_img_with_custom_weights = []
@@ -459,7 +459,7 @@ class MyCallback(Callback):
             self.markers_in_attenuated_img_with_custom_weights[i].append(res)
             self.iou_model_with_custom_weights[i].append(iou_custom_w)
             print('average markers in attenuated images with custom weights (set '+str(i)+'): ' \
-                  + str(res))
+                  + str(res) + ' iou ' + str(iou_custom_w) )
 
     def save_marker_data(self):
         print('saving marker detection results...')
