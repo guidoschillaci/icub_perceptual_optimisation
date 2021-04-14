@@ -405,7 +405,9 @@ class MyCallback(Callback):
         iou = []
         for i in range(len(predictions)):
             pred_unnorm = predictions[i].squeeze()
-            print('predunnomr min ', np.min(pred_unnorm), ' max ', np.max(pred_unnorm), ' mean ', np.mean(pred_unnorm))
+            print('predunnomr min ', np.min(pred_unnorm), ' max ', np.max(pred_unnorm), \
+                  ' mean ', np.mean(pred_unnorm), ' sum ', np.sum(pred_unnorm))
+
             cv2_pred_unnorm = binarize_optical_flow(self.parameters,pred_unnorm)  # * self.parameters.get('opt_flow_max_value'))
 
             iou.append(intersection_over_union(self.parameters, \
@@ -446,7 +448,7 @@ class MyCallback(Callback):
             predcustom_unnorm = deepcopy(pred_custom_fusion_allvision[i].numpy())
 
             print('predcustom_unnorm min ', np.min(predcustom_unnorm), ' max ',\
-                  np.max(predcustom_unnorm), ' mean ', np.mean(predcustom_unnorm))
+                  np.max(predcustom_unnorm), ' mean ', np.mean(predcustom_unnorm), ' sum ', np.sum(predcustom_unnorm))
 
             #if self.parameters.get('opt_flow_only_magnitude'):
             #else:
