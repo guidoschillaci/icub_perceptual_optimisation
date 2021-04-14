@@ -205,7 +205,9 @@ class DatasetLoader():
                 magnitude, ang = cv2.cartToPolar(flow[..., 0], flow[..., 1])
                 dataset.optical_flow.append(utils.binarize_optical_flow(self.parameters,magnitude,positive_value=1.0))
             dataset.optical_flow = np.array(dataset.optical_flow)
-
+            print ('dataset max ', np.max(np.asarray(dataset.optical_flow).flatten()), \
+                   ' min ',  np.min(np.asarray(dataset.optical_flow).flatten()), \
+                   ' mean ',  np.mean(np.asarray(dataset.optical_flow).flatten()))
 
             max_optflow = np.max(np.asarray(dataset.optical_flow).flatten())
             #dataset.optical_flow = dataset.optical_flow/self.parameters.get('opt_flow_max_value')
