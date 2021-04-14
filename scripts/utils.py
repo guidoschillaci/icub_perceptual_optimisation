@@ -43,15 +43,16 @@ def intersection_over_union(param, y_true, y_pred, is_true_binarised, is_pred_bi
         y_pred_binarised = binarize_optical_flow(param, y_pred, positive_value=1)
     else:
         y_pred_binarised = y_pred / np.max(y_pred)
-    intersection = np.multiply(y_true_binarised, y_pred_binarised)
-    union = y_true_binarised + y_pred_binarised - intersection
-    count_intersection = np.count_nonzero(intersection)
-    count_union = np.count_nonzero(union)
 
     print('y_true shape ', np.asarray(y_true_binarised).shape, ' max ', np.max(y_true_binarised), ' min ',
           np.min(y_true_binarised))
     print('y_pred shape ', np.asarray(y_pred_binarised).shape, ' max ', np.max(y_pred_binarised), ' min ',
           np.min(y_pred_binarised))
+    intersection = np.multiply(y_true_binarised, y_pred_binarised)
+    union = y_true_binarised + y_pred_binarised - intersection
+    count_intersection = np.count_nonzero(intersection)
+    count_union = np.count_nonzero(union)
+
     print('count int ', count_intersection)
 
     print('count uni ', count_union)
