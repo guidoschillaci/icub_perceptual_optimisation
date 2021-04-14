@@ -440,7 +440,7 @@ class Models:
                          padding='same')
         final_4 = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))
         final_5 = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                                    activation='relu', \
+                                    activation='sigmoid', \
                                     padding='same', name='main_output')
 
         # link them
@@ -516,7 +516,7 @@ class Models:
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             #if self.parameters.get('opt_flow_only_magnitude'):
             out_visual_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                               activation='relu', \
+                               activation='sigmoid', \
                                padding='same',
                                name='aux_visual_output')(x)
             #else:
@@ -546,7 +546,7 @@ class Models:
                 x = UpSampling2D((self.parameters.get('model_max_pool_size'), self.parameters.get('model_max_pool_size')))(x)
             #if self.parameters.get('opt_flow_only_magnitude'):
             out_proprio_aux_model = Conv2D(1, (self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                               activation='relu', \
+                               activation='sigmoid', \
                                padding='same', \
                             name='aux_proprio_output')(x)
             #else:
@@ -578,7 +578,7 @@ class Models:
             #if self.parameters.get('opt_flow_only_magnitude'):
             out_motor_aux_model = Conv2D(1, (
             self.parameters.get('model_conv_size'), self.parameters.get('model_conv_size')), \
-                                           activation='relu', \
+                                           activation='sigmoid', \
                                            padding='same', \
                                            name='aux_motor_output')(x)
             #else:
