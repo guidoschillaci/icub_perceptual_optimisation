@@ -194,7 +194,7 @@ def do_stats_plot_incremental(num_runs,exp, num_phases=3):
     stddev_mkr_att_custom_4 = np.std(np.asarray(data_mkr_att_custom_4), axis=0)
     stddev_mkr_att_custom_5 = np.std(np.asarray(data_mkr_att_custom_5), axis=0)
 
-    plots.make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00004,0.0006])
+    plots.make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00002,0.0006])
     #make_figure(, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
     #plots.make_figure(mean_iou, stddev_iou, 'exp'+str(exp)+'_Mean_Intersection_Over_Unit', 'IoU', 'epoch',[0,1])
 
@@ -217,7 +217,7 @@ def do_stats_plot_incremental(num_runs,exp, num_phases=3):
                      mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
                      mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
-                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [5.4,8.5])
+                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [7.0,8.5])
 
 def save_csv():
     p0_orig = []
@@ -529,7 +529,7 @@ if __name__ == "__main__":
     print('started')
     plt.rcParams.update({'font.size': 18})
     num_experiments = 1
-    id_first_dyn_exp = 11 # id of the first dynamic experiment
+    id_first_dyn_exp = 10 # id of the first dynamic experiment
     num_runs = 10
     num_phases = 6
     main_path = os.getcwd()

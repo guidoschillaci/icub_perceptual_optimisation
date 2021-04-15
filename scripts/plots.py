@@ -707,6 +707,46 @@ def do_ttest_self_other(num_runs):
     print('other mean ', np.mean(other), ' std ', np.std(other))
     print('stat ', stat, ' p ', p)
 
+
+
+def save_csv():
+    p0_orig = []
+    p0_att = []
+    p0_att_w0 = []
+    p0_att_w1 = []
+    p0_att_w2 = []
+    p0_att_w3 = []
+    p0_att_w4 = []
+    p0_att_w5 = []
+
+    # load results for each run of this experiment
+    for run in range(num_runs):
+        directory = 'run_' + str(run) + '/'
+        p0_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
+        p0_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
+        p0_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
+        p0_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
+        p0_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
+        p0_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
+        p0_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
+        p0_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+
+
+    # flatten list of lists
+    p0_orig = [val for sublist in p0_orig for val in sublist]
+    p0_att = [val for sublist in p0_att for val in sublist]
+    p0_att_w0 = [val for sublist in p0_att_w0 for val in sublist]
+    p0_att_w1 = [val for sublist in p0_att_w1 for val in sublist]
+    p0_att_w2 = [val for sublist in p0_att_w2 for val in sublist]
+    p0_att_w3 = [val for sublist in p0_att_w3 for val in sublist]
+    p0_att_w4 = [val for sublist in p0_att_w4 for val in sublist]
+    p0_att_w5 = [val for sublist in p0_att_w5 for val in sublist]
+
+    p0_tuples = list(zip(p0_orig, p0_att, p0_att_w0, p0_att_w1, p0_att_w2, p0_att_w3, p0_att_w4, p0_att_w5))
+    p0_df = pd.DataFrame(p0_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
+    p0_df.to_csv('raw_results.csv')
+
+
 if __name__ == "__main__":
 
     do_stats = True
@@ -755,6 +795,9 @@ if __name__ == "__main__":
                              starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
                         make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'attenuated_custom_'+str(w), \
                              starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-
+        print('saving csv')
+        save_csv()
         # go back
         os.chdir(multiple_experiments_folder)
+
+    print('finished!')
