@@ -651,7 +651,7 @@ def do_stats_plot(num_runs,exp, do_iou):
     stddev_mkr_att_custom_4 = np.std(np.asarray(data_mkr_att_custom_4), axis=0)
     stddev_mkr_att_custom_5 = np.std(np.asarray(data_mkr_att_custom_5), axis=0)
 
-    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00003,0.00022])
+    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00003,0.00052])
     #make_figure(, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
     #make_figure(mean_iou, stddev_iou, 'exp'+str(exp)+'_Mean_Intersection_Over_Unit', 'IoU', 'epoch',[0,1])
 
@@ -757,7 +757,7 @@ if __name__ == "__main__":
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
     num_experiments = 1
-    id_first_dyn_exp = 3 # id of the first dynamic experiment
+    id_first_dyn_exp = 12 # id of the first dynamic experiment
     num_runs = 10
 
     if do_self_other_test:
