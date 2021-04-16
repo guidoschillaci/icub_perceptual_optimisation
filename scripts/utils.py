@@ -125,7 +125,7 @@ class MyCallback(Callback):
                                           outputs=self.model.get_layer(name='fusion_weights').output)
         if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
-            self.plot_train_sequences(save_gif=True)
+            self.plot_train_sequences(save_gif=False)
         self.test_marker_detection()
 
     def on_train_end(self, logs=None):
