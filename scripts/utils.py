@@ -178,6 +178,9 @@ class MyCallback(Callback):
 
                 np.savetxt(self.parameters.get('directory_plots') + 'cmd_' + \
                            str(start[i]) + '_' + str(end[i]) + '.txt', self.datasets.test.cmd[start[i]:end[i]])
+                np.savetxt(self.parameters.get('directory_plots') + 'ditance_cmd_joints_' + \
+                           str(start[i]) + '_' + str(end[i]) + '.txt', self.datasets.test.cmd[start[i]:end[i]] - \
+                           self.datasets.test.joints[start[i]:end[i]])
 
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
