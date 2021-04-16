@@ -123,9 +123,9 @@ class MyCallback(Callback):
         # sub model with fusion weights output
         self.model_fusion_weights = Model(inputs=self.model.input,
                                           outputs=self.model.get_layer(name='fusion_weights').output)
-        #if self.parameters.get('make_plots'):
+        if self.parameters.get('make_plots'):
         #    # plot also sequences of predictions
-        #    self.plot_train_sequences(save_gif=True)
+            self.plot_train_sequences(save_gif=True)
         self.test_marker_detection()
 
     def on_train_end(self, logs=None):
@@ -173,6 +173,11 @@ class MyCallback(Callback):
                                                        self.datasets.test.cmd[start[i]:end[i]], \
                                                        self.datasets.test.optical_flow[start[i]:end[i]],\
                                                        save_gif=save_gif)
+                np.savetxt(self.parameters.get('directory_plots') + 'joints_' + \
+                           str(start[i]) + '_' + str(end[i]) + '.txt', self.datasets.test.joints[start[i]:end[i]])
+
+                np.savetxt(self.parameters.get('directory_plots') + 'cmd_' + \
+                           str(start[i]) + '_' + str(end[i]) + '.txt', self.datasets.test.cmd[start[i]:end[i]])
 
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
@@ -377,6 +382,7 @@ class MyCallback(Callback):
                               self.datasets.test.joints[0:self.parameters.get('plots_predict_size')], \
                               self.datasets.test.cmd[0:self.parameters.get('plots_predict_size')], \
                               self.datasets.test.optical_flow[0:self.parameters.get('plots_predict_size')])
+
 
     # attenuate on test dataset using learned weights
     def attenuate_test_ds(self):
