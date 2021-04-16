@@ -165,7 +165,7 @@ class MyCallback(Callback):
             print('saving sequence plots...')
             for i in tqdm(range(len(start))):
                 #print('plotting train '+str(i)+' of '+ str(len(start)) + ' ('  + str(start[i]) + ' to ' + str(end[i]) + ')')
-                fusion_weights = self.plot_predictions('pred_sequence_train_' + str(start[i]) + '_' + str(end[i]), \
+                fusion_weights = self.plot_predictions('test_sequence_' + str(start[i]) + '_' + str(end[i]), \
                                                        self.datasets.test.images_t[start[i]:end[i]], \
                                                        self.datasets.test.images_orig_size_t[start[i]:end[i]], \
                                                        self.datasets.test.images_orig_size_tp1[start[i]:end[i]], \
@@ -178,9 +178,12 @@ class MyCallback(Callback):
 
                 np.savetxt(self.parameters.get('directory_plots') + 'cmd_' + \
                            str(start[i]) + '_' + str(end[i]) + '.txt', self.datasets.test.cmd[start[i]:end[i]])
-                np.savetxt(self.parameters.get('directory_plots') + 'ditance_cmd_joints_' + \
+                np.savetxt(self.parameters.get('directory_plots') + 'distance_cmd_joints_' + \
                            str(start[i]) + '_' + str(end[i]) + '.txt', self.datasets.test.cmd[start[i]:end[i]] - \
                            self.datasets.test.joints[start[i]:end[i]])
+                np.savetxt(self.parameters.get('directory_plots') + 'mean_distance_cmd_joints_' + \
+                           str(start[i]) + '_' + str(end[i]) + '.txt', np.mean(self.datasets.test.cmd[start[i]:end[i]] - \
+                           self.datasets.test.joints[start[i]:end[i]]))
 
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
