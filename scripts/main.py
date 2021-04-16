@@ -17,9 +17,11 @@ if __name__ == "__main__":
     os.chdir(multiple_experiments_folder)
 
     # which train and test dataset to use
-    # 0: robot alone in the scene; 1: robot and balls falling from the sky
+    # DS 0: robot alone in the scene; DS 1: robot and balls falling from the sky
+    # DS 2: robot not moving and balls (1 every 20 sec); DS 3: robot moving and many balls (1 every sec)
+    # DS 4: combined DS0 and DS3
     doe = build.build_full_fact( \
-        {'dataset_train_type': [4], 'dataset_test_type': [3]})
+        {'dataset_train_type': [0, 4], 'dataset_test_type': [3]})
         #{'dataset_train_type': [0, 1, 2], 'dataset_test_type': [0, 1]})
     #    {'dataset_type': [0, 1], 'attenuation_test_dataset_type': [0, 1]})
     # add case:
