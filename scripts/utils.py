@@ -183,7 +183,7 @@ class MyCallback(Callback):
                            self.datasets.test.joints[start[i]:end[i]])
                 np.savetxt(self.parameters.get('directory_plots') + 'mean_distance_cmd_joints_' + \
                            str(start[i]) + '_' + str(end[i]) + '.txt', np.mean(self.datasets.test.cmd[start[i]:end[i]] - \
-                           self.datasets.test.joints[start[i]:end[i]]))
+                           self.datasets.test.joints[start[i]:end[i]]), axis=0)
 
     #def get_fusion_weights(self):
     #    return K.function([self.model.layers[0].input], [self.model.get_layer('fusion_weights').output])
