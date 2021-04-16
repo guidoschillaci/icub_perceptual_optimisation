@@ -674,7 +674,7 @@ def do_stats_plot(num_runs,exp, do_iou):
                      mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
                      mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
-                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [7,8.5])
+                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [6,7.5])
 
 def make_gif(folder, test_name, first_id, last_id, num_frames =20):
     images = []
@@ -757,7 +757,7 @@ if __name__ == "__main__":
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
     num_experiments = 1
-    id_first_dyn_exp = 12 # id of the first dynamic experiment
+    id_first_dyn_exp = 15 # id of the first dynamic experiment
     num_runs = 10
 
     if do_self_other_test:
