@@ -39,7 +39,7 @@ RUN rm -rf /var/lib/apt/lists/*
 # to avoid getting stuck on configuring tzdata, called by python3-tk
 ENV TZ=Europe/Rome
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-RUN apt install -y --allow-unauthenticated python3-tk graphviz
+#RUN apt install -y --allow-unauthenticated python3-tk graphviz
 
 RUN pip3 install pandas
 RUN pip3 install doepy
