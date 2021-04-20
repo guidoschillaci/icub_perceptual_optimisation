@@ -1,5 +1,11 @@
+
+print('start')
 import cv2
+
+print('start')
 import os
+
+print('start')
 import numpy as np
 
 print('start')
