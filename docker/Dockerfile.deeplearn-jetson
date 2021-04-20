@@ -27,8 +27,6 @@ RUN pip3 install --upgrade pip
 RUN pip3 install imutils
 RUN pip3 install scikit-image scikit-learn
 RUN apt install -y --allow-unauthenticated python3-opencv
-#RUN pip3 install opencv-python
-#RUN pip3 install opencv-contrib-python
 RUN pip3 install pydot
 
 ENV LD_PRELOAD /usr/lib/aarch64-linux-gnu/libgomp.so.1
@@ -43,6 +41,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 RUN pip3 install pandas
 RUN pip3 install doepy
+
+RUN pip3 install opencv-python
+RUN pip3 install opencv-contrib-python
 
 CMD [ "bash" ]
 
