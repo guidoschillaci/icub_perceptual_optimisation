@@ -45,6 +45,8 @@ RUN pip3 install doepy
 #RUN pip3 install opencv-python
 #RUN pip3 install opencv-contrib-python
 
+ENV OPENBLAS_CORETYPE ARMV8
+
 CMD [ "bash" ]
 
 
