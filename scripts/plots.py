@@ -602,14 +602,22 @@ def do_stats_plot(num_runs,exp, do_iou):
             data_iou_custom_4.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_4.txt'))
             data_iou_custom_5.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_5.txt'))
 
-        data_mkr_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
-        data_mkr_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
-        data_mkr_att_custom_0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
-        data_mkr_att_custom_1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
-        data_mkr_att_custom_2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
-        data_mkr_att_custom_3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
-        data_mkr_att_custom_4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
-        data_mkr_att_custom_5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+        da_ = np.loadtxt(directory + 'plots/markers_in_original_img.txt')
+        data_mkr_orig.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt')
+        data_mkr_att.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt')
+        data_mkr_att_custom_0.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt')
+        data_mkr_att_custom_1.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt')
+        data_mkr_att_custom_2.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt')
+        data_mkr_att_custom_3.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt')
+        data_mkr_att_custom_4.append(da_)
+        da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt')
+        data_mkr_att_custom_5.append(da_)
     mean_loss = np.mean(np.asarray(data_loss), axis=0)
     mean_val_loss = np.mean(np.asarray(data_val_loss), axis=0)
     if do_iou:
@@ -651,7 +659,7 @@ def do_stats_plot(num_runs,exp, do_iou):
     stddev_mkr_att_custom_4 = np.std(np.asarray(data_mkr_att_custom_4), axis=0)
     stddev_mkr_att_custom_5 = np.std(np.asarray(data_mkr_att_custom_5), axis=0)
 
-    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00003,0.00052])
+    make_figure_loss(mean_loss, stddev_loss,mean_val_loss, stddev_val_loss, 'exp'+str(exp)+'_Mean_Loss', 'loss', 'epoch', [0.00003,0.0002])
     #make_figure(, 'Mean_Val_Loss', 'val_loss', 'epoch',[0,1])
     #make_figure(mean_iou, stddev_iou, 'exp'+str(exp)+'_Mean_Intersection_Over_Unit', 'IoU', 'epoch',[0,1])
 
@@ -663,7 +671,7 @@ def do_stats_plot(num_runs,exp, do_iou):
                          mean_iou_custom_3, stddev_iou_custom_3, \
                          mean_iou_custom_4, stddev_iou_custom_4, \
                          mean_iou_custom_5, stddev_iou_custom_5, \
-                         'exp'+str(exp)+'_Mean_IoU', 'Intersection over Unit', 'epoch', [7,8.5])
+                         'exp'+str(exp)+'_Mean_IoU', 'Intersection over Unit', 'epoch', [0,1])
 
 
     make_figure_markers(mean_mkr_orig, stddev_mkr_orig, \
@@ -674,7 +682,7 @@ def do_stats_plot(num_runs,exp, do_iou):
                      mean_mkr_att_custom_3, stddev_mkr_att_custom_3, \
                      mean_mkr_att_custom_4, stddev_mkr_att_custom_4, \
                      mean_mkr_att_custom_5, stddev_mkr_att_custom_5, \
-                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [6,7.5])
+                     'exp'+str(exp)+'_Mean_Marker_Detection', 'Markers detected', 'epoch', [7,8.5])
 
 def make_gif(folder, test_name, first_id, last_id, num_frames =20):
     images = []
@@ -722,14 +730,22 @@ def save_csv():
     # load results for each run of this experiment
     for run in range(num_runs):
         directory = 'run_' + str(run) + '/'
-        p0_orig.append(np.loadtxt(directory + 'plots/markers_in_original_img.txt'))
-        p0_att.append(np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt'))
-        p0_att_w0.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt'))
-        p0_att_w1.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt'))
-        p0_att_w2.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt'))
-        p0_att_w3.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt'))
-        p0_att_w4.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt'))
-        p0_att_w5.append(np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt'))
+        data = np.loadtxt(directory + 'plots/markers_in_original_img.txt')
+        p0_orig.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt')
+        p0_att.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt')
+        p0_att_w0.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt')
+        p0_att_w1.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt')
+        p0_att_w2.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt')
+        p0_att_w3.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt')
+        p0_att_w4.append(data)
+        data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt')
+        p0_att_w5.append(data)
 
 
     # flatten list of lists
@@ -757,7 +773,7 @@ if __name__ == "__main__":
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
     num_experiments = 1
-    id_first_dyn_exp = 15 # id of the first dynamic experiment
+    id_first_dyn_exp = 0 # id of the first dynamic experiment
     num_runs = 10
 
     if do_self_other_test:
