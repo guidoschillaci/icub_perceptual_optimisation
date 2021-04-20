@@ -1,9 +1,12 @@
 import cv2
 import os
 import numpy as np
-import parameters
-from sklearn.model_selection import train_test_split
-from sklearn import preprocessing
+
+print('start')
+
+#import parameters
+#from sklearn.model_selection import train_test_split
+#from sklearn import preprocessing
 
 # concatene the two datasets
 def combine_datasets(DSa_folder, DSb_folder, combined_folder):
