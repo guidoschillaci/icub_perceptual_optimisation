@@ -780,7 +780,7 @@ def save_marker_detection(exp_id):
 
     p0_tuples = list(zip(p0_orig, p0_att, p0_att_w0, p0_att_w1, p0_att_w2, p0_att_w3, p0_att_w4, p0_att_w5))
     p0_df = pd.DataFrame(p0_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p0_df.to_csv('exp' + str(exp_id)+'marker_detection_results.csv')
+    p0_df.to_csv('exp' + str(exp_id)+'_marker_detection_results.csv')
 
     print('saved')
 
