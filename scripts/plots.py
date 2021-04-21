@@ -28,7 +28,7 @@ def make_figure(means, stddevs, title, xlabel, ylabel, y_lim):
 
 def make_figure_loss(means_l, stddevs_l, means_val, std_val, title, xlabel, ylabel, ylim):
     fig1 = plt.figure(figsize=(10, 10))
-    plt.title(title)
+    #plt.title(title)
     plt.ylabel(xlabel)
     plt.xlabel(ylabel)
     plt.ylim(ylim)
@@ -736,7 +736,7 @@ def save_loss_and_val_loss(num_runs, exp_folder, exp_id, epochs=10):
     val_loss_df.to_csv('exp'+str(exp_id)+'_val_loss.csv')
     print('saved')
 
-def save_marker_detection():
+def save_marker_detection(exp_id):
     print('saving marker detection results')
     p0_orig = []
     p0_att = []
@@ -780,7 +780,7 @@ def save_marker_detection():
 
     p0_tuples = list(zip(p0_orig, p0_att, p0_att_w0, p0_att_w1, p0_att_w2, p0_att_w3, p0_att_w4, p0_att_w5))
     p0_df = pd.DataFrame(p0_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p0_df.to_csv('marker_detection_results.csv')
+    p0_df.to_csv('exp' + str(exp_id)+'marker_detection_results.csv')
 
     print('saved')
 
@@ -833,7 +833,7 @@ if __name__ == "__main__":
                         make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'attenuated_custom_'+str(w), \
                              starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
 
-        save_marker_detection()
+        save_marker_detection(exp)
         save_loss_and_val_loss(num_runs,exp_folder, exp)
         # go back
         os.chdir(multiple_experiments_folder)

@@ -323,7 +323,7 @@ def save_csv():
     p2_df.to_csv('raw_phase_2.csv')
 
 
-def save_six_phases_marker_detection_results():
+def save_six_phases_marker_detection_results(exp_id):
     p0_orig = []
     p0_att = []
     p0_att_w0 = []
@@ -500,27 +500,27 @@ def save_six_phases_marker_detection_results():
 
     p0_tuples = list(zip(p0_orig, p0_att, p0_att_w0, p0_att_w1, p0_att_w2, p0_att_w3, p0_att_w4, p0_att_w5))
     p0_df = pd.DataFrame(p0_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p0_df.to_csv('raw_phase_0.csv')
+    p0_df.to_csv('exp' + str(exp_id) + 'marker_detection_results_phase_0.csv')
 
     p1_tuples = list(zip(p1_orig, p1_att, p1_att_w0, p1_att_w1, p1_att_w2, p1_att_w3, p1_att_w4, p1_att_w5))
     p1_df = pd.DataFrame(p1_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p1_df.to_csv('raw_phase_1.csv')
+    p1_df.to_csv('exp' + str(exp_id) + 'marker_detection_results_phase_1.csv')
 
     p2_tuples = list(zip(p2_orig, p2_att, p2_att_w0, p2_att_w1, p2_att_w2, p2_att_w3, p2_att_w4, p2_att_w5))
     p2_df = pd.DataFrame(p2_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p2_df.to_csv('raw_phase_2.csv')
+    p2_df.to_csv('exp' + str(exp_id) + 'marker_detection_results_phase_2.csv')
 
     p3_tuples = list(zip(p3_orig, p3_att, p3_att_w0, p3_att_w1, p3_att_w2, p3_att_w3, p3_att_w4, p3_att_w5))
     p3_df = pd.DataFrame(p3_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p3_df.to_csv('raw_phase_3.csv')
+    p3_df.to_csv('exp' + str(exp_id) + 'marker_detection_results_phase_3.csv')
 
     p4_tuples = list(zip(p4_orig, p4_att, p4_att_w0, p4_att_w1, p4_att_w2, p4_att_w3, p4_att_w4, p4_att_w5))
     p4_df = pd.DataFrame(p4_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p4_df.to_csv('raw_phase_4.csv')
+    p4_df.to_csv('exp' + str(exp_id) + 'marker_detection_results_phase_4.csv')
 
     p5_tuples = list(zip(p5_orig, p5_att, p5_att_w0, p5_att_w1, p5_att_w2, p5_att_w3, p5_att_w4, p5_att_w5))
     p5_df = pd.DataFrame(p5_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p5_df.to_csv('raw_phase_5.csv')
+    p5_df.to_csv('exp' + str(exp_id) + 'marker_detection_results_phase_5.csv')
 
 
 def save_loss_and_val_loss(num_runs, exp_folder, exp_id, epochs=10):
