@@ -12,6 +12,8 @@ if os.environ.get('DISPLAY','') == '':
     print('no display found. Using :0.0')
     os.environ.__setitem__('DISPLAY', ':0.0')
 
+# sthis only for correcting issue with 11 elements instead of 10 in marker det tests
+start_marker_det_index = 1 # 1 + 10 epochs?
 
 def make_figure(means, stddevs, title, xlabel, ylabel, y_lim):
     fig1 = plt.figure(figsize=(10, 10))
@@ -47,18 +49,18 @@ def make_figure_markers(means_mo, stddevs_mo, \
                         means_w5, stddevs_w5, \
                         title, xlabel, ylabel, ylim):
     fig1 = plt.figure(figsize=(10, 10))
-    plt.title(title)
+    #plt.title(title)
     plt.ylabel(xlabel)
     plt.xlabel(ylabel)
     plt.ylim(ylim)
-    plt.errorbar(range(len(means_mo)), means_mo, stddevs_mo, capsize=5, errorevery=2, label='original')
-    plt.errorbar(range(len(means_ma)), means_ma, stddevs_ma, capsize=5, errorevery=3, label='main model')
-    plt.errorbar(range(len(means_w0)), means_w0, stddevs_w0, capsize=5, errorevery=3, label='custom_w 0')
-    plt.errorbar(range(len(means_w1)), means_w1, stddevs_w1, capsize=5, errorevery=3, label='custom_w 1')
-    plt.errorbar(range(len(means_w2)), means_w2, stddevs_w2, capsize=5, errorevery=3, label='custom_w 2')
-    plt.errorbar(range(len(means_w3)), means_w3, stddevs_w3, capsize=5, errorevery=3, label='custom_w 3')
-    plt.errorbar(range(len(means_w4)), means_w4, stddevs_w4, capsize=5, errorevery=3, label='custom_w 4')
-    plt.errorbar(range(len(means_w5)), means_w5, stddevs_w5, capsize=5, errorevery=3, label='custom_w 5')
+    plt.errorbar(range(len(means_mo)), means_mo, stddevs_mo, capsize=5, errorevery=2, label='no attenuation')
+    plt.errorbar(range(len(means_ma)), means_ma, stddevs_ma, capsize=5, errorevery=3, label='model')
+    plt.errorbar(range(len(means_w0)), means_w0, stddevs_w0, capsize=5, errorevery=4, label='w0 set')
+    plt.errorbar(range(len(means_w1)), means_w1, stddevs_w1, capsize=5, errorevery=5, label='w1 set')
+    plt.errorbar(range(len(means_w2)), means_w2, stddevs_w2, capsize=5, errorevery=6, label='w2 set')
+    plt.errorbar(range(len(means_w3)), means_w3, stddevs_w3, capsize=5, errorevery=7, label='w3 set')
+    plt.errorbar(range(len(means_w4)), means_w4, stddevs_w4, capsize=5, errorevery=8, label='w4 set')
+    plt.errorbar(range(len(means_w5)), means_w5, stddevs_w5, capsize=5, errorevery=9, label='w5 set')
     plt.legend(ncol=2, loc='lower right')
     filename = title + '.jpg'
     plt.savefig(filename)
@@ -603,21 +605,21 @@ def do_stats_plot(num_runs,exp, do_iou):
             data_iou_custom_5.append(np.loadtxt(directory + 'plots/iou_model_with_custom_weights_5.txt'))
 
         da_ = np.loadtxt(directory + 'plots/markers_in_original_img.txt')
-        data_mkr_orig.append(da_)
+        data_mkr_orig.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt')
-        data_mkr_att.append(da_)
+        data_mkr_att.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt')
-        data_mkr_att_custom_0.append(da_)
+        data_mkr_att_custom_0.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt')
-        data_mkr_att_custom_1.append(da_)
+        data_mkr_att_custom_1.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt')
-        data_mkr_att_custom_2.append(da_)
+        data_mkr_att_custom_2.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt')
-        data_mkr_att_custom_3.append(da_)
+        data_mkr_att_custom_3.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt')
-        data_mkr_att_custom_4.append(da_)
+        data_mkr_att_custom_4.append(da_[start_marker_det_index:])
         da_ = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt')
-        data_mkr_att_custom_5.append(da_)
+        data_mkr_att_custom_5.append(da_[start_marker_det_index:])
     mean_loss = np.mean(np.asarray(data_loss), axis=0)
     mean_val_loss = np.mean(np.asarray(data_val_loss), axis=0)
     if do_iou:
@@ -715,9 +717,27 @@ def do_ttest_self_other(num_runs):
     print('other mean ', np.mean(other), ' std ', np.std(other))
     print('stat ', stat, ' p ', p)
 
+def save_loss_and_val_loss(num_runs, exp_folder, exp_id, epochs=10):
+    print('saving loss and val_loss')
+    res_loss = []
+    res_val_loss = []
 
+    for run in range(num_runs):
+        _res = np.loadtxt(exp_folder + '/run_'+str(run)+'/plots/loss.txt')
+        _res_val = np.loadtxt(exp_folder + '/run_' + str(run) + '/plots/val_loss.txt')
+        for i in range(epochs):
+            res_loss.append(_res[i])
+            res_val_loss.append(_res_val[i])
 
-def save_csv():
+    loss_df = pd.DataFrame(np.asarray(res_loss), columns=['loss'])
+    loss_df.to_csv('exp'+str(exp_id)+'_loss.csv')
+
+    val_loss_df = pd.DataFrame(np.asarray(res_val_loss), columns=['val_loss'])
+    val_loss_df.to_csv('exp'+str(exp_id)+'_val_loss.csv')
+    print('saved')
+
+def save_marker_detection():
+    print('saving marker detection results')
     p0_orig = []
     p0_att = []
     p0_att_w0 = []
@@ -731,21 +751,21 @@ def save_csv():
     for run in range(num_runs):
         directory = 'run_' + str(run) + '/'
         data = np.loadtxt(directory + 'plots/markers_in_original_img.txt')
-        p0_orig.append(data)
+        p0_orig.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_attenuated_img.txt')
-        p0_att.append(data)
+        p0_att.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_0.txt')
-        p0_att_w0.append(data)
+        p0_att_w0.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_1.txt')
-        p0_att_w1.append(data)
+        p0_att_w1.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_2.txt')
-        p0_att_w2.append(data)
+        p0_att_w2.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_3.txt')
-        p0_att_w3.append(data)
+        p0_att_w3.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_4.txt')
-        p0_att_w4.append(data)
+        p0_att_w4.append(data[start_marker_det_index:])
         data = np.loadtxt(directory + 'plots/markers_in_att_custom_weig_5.txt')
-        p0_att_w5.append(data)
+        p0_att_w5.append(data[start_marker_det_index:])
 
 
     # flatten list of lists
@@ -760,8 +780,9 @@ def save_csv():
 
     p0_tuples = list(zip(p0_orig, p0_att, p0_att_w0, p0_att_w1, p0_att_w2, p0_att_w3, p0_att_w4, p0_att_w5))
     p0_df = pd.DataFrame(p0_tuples, columns=['orig','main', 'w0', 'w1', 'w2', 'w3', 'w4', 'w5'])
-    p0_df.to_csv('raw_results.csv')
+    p0_df.to_csv('marker_detection_results.csv')
 
+    print('saved')
 
 if __name__ == "__main__":
 
@@ -772,8 +793,8 @@ if __name__ == "__main__":
 
     starting_sample_for_gif = [125, 250, 375, 500, 625, 750, 875, 1000]
     num_frames = 20
-    num_experiments = 1
-    id_first_dyn_exp = 0 # id of the first dynamic experiment
+    num_experiments = 3
+    id_first_dyn_exp = 1 # id of the first dynamic experiment
     num_runs = 10
 
     if do_self_other_test:
@@ -811,8 +832,9 @@ if __name__ == "__main__":
                              starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
                         make_gif(exp_folder+'/run_'+str(run)+'/plots/gif/', 'attenuated_custom_'+str(w), \
                              starting_sample_for_gif[i], starting_sample_for_gif[i]+num_frames)
-        print('saving csv')
-        save_csv()
+
+        save_marker_detection()
+        save_loss_and_val_loss(num_runs,exp_folder, exp)
         # go back
         os.chdir(multiple_experiments_folder)
 

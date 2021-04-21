@@ -1,14 +1,7 @@
 
-print('start')
 import cv2
-
-print('start')
 import os
-
-print('start')
 import numpy as np
-
-print('start')
 
 #import parameters
 #from sklearn.model_selection import train_test_split

@@ -323,7 +323,7 @@ def save_csv():
     p2_df.to_csv('raw_phase_2.csv')
 
 
-def save_csv_phase6():
+def save_six_phases_marker_detection_results():
     p0_orig = []
     p0_att = []
     p0_att_w0 = []
@@ -523,6 +523,103 @@ def save_csv_phase6():
     p5_df.to_csv('raw_phase_5.csv')
 
 
+def save_loss_and_val_loss(num_runs, exp_folder, exp_id, epochs=10):
+    print('saving loss and val_loss')
+    p0_res_loss = []
+    p0_res_val_loss = []
+
+    p1_res_loss = []
+    p1_res_val_loss = []
+
+    p2_res_loss = []
+    p2_res_val_loss = []
+
+    p3_res_loss = []
+    p3_res_val_loss = []
+
+    p4_res_loss = []
+    p4_res_val_loss = []
+
+    p5_res_loss = []
+    p5_res_val_loss = []
+
+    # load results for each run of this experiment
+    for run in range(num_runs):
+        directory = 'run_' + str(run) + '/phase_0/'
+        p0_res_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+        p0_res_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
+        directory = 'run_' + str(run) + '/phase_1/'
+        p1_res_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+        p1_res_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
+        directory = 'run_' + str(run) + '/phase_2/'
+        p2_res_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+        p2_res_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
+        directory = 'run_' + str(run) + '/phase_3/'
+        p3_res_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+        p3_res_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
+        directory = 'run_' + str(run) + '/phase_4/'
+        p4_res_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+        p4_res_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
+        directory = 'run_' + str(run) + '/phase_5/'
+        p5_res_loss.append(np.loadtxt(directory + 'plots/loss.txt'))
+        p5_res_val_loss.append(np.loadtxt(directory + 'plots/val_loss.txt'))
+
+    # flatten list of lists
+    p0_res_loss = [val for sublist in p0_res_loss for val in sublist]
+    p0_res_val_loss = [val for sublist in p0_res_val_loss for val in sublist]
+
+    p1_res_loss = [val for sublist in p1_res_loss for val in sublist]
+    p1_res_val_loss = [val for sublist in p1_res_val_loss for val in sublist]
+
+    p2_res_loss = [val for sublist in p2_res_loss for val in sublist]
+    p2_res_val_loss = [val for sublist in p2_res_val_loss for val in sublist]
+
+    p3_res_loss = [val for sublist in p3_res_loss for val in sublist]
+    p3_res_val_loss = [val for sublist in p3_res_val_loss for val in sublist]
+
+    p4_res_loss = [val for sublist in p4_res_loss for val in sublist]
+    p4_res_val_loss = [val for sublist in p4_res_val_loss for val in sublist]
+
+    p5_res_loss = [val for sublist in p5_res_loss for val in sublist]
+    p5_res_val_loss = [val for sublist in p5_res_val_loss for val in sublist]
+
+    p0_loss_df = pd.DataFrame(np.asarray(p0_res_loss), columns=['loss'])
+    p0_loss_df.to_csv('exp' + str(exp_id) + 'phase_0_loss.csv')
+    p0_val_loss_df = pd.DataFrame(np.asarray(p0_res_val_loss), columns=['val_loss'])
+    p0_val_loss_df.to_csv('exp' + str(exp_id) + 'phase_0_val_loss.csv')
+
+    p1_loss_df = pd.DataFrame(np.asarray(p1_res_loss), columns=['loss'])
+    p1_loss_df.to_csv('exp' + str(exp_id) + 'phase_1_loss.csv')
+    p1_val_loss_df = pd.DataFrame(np.asarray(p1_res_val_loss), columns=['val_loss'])
+    p1_val_loss_df.to_csv('exp' + str(exp_id) + 'phase_1_val_loss.csv')
+
+    p2_loss_df = pd.DataFrame(np.asarray(p2_res_loss), columns=['loss'])
+    p2_loss_df.to_csv('exp' + str(exp_id) + 'phase_2_loss.csv')
+    p2_val_loss_df = pd.DataFrame(np.asarray(p2_res_val_loss), columns=['val_loss'])
+    p2_val_loss_df.to_csv('exp' + str(exp_id) + 'phase_2_val_loss.csv')
+
+    p3_loss_df = pd.DataFrame(np.asarray(p3_res_loss), columns=['loss'])
+    p3_loss_df.to_csv('exp' + str(exp_id) + 'phase_3_loss.csv')
+    p3_val_loss_df = pd.DataFrame(np.asarray(p3_res_val_loss), columns=['val_loss'])
+    p3_val_loss_df.to_csv('exp' + str(exp_id) + 'phase_3_val_loss.csv')
+
+    p4_loss_df = pd.DataFrame(np.asarray(p4_res_loss), columns=['loss'])
+    p4_loss_df.to_csv('exp' + str(exp_id) + 'phase_4_loss.csv')
+    p4_val_loss_df = pd.DataFrame(np.asarray(p4_res_val_loss), columns=['val_loss'])
+    p4_val_loss_df.to_csv('exp' + str(exp_id) + 'phase_4_val_loss.csv')
+
+    p5_loss_df = pd.DataFrame(np.asarray(p5_res_loss), columns=['loss'])
+    p5_loss_df.to_csv('exp' + str(exp_id) + 'phase_5_loss.csv')
+    p5_val_loss_df = pd.DataFrame(np.asarray(p5_res_val_loss), columns=['val_loss'])
+    p5_val_loss_df.to_csv('exp' + str(exp_id) + 'phase_5_val_loss.csv')
+
+    print('saved')
+
 
 if __name__ == "__main__":
     do_stats = True
@@ -547,7 +644,8 @@ if __name__ == "__main__":
         if do_stats:
             do_stats_plot_incremental(num_runs, exp, num_phases)
         if num_phases ==6:
-            save_csv_phase6()
+            save_six_phases_marker_detection_results()
+            save_loss_and_val_loss(num_runs,exp_folder,exp)
         else:
             save_csv()
 
